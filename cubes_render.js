@@ -1,11 +1,12 @@
 // Create the scene
-const scene = new THREE.Scene();
+var scene = new THREE.Scene();
+scene.background = new THREE.Color(0x2d3436);
 // Set up the camera
-var camera = new THREE.PerspectiveCamera( 100, window.innerWidth / window.innerHeight, 0.1, 1000 );
+var camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
 // Set up the render
 var renderer = new THREE.WebGLRenderer();
-renderer.setSize( window.innerWidth, window.innerHeight );
-document.body.appendChild( renderer.domElement );
+renderer.setSize(window.innerWidth, window.innerHeight);
+document.body.appendChild(renderer.domElement);
 // Create cubes
 const cubes = [
     create_cube(3),
@@ -28,14 +29,14 @@ animate();
 function create_cube(x_position) {
     var geometry = new THREE.Geometry();
     geometry.vertices.push(
-        new THREE.Vector3(-1, -1,  1),
-        new THREE.Vector3( 1, -1,  1),
-        new THREE.Vector3(-1,  1,  1),
-        new THREE.Vector3( 1,  1,  1),
+        new THREE.Vector3(-1, -1, 1),
+        new THREE.Vector3(1, -1, 1),
+        new THREE.Vector3(-1, 1, 1),
+        new THREE.Vector3(1, 1, 1),
         new THREE.Vector3(-1, -1, -1),
-        new THREE.Vector3( 1, -1, -1),
-        new THREE.Vector3(-1,  1, -1),
-        new THREE.Vector3( 1,  1, -1),
+        new THREE.Vector3(1, -1, -1),
+        new THREE.Vector3(-1, 1, -1),
+        new THREE.Vector3(1, 1, -1),
     );
     geometry.faces.push(
         // front
@@ -60,13 +61,13 @@ function create_cube(x_position) {
     // Color one face
     geometry.faces[0].color = geometry.faces[1].color = new THREE.Color('magenta');
     // Set materials
-    var material = new THREE.MeshBasicMaterial( {
+    var material = new THREE.MeshBasicMaterial({
         vertexColors: THREE.FaceColors,
         color: 0x95a5a6
-    } );
-    var cube = new THREE.Mesh( geometry, material );
+    });
+    var cube = new THREE.Mesh(geometry, material);
     // Add the cube to the scene
-    scene.add( cube );
+    scene.add(cube);
     cube.position.x = x_position;
     return cube;
 }
