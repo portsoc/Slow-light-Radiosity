@@ -1,3 +1,4 @@
+import * as THREE from '../lib/three.module.js';
 // Create the scene
 const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2d3436);
