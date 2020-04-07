@@ -1,4 +1,4 @@
 test/
 node_modules/
-eslint-config-portsc/
+eslint-config-portsoc/
 .eslintrc.yml
