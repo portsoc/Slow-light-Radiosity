@@ -2,3 +2,4 @@ test/
 node_modules/
 eslint-config-portsoc/
 .eslintrc.yml
+.vscode
