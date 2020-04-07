@@ -5,7 +5,7 @@
   "main": "index.js",
   "directories": {
     "lib": "lib",
-    "test": "tests"
+    "test": "test"
   },
   "dependencies": {
     "eslint": "^6.8.0",
@@ -16,7 +16,7 @@
     "qunit": "^2.9.3"
   },
   "scripts": {
-    "test": "test"
+    "test": "qunit"
   },
   "repository": {
     "type": "git",
