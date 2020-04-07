@@ -1,4 +1,4 @@
-export default class Vector3 {
+class Vector3 {
   constructor(x, y, z) {
     this.x = x;
     this.y = y;
@@ -17,9 +17,9 @@ export default class Vector3 {
   }
 
   subVector3(v) {
-    this.x += v.x;
-    this.y += v.y;
-    this.z += v.z;
+    this.x -= v.x;
+    this.y -= v.y;
+    this.z -= v.z;
   }
 
   multScalar(s) {
@@ -58,7 +58,7 @@ export default class Vector3 {
   }
 
   static invertVector3(v) {
-    return new Vector3(-v.xs, -v.y, -v.z);
+    return new Vector3(-v.x, -v.y, -v.z);
   }
 
   static dotProduct(v1, v2) {
@@ -69,3 +69,5 @@ export default class Vector3 {
     return new Vector3(v1.y * v2.z - v1.z * v2.y, v1.z * v2.x - v1.x * v2.z, v1.x * v2.y - v1.y * v2.x);
   }
 }
+
+module.exports = Vector3;
