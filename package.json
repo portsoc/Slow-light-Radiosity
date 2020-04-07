@@ -1,0 +1,31 @@
+{
+  "name": "slow-light-radiosity",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "directories": {
+    "lib": "lib",
+    "test": "tests"
+  },
+  "dependencies": {
+    "eslint": "^6.8.0",
+    "eslint-config-portsoc": "^0.5.0",
+    "three": "^0.115.0"
+  },
+  "devDependencies": {
+    "qunit": "^2.9.3"
+  },
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Eccsx/Slow-light-Radiosity.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Eccsx/Slow-light-Radiosity/issues"
+  },
+  "homepage": "https://github.com/Eccsx/Slow-light-Radiosity#readme"
+}
