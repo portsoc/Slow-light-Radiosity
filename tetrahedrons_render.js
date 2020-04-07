@@ -16,8 +16,8 @@ for (let i = 0; i < n; i++) {
     do {
         x = Math.floor(Math.random() * 10) - 5;
         y = Math.floor(Math.random() * 10) - 5;
-    } while ((x, y) in positions);
-    positions.push((x, y));
+    } while ([x, y] in positions);
+    positions.push([x, y]);
     tetrahedrons.push(create_tetrahedron(x * 2.5, y * 2.5));
 }
 // Color one random tetrahedron in black and another in white
