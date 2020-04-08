@@ -1,8 +1,20 @@
-class Vector3 {
+import Point3 from './point3.js';
+
+export default class Vector3 {
   constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+    if (x instanceof Point3 && y === undefined) {
+      this.x = x.x;
+      this.y = x.y;
+      this.z = x.z;
+    } else if (x instanceof Point3 && y instanceof Point3 && z === undefined) {
+      this.x = y.x - x.x;
+      this.y = y.y - x.y;
+      this.z = y.z - x.z;
+    } else {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
 
   get length() {
@@ -42,6 +54,3 @@ class Vector3 {
     );
   }
 }
-
-
-module.exports = Vector3;

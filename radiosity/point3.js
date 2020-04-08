@@ -1,4 +1,4 @@
-class Point3 {
+export default class Point3 {
   constructor(x, y, z) {
     this.x = x;
     this.y = y;
@@ -11,5 +11,3 @@ class Point3 {
     this.z += v.z;
   }
 }
-
-module.exports = Point3;
