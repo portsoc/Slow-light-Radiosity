@@ -42,6 +42,14 @@ export default class Vector3 {
     return this;
   }
 
+  norm() {
+    const len = this.length;
+    this.x /= len;
+    this.y /= len;
+    this.z /= len;
+    return this;
+  }
+
   dot(v) {
     return this.x * v.x + this.y * v.y + this.z * v.z;
   }
