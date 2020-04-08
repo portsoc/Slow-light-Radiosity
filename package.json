@@ -25,7 +25,7 @@
   },
   "jest": {
     "verbose": true,
-    "testRegex": "./__tests__/.*\\.(js|jsx)$"
+    "testRegex": "./test/.*\\.(js|jsx)$"
   },
   "repository": {
     "type": "git",
