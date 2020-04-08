@@ -13,11 +13,19 @@
     "three": "^0.115.0"
   },
   "devDependencies": {
-    "qunit": "^2.9.3"
+    "@babel/core": "^7.9.0",
+    "@babel/preset-env": "^7.9.5",
+    "babel-jest": "^25.2.6",
+    "babel-preset-env": "^1.7.0",
+    "jest": "^25.2.7"
   },
   "scripts": {
-    "test": "qunit",
+    "test": "jest",
     "lint": "eslint frontend radiosity test"
+  },
+  "jest": {
+    "verbose": true,
+    "testRegex": "./__tests__/.*\\.(js|jsx)$"
   },
   "repository": {
     "type": "git",
