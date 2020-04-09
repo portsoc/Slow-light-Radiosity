@@ -19,14 +19,6 @@ export default class Spectra {
     return this;
   }
 
-  static blend(s1, s2, alpha) {
-    const s3 = new Spectra(0, 0, 0);
-    s3.redBand = s1.redBand + (s2.redBand - s1.redBand) * alpha;
-    s3.greenBand = s1.greenBand + (s2.greenBand - s1.greenBand) * alpha;
-    s3.blueBand = s1.blueBand + (s2.blueBand - s1.blueBand) * alpha;
-    return s3;
-  }
-
   get maxColor() {
     return Math.max(this.redBand, this.greenBand, this.blueBand);
   }
