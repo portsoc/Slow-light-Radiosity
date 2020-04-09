@@ -5,8 +5,8 @@ import Vector3 from './vector3.js';
 export default class Patch3 extends Element3 {
   constructor(vertex, surface) {
     super(vertex, null);
-    this.elem = null;
-    this.surface = surface;
+    this.elem = null;         // Element list head
+    this.surface = surface;   // Parent surface pointer
   }
 
   get unsentFlux() {
