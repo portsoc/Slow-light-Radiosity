@@ -1,14 +1,8 @@
 export default class Spectra {
-  constructor(redBand, greenBand, blueBand) {
+  constructor(redBand = 0, greenBand = 0, blueBand = 0) {
     this.redBand = redBand;
     this.blueBand = blueBand;
     this.greenBand = greenBand;
-  }
-
-  reset() {
-    this.redBand = 0;
-    this.blueBand = 0;
-    this.greenBand = 0;
   }
 
   add(s) {
