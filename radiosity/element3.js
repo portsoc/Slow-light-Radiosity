@@ -1,11 +1,12 @@
 import Vector3 from './vector3.js';
+import Spectra from './spectra.js';
 
 export default class Element3 {
   constructor(vertexArray, patch) {
     this.patch = patch;               // Parent patch
     this.area = 0;                    // Element area
     this.next = null;                 // Next element
-    this.exitance.reset();            // Spectral exitance
+    this.exitance = new Spectra();            // Spectral exitance
     this.vertexArray = vertexArray;   // Vexter array
     this.isQuad = false;
   }
