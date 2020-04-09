@@ -1,2 +1,6 @@
 extends: portsoc
 root: true
+rules:
+  no-multi-spaces:
+    - error
+    - ignoreEOLComments: true
