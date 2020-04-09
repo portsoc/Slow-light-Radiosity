@@ -1,10 +1,10 @@
 export default class Vertex3 {
   constructor(coord) {
-    this.posn = coord;
-    this.normal = 0;
-    this.elemList = null;
-    this.next = null;
-    this.exitance.reset();
+    this.posn = coord;       // Vexter co-ordinates
+    this.normal = 0;         // Vertex normal
+    this.elemList = null;    // Element list head
+    this.next = null;        // Next vertex
+    this.exitance.reset();   // Vertex exitance
   }
 
   get normal() {
