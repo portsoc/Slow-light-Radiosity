@@ -4,9 +4,9 @@ import Spectra from './spectra.js';
 export default class Element3 {
   constructor(vertexArray, patch) {
     this.patch = patch;               // Parent patch
-    this._area = 0;                    // Element area
+    this._area = 0;                   // Element area
     this.next = null;                 // Next element
-    this.exitance = new Spectra();            // Spectral exitance
+    this.exitance = new Spectra();    // Spectral exitance
     this.vertexArray = vertexArray;   // Vexter array
     this.isQuad = false;
     this._norm = null;
