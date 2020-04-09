@@ -2,12 +2,12 @@ import Vector3 from './vector3.js';
 
 export default class Element3 {
   constructor(vertexArray, patch) {
-    this.patch = patch;
-    this.area = 0;
-    this.flags = 0;
-    this.next = null;
-    this.exitance.reset();
-    this.vertexArray = vertexArray;
+    this.patch = patch;               // Parent patch
+    this.area = 0;                    // Element area
+    this.flags = 0;                   // Falgs bitmap
+    this.next = null;                 // Next element
+    this.exitance.reset();            // Spectral exitance
+    this.vertexArray = vertexArray;   // Vexter array
   }
 
   isQuad() {
