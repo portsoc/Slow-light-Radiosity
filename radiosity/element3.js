@@ -7,8 +7,8 @@ export default class Element3 {
     this._area = 0;                   // Element area
     this.next = null;                 // Next element
     this.exitance = new Spectra();    // Spectral exitance
-    this.vertexArray = vertexArray;   // Vexter array
-    this.isQuad = false;
+    this.vertexArray = vertexArray;   // Vertex array
+    this.isQuad = this.vertexArray.length === 4;
     this._norm = null;
   }
 
