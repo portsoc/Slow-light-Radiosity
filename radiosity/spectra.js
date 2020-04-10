@@ -8,14 +8,14 @@ export default class Spectra {
   add(s) {
     this.redBand += s.redBand;
     this.blueBand += s.blueBand;
-    this.greenBand += s.blueBand;
+    this.greenBand += s.greenBand;
     return this;
   }
 
   sub(s) {
     this.redBand -= s.redBand;
     this.blueBand -= s.blueBand;
-    this.greenBand -= s.blueBand;
+    this.greenBand -= s.greenBand;
     return this;
   }
 
