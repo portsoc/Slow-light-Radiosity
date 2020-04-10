@@ -3,10 +3,10 @@ import Point3 from './point3.js';
 import Vector3 from './vector3.js';
 
 export default class Patch3 extends Element3 {
-  constructor(vertex, surface) {
-    super(vertex, null);
-    this.elem = [];           // Element list head
-    this.surface = surface;   // Parent surface pointer
+  constructor(vertexArray, parentSurface) {
+    super(vertexArray, null);
+    this.elem = [];           // Element list
+    this.parentSurface = parentSurface;   // Parent surface
   }
 
   get unsentFlux() {

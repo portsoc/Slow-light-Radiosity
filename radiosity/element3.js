@@ -2,8 +2,8 @@ import Vector3 from './vector3.js';
 import Spectra from './spectra.js';
 
 export default class Element3 {
-  constructor(vertexArray, patch) {
-    this.patch = patch;               // Parent patch
+  constructor(vertexArray, parentPatch) {
+    this.parentPatch = parentPatch;   // Parent patch
     this._area = 0;                   // Element area
     this.next = null;                 // Next element
     this.exitance = new Spectra();    // Spectral exitance
