@@ -62,5 +62,5 @@ test('normal()', () => {
       new Vertex3(p4),
     ],
     null);
-  expect(e1.normal).toMatchObject(new Vector3(0, 0, 1));
+  expect(e1.normal).toEqual(new Vector3(0, 0, 1));
 });

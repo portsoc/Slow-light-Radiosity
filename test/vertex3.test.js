@@ -69,5 +69,5 @@ test('normal()', () => {
   const v = new Vertex3(p3);
   v.elemList = [e1, e2, e3, e4];
   // Test
-  expect(v.normal).toMatchObject(new Vector3(0, 0, 1));
+  expect(v.normal).toEqual(new Vector3(0, 0, 1));
 });

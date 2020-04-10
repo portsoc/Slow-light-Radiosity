@@ -46,5 +46,5 @@ test('center()', () => {
       new Vertex3(p6),
     ],
     null);
-  expect(p.center).toMatchObject(new Point3(1, -1, 0));
+  expect(p.center).toEqual(new Point3(1, -1, 0));
 });
