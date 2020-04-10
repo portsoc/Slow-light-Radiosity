@@ -9,7 +9,7 @@ export default class Element3 {
     this.exitance = new Spectra();    // Spectral exitance
     this.vertexArray = vertexArray;   // Vertex array
     this.isQuad = this.vertexArray.length === 4;
-    this._norm = null;
+    this._normal = null;
   }
 
   get numVert() {
@@ -32,11 +32,11 @@ export default class Element3 {
   }
 
   get normal() {
-    if (this._norm === null) {
+    if (this._normal === null) {
       const va = new Vector3(this.vertexArray[0].posn, this.vertexArray[1].posn);
       const vb = new Vector3(this.vertexArray[0].posn, this.vertexArray[2].posn);
-      this._norm = va.cross(vb);
+      this._normal = va.cross(vb);
     }
-    return this._norm;
+    return this._normal;
   }
 }
