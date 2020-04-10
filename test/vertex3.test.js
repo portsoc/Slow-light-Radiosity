@@ -15,14 +15,14 @@ import Vector3 from '../radiosity/vector3.js';
 test('normal()', () => {
   // Points
   const p1 = new Point3(0, 0, 0);
-  const p2 = new Point3(-1, 0, 0);
-  const p7 = new Point3(-2, 0, 0);
-  const p4 = new Point3(0, 1, 0);
-  const p3 = new Point3(-1, 1, 0);
-  const p8 = new Point3(-2, 1, 0);
-  const p6 = new Point3(0, 2, 0);
-  const p5 = new Point3(-1, 2, 0);
-  const p9 = new Point3(-2, 2, 0);
+  const p2 = new Point3(0, -1, 0);
+  const p7 = new Point3(0, -2, 0);
+  const p4 = new Point3(1, 0, 0);
+  const p3 = new Point3(1, -1, 0);
+  const p8 = new Point3(1, -2, 0);
+  const p6 = new Point3(2, 0, 0);
+  const p5 = new Point3(2, -1, 0);
+  const p9 = new Point3(2, -2, 0);
   // Patch
   const patch = new Patch3(
     [
@@ -69,5 +69,5 @@ test('normal()', () => {
   const v = new Vertex3(p3);
   v.elemList = [e1, e2, e3, e4];
   // Test
-  expect(v.normal).toMatchObject(new Vector3(0, 0, -1));
+  expect(v.normal).toMatchObject(new Vector3(0, 0, 1));
 });

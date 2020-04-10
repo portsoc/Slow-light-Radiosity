@@ -13,9 +13,9 @@ import Vertex3 from '../radiosity/vertex3.js';
 test('unsentFlux()', () => {
   // Points
   const p1 = new Point3(0, 0, 0);
-  const p7 = new Point3(-2, 0, 0);
-  const p9 = new Point3(-2, 2, 0);
-  const p6 = new Point3(0, 2, 0);
+  const p7 = new Point3(0, -2, 0);
+  const p9 = new Point3(2, -2, 0);
+  const p6 = new Point3(2, 0, 0);
   // Patch
   const p = new Patch3(
     [
@@ -34,9 +34,9 @@ test('unsentFlux()', () => {
 test('center()', () => {
   // Points
   const p1 = new Point3(0, 0, 0);
-  const p7 = new Point3(-2, 0, 0);
-  const p9 = new Point3(-2, 2, 0);
-  const p6 = new Point3(0, 2, 0);
+  const p7 = new Point3(0, -2, 0);
+  const p9 = new Point3(2, -2, 0);
+  const p6 = new Point3(2, 0, 0);
   // Patch
   const p = new Patch3(
     [
@@ -46,5 +46,5 @@ test('center()', () => {
       new Vertex3(p6),
     ],
     null);
-  expect(p.center).toMatchObject(new Point3(-1, 1, 0));
+  expect(p.center).toMatchObject(new Point3(1, -1, 0));
 });
