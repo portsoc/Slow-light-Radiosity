@@ -10,7 +10,7 @@ export default class Patch3 extends Element3 {
   }
 
   get unsentFlux() {
-    return (this.exitance.GetRedBand() + this.exitance.GetGreenBand() + this.exitance.GetBlueBand()) * this.area;
+    return (this.exitance.redBand + this.exitance.greenBand + this.exitance.blueBand) * this.area;
   }
 
   get center() {
