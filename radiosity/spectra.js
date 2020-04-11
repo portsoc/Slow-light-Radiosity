@@ -1,32 +1,32 @@
 export default class Spectra {
-  constructor(redBand = 0, greenBand = 0, blueBand = 0) {
-    this.redBand = redBand;
-    this.blueBand = blueBand;
-    this.greenBand = greenBand;
+  constructor(r = 0, g = 0, b = 0) {
+    this.r = r;
+    this.g = g;
+    this.b = b;
   }
 
   add(s) {
-    this.redBand += s.redBand;
-    this.blueBand += s.blueBand;
-    this.greenBand += s.greenBand;
+    this.r += s.r;
+    this.g += s.g;
+    this.b += s.b;
     return this;
   }
 
   sub(s) {
-    this.redBand -= s.redBand;
-    this.blueBand -= s.blueBand;
-    this.greenBand -= s.greenBand;
+    this.r -= s.r;
+    this.g -= s.g;
+    this.b -= s.b;
     return this;
   }
 
   get maxColor() {
-    return Math.max(this.redBand, this.greenBand, this.blueBand);
+    return Math.max(this.r, this.g, this.b);
   }
 
-  scale(s) {
-    this.redBand *= s;
-    this.blueBand *= s;
-    this.greenBand *= s;
+  scale(x) {
+    this.r *= x;
+    this.g *= x;
+    this.b *= x;
     return this;
   }
 }
