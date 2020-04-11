@@ -1,29 +1,33 @@
-import Vector3 from './vector3.js';
-import Spectra from './spectra.js';
+import Vector3 from './vector3';
+import Spectra from './spectra';
 
 export default class Element3 {
-  constructor(vertexArray, parentPatch) {
+  constructor(vertices, parentPatch) {
     this.parentPatch = parentPatch;   // Parent patch
-    this._area = 0;                   // Element area
-    this.next = null;                 // Next element
+    this._area = null;                // Element area (computed once in getter)
+    this._normal = null;              // Normal vector (computed once in getter)
     this.exitance = new Spectra();    // Spectral exitance
-    this.vertexArray = vertexArray;   // Vertex array
-    this.isQuad = this.vertexArray.length === 4;
-    this._normal = null;
-  }
 
-  get numVert() {
-    return this.isQuad ? 4 : 3;
+    if (![3, 4].includes(vertices.length)) {
+      throw new TypeError('Element must have 3 or 4 vertices');
+    }
+    this.vertices = vertices;      // Vertices of this element
+    this.isQuad = this.vertices.length === 4;
+
+    // add itself to each vertex's list of elements that use it
+    for (const vertex of vertices) {
+      vertex.addElement(this);
+    }
   }
 
   get area() {
-    if (this._area === 0) {
-      const va = new Vector3(this.vertexArray[0].posn, this.vertexArray[1].posn);
-      const vb = new Vector3(this.vertexArray[0].posn, this.vertexArray[2].posn);
+    if (this._area == null) {
+      const va = new Vector3(this.vertices[0].pos, this.vertices[1].pos);
+      const vb = new Vector3(this.vertices[0].pos, this.vertices[2].pos);
       let temp = va.cross(vb);
       this._area = temp.length / 2.0;
       if (this.isQuad) {
-        const vc = new Vector3(this.vertexArray[3].posn, this.vertexArray[0].posn);
+        const vc = new Vector3(this.vertices[3].pos, this.vertices[0].pos);
         temp = vb.cross(vc);
         this._area += temp.length / 2.0;
       }
@@ -32,10 +36,11 @@ export default class Element3 {
   }
 
   get normal() {
-    if (this._normal === null) {
-      const va = new Vector3(this.vertexArray[0].posn, this.vertexArray[1].posn);
-      const vb = new Vector3(this.vertexArray[0].posn, this.vertexArray[2].posn);
+    if (this._normal == null) {
+      const va = new Vector3(this.vertices[0].pos, this.vertices[1].pos);
+      const vb = new Vector3(this.vertices[0].pos, this.vertices[2].pos);
       this._normal = va.cross(vb);
+      this._normal.normalize();
     }
     return this._normal;
   }
