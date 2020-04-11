@@ -1,7 +1,7 @@
-import Vertex3 from '../radiosity/vertex3';
-import Element3 from '../radiosity/element3';
-import Point3 from '../radiosity/point3';
-import Vector3 from '../radiosity/vector3';
+import Vertex3 from '../radiosity/vertex3.js';
+import Element3 from '../radiosity/element3.js';
+import Point3 from '../radiosity/point3.js';
+import Vector3 from '../radiosity/vector3.js';
 
 // ^ y
 // |

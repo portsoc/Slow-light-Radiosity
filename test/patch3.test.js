@@ -1,6 +1,6 @@
-import Patch3 from '../radiosity/patch3';
-import Point3 from '../radiosity/point3';
-import Vertex3 from '../radiosity/vertex3';
+import Patch3 from '../radiosity/patch3.js';
+import Point3 from '../radiosity/point3.js';
+import Vertex3 from '../radiosity/vertex3.js';
 
 // 1 ----- 4 ----- 6
 // |   e   |   e   |

@@ -1,4 +1,4 @@
-import Point3 from './point3';
+import Point3 from './point3.js';
 
 export default class Vector3 {
   constructor(x, y, z) {

@@ -1,4 +1,4 @@
-import Spectra from '../radiosity/spectra';
+import Spectra from '../radiosity/spectra.js';
 
 test('add()', () => {
   const s1 = new Spectra(12, 0, 5);
