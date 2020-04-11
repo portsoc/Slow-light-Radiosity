@@ -1,5 +1,5 @@
-import Vector3 from './vector3';
-import Spectra from './spectra';
+import Vector3 from './vector3.js';
+import Spectra from './spectra.js';
 
 export default class Element3 {
   constructor(vertices, parentPatch) {

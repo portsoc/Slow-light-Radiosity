@@ -1,6 +1,6 @@
-import Element3 from './element3';
-import Point3 from './point3';
-import Vector3 from './vector3';
+import Element3 from './element3.js';
+import Point3 from './point3.js';
+import Vector3 from './vector3.js';
 
 export default class Patch3 extends Element3 {
   constructor(vertices, parentSurface) {

@@ -1,5 +1,5 @@
-import Spectra from './spectra';
-import Vector3 from './vector3';
+import Spectra from './spectra.js';
+import Vector3 from './vector3.js';
 
 export default class Vertex3 {
   constructor(coord) {

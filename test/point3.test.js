@@ -1,5 +1,5 @@
-import Vector3 from '../radiosity/vector3';
-import Point3 from '../radiosity/point3';
+import Vector3 from '../radiosity/vector3.js';
+import Point3 from '../radiosity/point3.js';
 
 test('constructor', () => {
   expect(new Point3(1, 2, 3.14)).toMatchObject({ x: 1, y: 2, z: 3.14 });
