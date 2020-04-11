@@ -1,73 +1,138 @@
-import Vertex3 from '../radiosity/vertex3.js';
-import Element3 from '../radiosity/element3.js';
-import Point3 from '../radiosity/point3.js';
-import Patch3 from '../radiosity/patch3.js';
-import Vector3 from '../radiosity/vector3.js';
+import Vertex3 from '../radiosity/vertex3';
+import Element3 from '../radiosity/element3';
+import Point3 from '../radiosity/point3';
+import Vector3 from '../radiosity/vector3';
 
-// 1 ----- 4 ----- 6
-// |   e   |   e   |
-// |   1   |   4   |
-// 2 ----- 3 ----- 5   ====> Patch
+// ^ y
+// |
+// 6 ----- 7 ----- 8
 // |   e   |   e   |
 // |   2   |   3   |
-// 7 ----- 8 ----- 9
+// 3 ----- 4 ----- 5
+// |   e   |   e   |
+// |   0   |   1   |
+// 0 ----- 1 ----- 2  -> x
 
 test('normal()', () => {
-  // Points
-  const p1 = new Point3(0, 0, 0);
-  const p2 = new Point3(0, -1, 0);
-  const p7 = new Point3(0, -2, 0);
-  const p4 = new Point3(1, 0, 0);
-  const p3 = new Point3(1, -1, 0);
-  const p8 = new Point3(1, -2, 0);
-  const p6 = new Point3(2, 0, 0);
-  const p5 = new Point3(2, -1, 0);
-  const p9 = new Point3(2, -2, 0);
-  // Patch
-  const patch = new Patch3(
-    [
-      new Vertex3(p1),
-      new Vertex3(p7),
-      new Vertex3(p9),
-      new Vertex3(p6),
-    ],
-    null);
-  // Elements
-  const e1 = new Element3(
-    [
-      new Vertex3(p1),
-      new Vertex3(p2),
-      new Vertex3(p3),
-      new Vertex3(p4),
-    ],
-    patch);
-  const e2 = new Element3(
-    [
-      new Vertex3(p2),
-      new Vertex3(p7),
-      new Vertex3(p8),
-      new Vertex3(p9),
-    ],
-    patch);
-  const e3 = new Element3(
-    [
-      new Vertex3(p3),
-      new Vertex3(p8),
-      new Vertex3(p9),
-      new Vertex3(p5),
-    ],
-    patch);
-  const e4 = new Element3(
-    [
-      new Vertex3(p4),
-      new Vertex3(p3),
-      new Vertex3(p5),
-      new Vertex3(p6),
-    ],
-    patch);
-  // Test's vertex
-  const v = new Vertex3(p3);
-  v.elemList = [e1, e2, e3, e4];
-  // Test
-  expect(v.normal).toEqual(new Vector3(0, 0, 1));
+  // four elements in the XY plane
+  const points1 = [
+    new Point3(0, 0, 0),
+    new Point3(1, 0, 0),
+    new Point3(2, 0, 0),
+    new Point3(0, 1, 0),
+    new Point3(1, 1, 0),
+    new Point3(2, 1, 0),
+    new Point3(0, 2, 0),
+    new Point3(1, 2, 0),
+    new Point3(2, 2, 0),
+  ];
+  const v1 = createTestElements(points1).vertices;
+  const n1 = v1[4].normal;
+
+  // test normal in the central vertex
+  expect(n1).toBeInstanceOf(Vector3);
+  expect(n1).toBe(v1[4].normal); // the normal should be computed once
+  expect(n1).toEqual(new Vector3(0, 0, 1));
+
+  // in the following elements, the centre point is raised
+  const points2 = [
+    new Point3(0, 0, 0),
+    new Point3(1, 0, 0.5),
+    new Point3(2, 0, 0),
+    new Point3(0, 1, 0.5),
+    new Point3(1, 1, 1),
+    new Point3(2, 1, 0.5),
+    new Point3(0, 2, 0),
+    new Point3(1, 2, 0.5),
+    new Point3(2, 2, 0),
+  ];
+
+  const v2 = createTestElements(points2).vertices;
+  const n2 = v2[1].normal;
+
+  // test normal in the central vertex
+  expect(v2[4].normal).toEqual(new Vector3(0, 0, 1));
+
+  expect(n2.x).toBeCloseTo(0, 5);
+  expect(n2.y).toBeCloseTo(-0.4472135955, 5);
+  expect(n2.z).toBeCloseTo(0.894427191, 5);
+
+  // these are in a plane going through Y, and at 45° between X and Z
+  const points3 = [
+    new Point3(0, 0, 0),
+    new Point3(1, 0, 1),
+    new Point3(2, 0, 2),
+    new Point3(0, 1, 0),
+    new Point3(1, 1, 1),
+    new Point3(2, 1, 2),
+    new Point3(0, 2, 0),
+    new Point3(1, 2, 1),
+    new Point3(2, 2, 2),
+  ];
+
+  const v3 = createTestElements(points3).vertices;
+  const n3 = v3[4].normal;
+
+  // test normal in the central vertex, approximately to 5 places
+  expect(n3.x).toBeCloseTo(-Math.sqrt(0.5), 5);
+  expect(n3.y).toBe(0);
+  expect(n3.z).toBeCloseTo(Math.sqrt(0.5), 5);
 });
+
+
+/*
+ * Creates four elements from an array of 9 points like this:
+ *
+ * ^ y
+ * |
+ * 6 ----- 7 ----- 8
+ * |   e   |   e   |
+ * |   2   |   3   |
+ * 3 ----- 4 ----- 5
+ * |   e   |   e   |
+ * |   0   |   1   |
+ * 0 ----- 1 ----- 2  -> x
+ *
+ * Returns { vertices, elements } so all objects can be tested.
+ */
+
+function createTestElements(ninePoints) {
+  const vertices = ninePoints.map(p => new Vertex3(p));
+
+  const elements = [
+    new Element3(
+      [
+        vertices[0],
+        vertices[1],
+        vertices[4],
+        vertices[3],
+      ],
+      null),
+    new Element3(
+      [
+        vertices[1],
+        vertices[2],
+        vertices[5],
+        vertices[4],
+      ],
+      null),
+    new Element3(
+      [
+        vertices[3],
+        vertices[4],
+        vertices[7],
+        vertices[6],
+      ],
+      null),
+    new Element3(
+      [
+        vertices[4],
+        vertices[5],
+        vertices[8],
+        vertices[7],
+      ],
+      null),
+  ];
+
+  return { vertices, elements };
+}
