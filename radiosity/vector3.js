@@ -1,4 +1,4 @@
-import Point3 from './point3.js';
+import Point3 from './point3';
 
 export default class Vector3 {
   constructor(x, y, z) {
@@ -42,11 +42,13 @@ export default class Vector3 {
     return this;
   }
 
-  norm() {
+  normalize() {
     const len = this.length;
-    this.x /= len;
-    this.y /= len;
-    this.z /= len;
+    if (len > 0) {
+      this.x /= len;
+      this.y /= len;
+      this.z /= len;
+    }
     return this;
   }
 
