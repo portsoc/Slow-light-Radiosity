@@ -1,3 +1,5 @@
+import Vector3 from './vector3';
+
 export default class Point3 {
   constructor(x, y, z) {
     this.x = x;
@@ -6,6 +8,8 @@ export default class Point3 {
   }
 
   addVector(v) {
+    if (!(v instanceof Vector3)) throw new TypeError('point can only add vectors');
+
     this.x += v.x;
     this.y += v.y;
     this.z += v.z;
