@@ -47,4 +47,5 @@ test('center()', () => {
     ],
     null);
   expect(p.center).toEqual(new Point3(1, -1, 0));
+  expect(p.center).toEqual(new Point3(1, -1, 0)); // to cover the case center is cached
 });

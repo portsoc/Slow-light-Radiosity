@@ -2,12 +2,32 @@ import Element3 from '../radiosity/element3';
 import Point3 from '../radiosity/point3';
 import Vertex3 from '../radiosity/vertex3';
 import Vector3 from '../radiosity/vector3';
+import Spectra from '../radiosity/spectra';
 
 // ^ y
 // |
 // 3 ----- 2
 // |   e   |
 // 0 ----- 1  -> x
+
+test('constructor', () => {
+  const p1 = [
+    new Point3(0, 0, 0),
+    new Point3(1, 0, 0),
+    new Point3(1, 1, 0),
+    new Point3(0, 1, 0),
+  ];
+  const v1 = p1.map(p => new Vertex3(p));
+  const e1 = new Element3(v1);
+
+  expect(e1.exitance).toEqual(new Spectra());
+  expect(v1[0].elements).toEqual([e1]);
+
+  const tooFewVertices = v1.slice(0, 2);
+  const tooManyVertices = v1.concat(v1);
+  expect(() => new Element3(tooFewVertices)).toThrow(TypeError);
+  expect(() => new Element3(tooManyVertices)).toThrow(TypeError);
+});
 
 test('area()', () => {
   const p1 = [
@@ -20,6 +40,7 @@ test('area()', () => {
   const e1 = new Element3(v1);
 
   expect(e1.area).toBe(1);
+  expect(e1.area).toBe(1); // to cover case where area is precomputed
 
   const p2 = [
     new Point3(0, 0, 0),

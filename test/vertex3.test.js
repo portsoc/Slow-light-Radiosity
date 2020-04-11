@@ -13,6 +13,25 @@ import Vector3 from '../radiosity/vector3';
 // |   0   |   1   |
 // 0 ----- 1 ----- 2  -> x
 
+test('addElement', () => {
+  const p1 = [
+    new Point3(0, 0, 0),
+    new Point3(1, 0, 0),
+    new Point3(1, 1, 0),
+    new Point3(0, 1, 0),
+  ];
+  const v1 = p1.map(p => new Vertex3(p));
+  const e1 = new Element3(v1);
+
+  expect(v1[0].elements).toEqual([e1]);
+
+  v1[0].addElement(e1); // addElement shouldn't add an element twice
+  expect(v1[0].elements).toEqual([e1]);
+
+  const e2 = new Element3(v1);
+  expect(v1[0].elements).toEqual([e1, e2]);
+});
+
 test('normal()', () => {
   // four elements in the XY plane
   const points1 = [
