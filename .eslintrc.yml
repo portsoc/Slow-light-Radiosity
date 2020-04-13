@@ -1,6 +1,10 @@
 extends: portsoc
+plugins:
+  - import
 root: true
 rules:
   no-multi-spaces:
     - error
     - ignoreEOLComments: true
+  import/no-unresolved:
+    - 2
