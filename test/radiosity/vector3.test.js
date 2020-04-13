@@ -1,4 +1,4 @@
-import Vector3 from '../radiosity/vector3.js';
+import Vector3 from '../../radiosity/vector3.js';
 
 test('length()', () => {
   expect(new Vector3(1, 2, 3).length).toBe(Math.sqrt(14));
