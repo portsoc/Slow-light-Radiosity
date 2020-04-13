@@ -27,12 +27,10 @@ export default class Element3 {
     if (this._area == null) {
       const va = new Vector3(this.vertices[0].pos, this.vertices[1].pos);
       const vb = new Vector3(this.vertices[0].pos, this.vertices[2].pos);
-      let temp = va.cross(vb);
-      this._area = temp.length / 2.0;
+      this._area = va.cross(vb).length / 2;
       if (this.isQuad) {
-        const vc = new Vector3(this.vertices[3].pos, this.vertices[0].pos);
-        temp = vb.cross(vc);
-        this._area += temp.length / 2.0;
+        const vc = new Vector3(this.vertices[0].pos, this.vertices[3].pos);
+        this._area += vb.cross(vc).length / 2;
       }
     }
     return this._area;
@@ -42,8 +40,7 @@ export default class Element3 {
     if (this._normal == null) {
       const va = new Vector3(this.vertices[0].pos, this.vertices[1].pos);
       const vb = new Vector3(this.vertices[0].pos, this.vertices[2].pos);
-      this._normal = va.cross(vb);
-      this._normal.normalize();
+      this._normal = va.cross(vb).normalize();
     }
     return this._normal;
   }
