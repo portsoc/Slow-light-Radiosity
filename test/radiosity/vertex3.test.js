@@ -2,18 +2,20 @@ import Vertex3 from '../../radiosity/vertex3.js';
 import Element3 from '../../radiosity/element3.js';
 import Point3 from '../../radiosity/point3.js';
 import Vector3 from '../../radiosity/vector3.js';
+import Spectra from '../../radiosity/spectra.js';
 
-// ^ y
-// |
-// 6 ----- 7 ----- 8
-// |   e   |   e   |
-// |   2   |   3   |
-// 3 ----- 4 ----- 5
-// |   e   |   e   |
-// |   0   |   1   |
-// 0 ----- 1 ----- 2  -> x
+test('constructor', () => {
+  const p = new Point3(1, 2, 3);
+  const v = new Vertex3(p);
 
-test('addElement', () => {
+  expect(v.pos).toBe(p);
+  expect(v.elements).toEqual([]);
+  expect(v.exitance).toEqual(new Spectra());
+
+  expect(() => new Vertex3(v)).toThrow(TypeError);
+});
+
+test('_addElement', () => {
   const p1 = [
     new Point3(0, 0, 0),
     new Point3(1, 0, 0),
@@ -25,7 +27,7 @@ test('addElement', () => {
 
   expect(v1[0].elements).toEqual([e1]);
 
-  v1[0].addElement(e1); // addElement shouldn't add an element twice
+  v1[0]._addElement(e1); // _addElement shouldn't add an element twice
   expect(v1[0].elements).toEqual([e1]);
 
   const e2 = new Element3(v1);
@@ -125,32 +127,28 @@ function createTestElements(ninePoints) {
         vertices[1],
         vertices[4],
         vertices[3],
-      ],
-      null),
+      ]),
     new Element3(
       [
         vertices[1],
         vertices[2],
         vertices[5],
         vertices[4],
-      ],
-      null),
+      ]),
     new Element3(
       [
         vertices[3],
         vertices[4],
         vertices[7],
         vertices[6],
-      ],
-      null),
+      ]),
     new Element3(
       [
         vertices[4],
         vertices[5],
         vertices[8],
         vertices[7],
-      ],
-      null),
+      ]),
   ];
 
   return { vertices, elements };

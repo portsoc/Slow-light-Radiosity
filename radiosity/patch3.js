@@ -3,11 +3,23 @@ import Point3 from './point3.js';
 import Vector3 from './vector3.js';
 
 export default class Patch3 extends Element3 {
-  constructor(vertices, parentSurface) {
-    super(vertices, null);
-    this.elements = [];                   // Elements that make up this patch
-    this.parentSurface = parentSurface;   // Parent surface
-    this._center = null;                  // Vertex centroid (computed once in getter)
+  // if no element is provided, we create one that coincides with this patch
+  constructor(vertices, elements) {
+    super(vertices);
+
+    if (elements == null) {
+      // create one element that coincides with this patch
+      elements = [new Element3(vertices)];
+    }
+
+    this.elements = elements;   // Elements that make up this patch
+    this.parentSurface = null;  // Parent surface
+    this._center = null;        // Vertex centroid (computed once in getter)
+
+    // set parent patch of elements
+    for (const el of elements) {
+      el.parentPatch = this;
+    }
   }
 
   get unsentFlux() {
