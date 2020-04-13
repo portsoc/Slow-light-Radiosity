@@ -2,21 +2,24 @@ import Vector3 from './vector3.js';
 import Spectra from './spectra.js';
 
 export default class Element3 {
-  constructor(vertices, parentPatch) {
-    this.parentPatch = parentPatch;   // Parent patch
+  constructor(vertices) {
+    this.parentPatch = null;          // Parent patch
     this._area = null;                // Element area (computed once in getter)
     this._normal = null;              // Normal vector (computed once in getter)
     this.exitance = new Spectra();    // Spectral exitance
 
-    if (![3, 4].includes(vertices.length)) {
+    if (!Array.isArray(vertices) || ![3, 4].includes(vertices.length)) {
       throw new TypeError('Element must have 3 or 4 vertices');
     }
     this.vertices = vertices;      // Vertices of this element
     this.isQuad = this.vertices.length === 4;
 
-    // add itself to each vertex's list of elements that use it
-    for (const vertex of vertices) {
-      vertex.addElement(this);
+    // if we're an Element3 but not a subclass,
+    // add ourself to each vertex's list of elements that use it
+    if (Object.getPrototypeOf(this) === Element3.prototype) {
+      for (const vertex of vertices) {
+        vertex._addElement(this);
+      }
     }
   }
 

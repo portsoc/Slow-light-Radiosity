@@ -1,8 +1,21 @@
 export default class Spectra {
+  // accepts three numbers: r, g, b; or one Spectra (copy constructor) (or null)
   constructor(r = 0, g = 0, b = 0) {
-    this.r = r;
-    this.g = g;
-    this.b = b;
+    if (r instanceof Spectra) {
+      this.r = r.r;
+      this.g = r.g;
+      this.b = r.b;
+    } else if (r == null) {
+      this.r = this.g = this.b = 0;
+    } else {
+      this.r = r;
+      this.g = g;
+      this.b = b;
+    }
+  }
+
+  reset() {
+    this.r = this.g = this.b = 0;
   }
 
   add(s) {

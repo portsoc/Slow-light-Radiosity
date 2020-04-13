@@ -1,9 +1,12 @@
 import Spectra from './spectra.js';
 import Vector3 from './vector3.js';
+import Point3 from './point3.js';
 
 export default class Vertex3 {
-  constructor(coord) {
-    this.pos = coord;                // Vertex co-ordinates (Point3)
+  constructor(point) {
+    if (!(point instanceof Point3)) throw TypeError('vertex position must be Point3');
+
+    this.pos = point;                // Vertex co-ordinates (Point3)
     this._normal = null;             // Vertex normal (Vector3) (computed once in getter)
     this.elements = [];              // Elements that use this vertex
     this.exitance = new Spectra();   // Vertex exitance
@@ -20,7 +23,7 @@ export default class Vertex3 {
     return this._normal;
   }
 
-  addElement(e) {
+  _addElement(e) {
     if (!this.elements.includes(e)) this.elements.push(e);
   }
 }

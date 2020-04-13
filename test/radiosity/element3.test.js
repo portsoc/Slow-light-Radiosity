@@ -27,6 +27,7 @@ test('constructor', () => {
   const tooManyVertices = v1.concat(v1);
   expect(() => new Element3(tooFewVertices)).toThrow(TypeError);
   expect(() => new Element3(tooManyVertices)).toThrow(TypeError);
+  expect(() => new Element3()).toThrow(TypeError);
 });
 
 test('area()', () => {

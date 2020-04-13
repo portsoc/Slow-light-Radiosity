@@ -93,11 +93,15 @@ test('dot()', () => {
 test('cross()', () => {
   const v1 = new Vector3(1, 2, 3);
   const v2 = new Vector3(4, 5, 6);
+  const v2Neg = new Vector3(-4, -5, -6);
   expect(v1.cross(v2)).toEqual(new Vector3(-3, 6, -3));
 
   // cross has no side effect
   expect(v1).toEqual(new Vector3(1, 2, 3));
   expect(v2).toEqual(new Vector3(4, 5, 6));
+
+  // cross against negated vector is negated result
+  expect(v1.cross(v2Neg)).toEqual(new Vector3(3, -6, 3));
 
   // anticommutative
   expect(v2.cross(v1)).toEqual(new Vector3(-3, 6, -3).scale(-1));
