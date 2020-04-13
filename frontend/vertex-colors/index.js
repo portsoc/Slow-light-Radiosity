@@ -11,8 +11,6 @@ document.body.appendChild(canvas);
 
 const geom = new THREE.TorusKnotGeometry(2.5, 0.5, 32, 8);
 
-const rev = true;
-
 const cols = [{
   stop: 0,
   color: new THREE.Color(0xf7b000),
@@ -30,9 +28,9 @@ const cols = [{
   color: new THREE.Color(0x77c8db),
 }];
 
-setGradient(geom, cols, 'z', rev);
+setGradient(geom, cols, 'z');
 
-function setGradient(geometry, colors, axis, reverse) {
+function setGradient(geometry, colors, axis) {
   geometry.computeBoundingBox();
 
   const bbox = geometry.boundingBox;
@@ -50,9 +48,6 @@ function setGradient(geometry, colors, axis, reverse) {
       for (let v = 0; v < 3; v++) {
         vertex = geometry.vertices[face[vertexIndices[v]]];
         normalizedAxis = normalized.subVectors(vertex, bbox.min).divide(size)[axis];
-        if (reverse) {
-          normalizedAxis = 1 - normalizedAxis;
-        }
         if (normalizedAxis >= colors[c].stop && normalizedAxis <= colors[c + 1].stop) {
           const localNormalizedAxis = (normalizedAxis - colors[c].stop) / colorDiff;
           face.vertexColors[v] = colors[c].color.clone().lerp(colors[c + 1].color, localNormalizedAxis);
