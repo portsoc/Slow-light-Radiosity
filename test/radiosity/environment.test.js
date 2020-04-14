@@ -9,7 +9,7 @@ test('constructor', () => {
   const s1 = new Surface3(null, null, []);
   const i1 = new Instance([s1]);
   const e1 = new Environment([i1]);
-  expect(e1.instances).toEqual([i1]);
+  expect(e1.instances).toStrictEqual([i1]);
 });
 
 test('checkNoVerticesAreShared', () => {

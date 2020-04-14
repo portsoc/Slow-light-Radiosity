@@ -14,7 +14,7 @@ test('constructor', () => {
   const p1 = new Patch3(vertices);
 
   expect(p1.elements).toHaveLength(1);
-  expect(p1.elements[0].vertices).toEqual(vertices);
+  expect(p1.elements[0].vertices).toStrictEqual(vertices);
 
   const tooFewVertices = vertices.slice(0, 2);
   const tooManyVertices = vertices.concat(vertices);
@@ -26,7 +26,7 @@ test('constructor', () => {
   expect(e2.parentPatch).toBeNull();
   const p2 = new Patch3(vertices, [e2]);
   expect(e2.parentPatch).toBe(p2);
-  expect(p2.elements).toEqual([e2]);
+  expect(p2.elements).toStrictEqual([e2]);
 });
 
 test('unsentFlux()', () => {
@@ -64,6 +64,6 @@ test('center()', () => {
       new Vertex3(p6),
     ],
     null);
-  expect(p.center).toEqual(new Point3(1, -1, 0));
-  expect(p.center).toEqual(new Point3(1, -1, 0)); // to cover the case center is cached
+  expect(p.center).toStrictEqual(new Point3(1, -1, 0));
+  expect(p.center).toStrictEqual(new Point3(1, -1, 0)); // to cover the case center is cached
 });

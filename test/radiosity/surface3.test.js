@@ -24,16 +24,16 @@ test('reflectance and emittance', () => {
   const color = new Spectra(1, 2, 3);
 
   const s1 = new Surface3(new Spectra(1, 2, 3), new Spectra(), []);
-  expect(s1.reflectance).toEqual(color);
-  expect(s1.emittance).toEqual(black);
+  expect(s1.reflectance).toStrictEqual(color);
+  expect(s1.emittance).toStrictEqual(black);
 
   const s2 = new Surface3(null, null, []);
-  expect(s2.reflectance).toEqual(black);
-  expect(s2.emittance).toEqual(black);
+  expect(s2.reflectance).toStrictEqual(black);
+  expect(s2.emittance).toStrictEqual(black);
 
   const s3 = new Surface3(black, color, []);
   expect(s3.reflectance).not.toBe(black);
   expect(s3.emittance).not.toBe(color);
-  expect(s3.reflectance).toEqual(black);
-  expect(s3.emittance).toEqual(color);
+  expect(s3.reflectance).toStrictEqual(black);
+  expect(s3.emittance).toStrictEqual(color);
 });

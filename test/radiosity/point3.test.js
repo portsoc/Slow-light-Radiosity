@@ -8,7 +8,7 @@ test('constructor', () => {
 test('addVector()', () => {
   const p = new Point3(-4, 2, -7);
   const v = new Vector3(1, 2, 3);
-  expect(p.addVector(v)).toEqual(new Point3(-3, 4, -4));
+  expect(p.addVector(v)).toStrictEqual(new Point3(-3, 4, -4));
 
   expect(() => p.addVector(p)).toThrow(TypeError);
 });
