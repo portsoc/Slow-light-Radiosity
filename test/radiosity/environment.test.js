@@ -77,10 +77,6 @@ describe('with a non-trivial environment', () => {
     environment = new Environment([i1, i2]);
   });
 
-  test('get numInst', () => {
-    expect(environment.numInst).toBe(2);
-  });
-
   test('get numSurf', () => {
     expect(environment.numSurf).toBe(3);
   });

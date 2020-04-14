@@ -3,10 +3,6 @@ export default class Environment {
     this.instances = instances;
   }
 
-  get numInst() {
-    return this.instances.length;
-  }
-
   get numSurf() {
     return sum(this.instances.map(i => i.surfaces.length));
   }
