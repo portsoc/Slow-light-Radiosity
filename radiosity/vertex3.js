@@ -9,7 +9,7 @@ export default class Vertex3 {
     this.pos = point;                // Vertex co-ordinates (Point3)
     this._normal = null;             // Vertex normal (Vector3) (computed once in getter)
     this.elements = [];              // Elements that use this vertex
-    this.exitance = new Spectra();   // Vertex exitance
+    this._exitance = new Spectra();  // Vertex exitance
   }
 
   get normal() {
@@ -25,5 +25,10 @@ export default class Vertex3 {
 
   _addElement(e) {
     if (!this.elements.includes(e)) this.elements.push(e);
+  }
+
+  // exitance should not be reassigned
+  get exitance() {
+    return this._exitance;
   }
 }
