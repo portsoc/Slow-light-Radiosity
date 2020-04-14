@@ -20,8 +20,8 @@ test('constructor', () => {
   const v1 = p1.map(p => new Vertex3(p));
   const e1 = new Element3(v1);
 
-  expect(e1.exitance).toEqual(new Spectra());
-  expect(v1[0].elements).toEqual([e1]);
+  expect(e1.exitance).toStrictEqual(new Spectra());
+  expect(v1[0].elements).toStrictEqual([e1]);
 
   const tooFewVertices = v1.slice(0, 2);
   const tooManyVertices = v1.concat(v1);
@@ -77,7 +77,7 @@ test('normal()', () => {
   const n1 = e1.normal;
 
   expect(n1).toBeInstanceOf(Vector3);
-  expect(n1).toEqual(new Vector3(0, 0, 1));
+  expect(n1).toStrictEqual(new Vector3(0, 0, 1));
   expect(n1).toBe(e1.normal); // normal should only be computed once
 
   // raised towards 1,1,1

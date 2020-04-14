@@ -9,8 +9,8 @@ test('constructor', () => {
   const v = new Vertex3(p);
 
   expect(v.pos).toBe(p);
-  expect(v.elements).toEqual([]);
-  expect(v.exitance).toEqual(new Spectra());
+  expect(v.elements).toStrictEqual([]);
+  expect(v.exitance).toStrictEqual(new Spectra());
 
   expect(() => new Vertex3(v)).toThrow(TypeError);
 });
@@ -25,13 +25,13 @@ test('_addElement', () => {
   const v1 = p1.map(p => new Vertex3(p));
   const e1 = new Element3(v1);
 
-  expect(v1[0].elements).toEqual([e1]);
+  expect(v1[0].elements).toStrictEqual([e1]);
 
   v1[0]._addElement(e1); // _addElement shouldn't add an element twice
-  expect(v1[0].elements).toEqual([e1]);
+  expect(v1[0].elements).toStrictEqual([e1]);
 
   const e2 = new Element3(v1);
-  expect(v1[0].elements).toEqual([e1, e2]);
+  expect(v1[0].elements).toStrictEqual([e1, e2]);
 });
 
 test('normal()', () => {
@@ -53,7 +53,7 @@ test('normal()', () => {
   // test normal in the central vertex
   expect(n1).toBeInstanceOf(Vector3);
   expect(n1).toBe(v1[4].normal); // the normal should be computed once
-  expect(n1).toEqual(new Vector3(0, 0, 1));
+  expect(n1).toStrictEqual(new Vector3(0, 0, 1));
 
   // in the following elements, the centre point is raised
   const points2 = [
@@ -72,7 +72,7 @@ test('normal()', () => {
   const n2 = v2[1].normal;
 
   // test normal in the central vertex
-  expect(v2[4].normal).toEqual(new Vector3(0, 0, 1));
+  expect(v2[4].normal).toStrictEqual(new Vector3(0, 0, 1));
 
   expect(n2.x).toBeCloseTo(0, 5);
   expect(n2.y).toBeCloseTo(-0.4472135955, 5);
