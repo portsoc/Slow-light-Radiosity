@@ -2,7 +2,13 @@ import Vector3 from '../../radiosity/vector3.js';
 import Point3 from '../../radiosity/point3.js';
 
 test('constructor', () => {
-  expect(new Point3(1, 2, 3.14)).toMatchObject({ x: 1, y: 2, z: 3.14 });
+  const p1 = new Point3(1, 2, 3.14);
+  expect(p1).toMatchObject({ x: 1, y: 2, z: 3.14 });
+
+  const p2 = new Point3(p1);
+  expect(p2).not.toBe(p1);
+  expect(p2).toStrictEqual(p1);
+  expect(p2).toMatchObject({ x: 1, y: 2, z: 3.14 });
 });
 
 test('addVector()', () => {

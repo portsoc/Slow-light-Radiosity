@@ -1,5 +1,15 @@
 import Vector3 from '../../radiosity/vector3.js';
 
+test('constructor', () => {
+  const v1 = new Vector3(1, 2, 3);
+  expect(v1).toMatchObject({ x: 1, y: 2, z: 3 });
+
+  const v2 = new Vector3(v1);
+  expect(v2).not.toBe(v1);
+  expect(v2).toStrictEqual(v1);
+  expect(v2).toMatchObject({ x: 1, y: 2, z: 3 });
+});
+
 test('length()', () => {
   expect(new Vector3(1, 2, 3).length).toBe(Math.sqrt(14));
   expect(new Vector3(0, 0, 0).length).toBe(0);
@@ -43,6 +53,12 @@ test('scale()', () => {
   // scales in place
   expect(v1).toStrictEqual(new Vector3(-2, -4, -6));
   expect(v1.scale(3)).toStrictEqual(new Vector3(-6, -12, -18));
+});
+
+test('div()', () => {
+  const v1 = new Vector3(49 * 2, 49 * 3, 49 * 4);
+  // the following would fail with v1.scale(1/49)
+  expect(v1.div(49)).toStrictEqual(new Vector3(2, 3, 4));
 });
 
 test('normalize()', () => {

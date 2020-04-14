@@ -2,7 +2,7 @@ import Point3 from './point3.js';
 
 export default class Vector3 {
   constructor(x, y, z) {
-    if (x instanceof Point3 && y === undefined) {
+    if ((x instanceof Point3 || x instanceof Vector3) && y === undefined) {
       this.x = x.x;
       this.y = x.y;
       this.z = x.z;
@@ -39,6 +39,14 @@ export default class Vector3 {
     this.x *= s;
     this.y *= s;
     this.z *= s;
+    return this;
+  }
+
+  // allows precise integer division, useful for testing
+  div(s) {
+    this.x /= s;
+    this.y /= s;
+    this.z /= s;
     return this;
   }
 

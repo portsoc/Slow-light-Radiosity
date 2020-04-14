@@ -2,9 +2,15 @@ import Vector3 from './vector3.js';
 
 export default class Point3 {
   constructor(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
+    if (x instanceof Point3 && y === undefined) {
+      this.x = x.x;
+      this.y = x.y;
+      this.z = x.z;
+    } else {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+    }
   }
 
   addVector(v) {
