@@ -3,6 +3,7 @@ import Instance from '../../radiosity/instance.js';
 import Surface3 from '../../radiosity/surface3.js';
 import Point3 from '../../radiosity/point3.js';
 import Patch3 from '../../radiosity/patch3.js';
+import Element3 from '../../radiosity/element3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
 
 test('constructor', () => {
@@ -12,39 +13,88 @@ test('constructor', () => {
   expect(e1.instances).toStrictEqual([i1]);
 });
 
-test('checkNoVerticesAreShared', () => {
-  const points = [
-    new Point3(0, 0, 0),
-    new Point3(1, 0, 0),
-    new Point3(1, 1, 0),
-    new Point3(0, 1, 0),
-  ];
-  const vertices = points.map(p => new Vertex3(p));
-  const p1 = new Patch3(vertices);
-  const s1 = new Surface3(null, null, [p1]);
-  const i1 = new Instance([s1]);
-  const e1 = new Environment([i1]);
-  expect(e1.checkNoVerticesAreShared()).toBe(true);
+describe('checkNoVerticesAreShared', () => {
+  test('no shared', () => {
+    const points = [
+      new Point3(0, 0, 0),
+      new Point3(1, 0, 0),
+      new Point3(1, 1, 0),
+      new Point3(0, 1, 0),
+    ];
+    const vertices = points.map(p => new Vertex3(p));
+    const p1 = new Patch3(vertices);
+    const s1 = new Surface3(null, null, [p1]);
+    const i1 = new Instance([s1]);
+    const e1 = new Environment([i1]);
+    expect(e1.checkNoVerticesAreShared()).toBe(true);
 
-  const points2 = [
-    new Point3(0, 0, 0),
-    new Point3(1, 0, 0),
-    new Point3(1, 1, 0),
-    new Point3(0, 1, 0),
-  ];
-  const vertices2 = points2.map(p => new Vertex3(p));
+    const vertices2 = points.map(p => new Vertex3(p));
 
-  const p2 = new Patch3(vertices2);
-  const s2 = new Surface3(null, null, [p2]);
-  const i2 = new Instance([s2]);
-  const e2 = new Environment([i1, i2]);
-  expect(e2.checkNoVerticesAreShared()).toBe(true);
+    const p2 = new Patch3(vertices2);
+    const s2 = new Surface3(null, null, [p2]);
+    const i2 = new Instance([s2]);
+    const e2 = new Environment([i1, i2]);
+    expect(e2.checkNoVerticesAreShared()).toBe(true);
+  });
 
-  const p3 = new Patch3(vertices);
-  const s3 = new Surface3(null, null, [p3]);
-  const i3 = new Instance([s3]);
-  const e3 = new Environment([i1, i3]);
-  expect(e3.checkNoVerticesAreShared()).toBe(false);
+  test('shared through patch', () => {
+    const points = [
+      new Point3(0, 0, 0),
+      new Point3(1, 0, 0),
+      new Point3(1, 1, 0),
+      new Point3(0, 1, 0),
+    ];
+    const vertices = points.map(p => new Vertex3(p));
+    const p1 = new Patch3(vertices);
+    const s1 = new Surface3(null, null, [p1]);
+    const i1 = new Instance([s1]);
+    const e1 = new Environment([i1]);
+    expect(e1.checkNoVerticesAreShared()).toBe(true);
+
+    // patch with vertices from another surface
+    const p3 = new Patch3(vertices);
+    const s3 = new Surface3(null, null, [p3]);
+    const i3 = new Instance([s3]);
+    const e3 = new Environment([i1, i3]);
+    expect(e3.checkNoVerticesAreShared()).toBe(false);
+
+    // the above has polluted i1 with vertices shared by surfaces
+    const e4 = new Environment([i1]);
+    expect(e4.checkNoVerticesAreShared()).toBe(false);
+  });
+
+  test('shared through element', () => {
+    const points = [
+      new Point3(0, 0, 0),
+      new Point3(1, 0, 0),
+      new Point3(1, 1, 0),
+      new Point3(0, 1, 0),
+    ];
+    const verticesE = points.map(p => new Vertex3(p));
+    const el1 = new Element3(verticesE);
+    const verticesP = points.map(p => new Vertex3(p));
+    const p1 = new Patch3(verticesP, [el1]);
+    const s1 = new Surface3(null, null, [p1]);
+    const i1 = new Instance([s1]);
+    const e1 = new Environment([i1]);
+    expect(e1.checkNoVerticesAreShared()).toBe(true);
+
+    const vertices5 = points.map(p => new Vertex3(p));
+
+    // element with vertices from another surface
+    const el5 = new Element3(verticesE);
+
+    // p5 has its own vertices5, but el5 has vertices shared with el1
+    const p5 = new Patch3(vertices5, [el5]);
+    const s5 = new Surface3(null, null, [p5]);
+    const i5 = new Instance([s5]);
+    const e5 = new Environment([i1, i5]);
+    expect(e5.checkNoVerticesAreShared()).toBe(false);
+
+    // the above has polluted i1 with vertices shared by surfaces
+    const e6 = new Environment([i1]);
+    expect(e6.checkNoVerticesAreShared()).toBe(false);
+  });
 });
 
 describe('with a non-trivial environment', () => {
