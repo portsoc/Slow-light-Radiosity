@@ -14,17 +14,13 @@ const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.inner
 camera.position.z = 5;
 
 // * Room
-const material = new THREE.MeshBasicMaterial({
-  color: 0x95a5a6,
-});
 
 const roomEnvironement = createRoom(1);
 
 for (const instance of roomEnvironement.instances) {
   const geometry = new THREE.Geometry();
+  geometry.colorsNeedupdate = true;
   const vertices = instance.vertices;
-
-  console.log('vertices');
 
   // * Read vertices
   for (const vertex of vertices) {
@@ -36,31 +32,42 @@ for (const instance of roomEnvironement.instances) {
   }
   vertices.forEach((v, i) => { v._orderIndex = i; });
 
-  console.log('faces');
-
   // * Read faces
   for (const surface of instance.surfaces) {
+    let face;
     for (const patch of surface.patches) {
-      geometry.faces.push(new THREE.Face3(
+      face = new THREE.Face3(
         patch.vertices[0]._orderIndex,
         patch.vertices[1]._orderIndex,
         patch.vertices[2]._orderIndex,
-      ));
+      );
+      face.color.setRGB(
+        surface.reflectance.r,
+        surface.reflectance.g,
+        surface.reflectance.b,
+      );
+      geometry.faces.push(face);
       if (patch.isQuad) {
-        geometry.faces.push(new THREE.Face3(
+        face = new THREE.Face3(
           patch.vertices[0]._orderIndex,
           patch.vertices[2]._orderIndex,
           patch.vertices[3]._orderIndex,
-        ));
+        );
+        face.color.setRGB(
+          surface.reflectance.r,
+          surface.reflectance.g,
+          surface.reflectance.b,
+        );
+        geometry.faces.push(face);
       }
     }
   }
 
-  console.log(geometry.vertices);
-  console.log(geometry.faces);
+  // * Material
 
-
-  console.log('scene');
+  const material = new THREE.MeshBasicMaterial({
+    vertexColors: THREE.FaceColors,
+  });
 
   // * Add to scene
   scene.add(new THREE.Mesh(geometry, material));
