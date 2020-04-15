@@ -1,6 +1,6 @@
 import * as THREE from '../lib/three.module.js';
 import createRoom from '../modeling/test-models/room1.js';
-
+import { OrbitControls } from '../lib/OrbitControls.js';
 // * Three.js set up
 
 const renderer = new THREE.WebGLRenderer();
@@ -12,6 +12,11 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2d3436);
 const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
+
+// * Controls
+
+const controls = new OrbitControls(camera, renderer.domElement);
+controls.target = new THREE.Vector3(0.25, 0, 0);
 
 // * Room
 
@@ -76,7 +81,7 @@ for (const instance of roomEnvironement.instances) {
 // * Animation
 
 function animate() {
-  // requestAnimationFrame(animate);
+  requestAnimationFrame(animate);
   renderer.render(scene, camera);
 }
 animate();
