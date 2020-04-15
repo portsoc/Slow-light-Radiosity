@@ -142,4 +142,10 @@ describe('with a non-trivial environment', () => {
   test('get numVert', () => {
     expect(environment.numVert).toBe(13);
   });
+
+  test('get boundingBox', () => {
+    expect(environment.boundingBox).toStrictEqual(
+      [new Point3(0, 0, 0), new Point3(1, 1, 0)],
+    );
+  });
 });
