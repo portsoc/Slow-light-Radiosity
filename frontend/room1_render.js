@@ -1,6 +1,8 @@
 import * as THREE from '../lib/three.module.js';
 import createRoom from '../modeling/test-models/room1.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
+import { Point3 } from '../radiosity/index.js';
+
 // * Three.js set up
 
 const renderer = new THREE.WebGLRenderer();
@@ -12,11 +14,6 @@ const scene = new THREE.Scene();
 scene.background = new THREE.Color(0x2d3436);
 const camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.z = 5;
-
-// * Controls
-
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.target = new THREE.Vector3(0.25, 0, 0);
 
 // * Room
 
@@ -77,6 +74,20 @@ for (const instance of roomEnvironement.instances) {
   // * Add to scene
   scene.add(new THREE.Mesh(geometry, material));
 }
+
+// * Controls
+
+const controls = new OrbitControls(camera, renderer.domElement);
+
+const bounds = roomEnvironement.boundingBox;
+const roomCenter = new Point3(
+  (bounds[0].x + bounds[1].x) / 2,
+  (bounds[0].y + bounds[1].y) / 2,
+  (bounds[0].z + bounds[1].z) / 2,
+);
+
+controls.target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
+controls.update();
 
 // * Animation
 
