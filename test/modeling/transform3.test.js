@@ -75,11 +75,22 @@ test('buildTransform()', () => {
   const h = Math.cos(alpha) * Math.sin(beta) * Math.sin(gamma) - Math.sin(alpha) * Math.cos(gamma);
   const i = Math.cos(alpha) * Math.cos(beta);
   // Test
-  expect(t.buildTransform()).toStrictEqual([
-    [2 * a, 4 * d, 6 * g, 1],
-    [2 * b, 4 * e, 6 * h, 2],
-    [2 * c, 4 * f, 6 * i, 3],
-  ]);
+  t.buildTransform();
+  // [2 * a, 4 * d, 6 * g, 1]
+  // [2 * b, 4 * e, 6 * h, 2]
+  // [2 * c, 4 * f, 6 * i, 3]
+  expect(t.matrix[0][0]).toBeCloseTo(2 * a, 5);
+  expect(t.matrix[0][1]).toBeCloseTo(4 * d, 5);
+  expect(t.matrix[0][2]).toBeCloseTo(6 * g, 5);
+  expect(t.matrix[0][3]).toBe(1);
+  expect(t.matrix[1][0]).toBeCloseTo(2 * b, 5);
+  expect(t.matrix[1][1]).toBeCloseTo(4 * e, 5);
+  expect(t.matrix[1][2]).toBeCloseTo(6 * h, 5);
+  expect(t.matrix[1][3]).toBe(2);
+  expect(t.matrix[2][0]).toBeCloseTo(2 * c, 5);
+  expect(t.matrix[2][1]).toBeCloseTo(4 * f, 5);
+  expect(t.matrix[2][2]).toBeCloseTo(6 * i, 5);
+  expect(t.matrix[2][3]).toBe(3);
 });
 
 test('transform()', () => {
