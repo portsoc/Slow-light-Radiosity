@@ -1,3 +1,5 @@
+import Point3 from '../radiosity/point3.js';
+
 export default class Environment {
   constructor(instances) {
     this.instances = instances;
@@ -36,6 +38,24 @@ export default class Environment {
       }
     }
     return true;
+  }
+
+  get boundingBox() {
+    let minX, minY, minZ;
+    minX = minY = minZ = 0;
+    let maxX, maxY, maxZ;
+    maxX = maxY = maxZ = 0;
+    for (const instance of this.instances) {
+      for (const vertex of instance.vertices) {
+        minX = Math.min(minX, vertex.pos.x);
+        minY = Math.min(minY, vertex.pos.y);
+        minZ = Math.min(minZ, vertex.pos.z);
+        maxX = Math.max(maxX, vertex.pos.x);
+        maxY = Math.max(maxY, vertex.pos.y);
+        maxZ = Math.max(maxZ, vertex.pos.z);
+      }
+    }
+    return [new Point3(minX, minY, minZ), new Point3(maxX, maxY, maxZ)];
   }
 }
 
