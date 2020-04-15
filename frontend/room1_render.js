@@ -87,6 +87,7 @@ const roomCenter = new Point3(
 );
 
 controls.target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
+controls.enablePan = false;
 controls.update();
 
 // * Animation
