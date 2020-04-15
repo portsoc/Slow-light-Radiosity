@@ -2,7 +2,7 @@ import * as Rad from '../../radiosity/index.js';
 import * as cube from '../cube.js';
 
 export default function createRoom(subdivision = 2) {
-  const cube1 = cube.unitCube(new Rad.Spectra(0.96, 0.92, 0.84), null, subdivision);
+  const cube1 = cube.unitCube(new Rad.Spectra(0.12, 0.81, 0.21), null, subdivision);
   const cube2 = cube.unitCubeMultiSurface(subdivision);
 
   cube2.surfaces[0].reflectance.add(new Rad.Spectra(0.7, 0.2, 0.2));
