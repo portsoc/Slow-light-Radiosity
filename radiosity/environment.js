@@ -57,6 +57,17 @@ export default class Environment {
     }
     return [new Point3(minX, minY, minZ), new Point3(maxX, maxY, maxZ)];
   }
+
+  transformCoordinatesToViewSystem() {
+    for (const instance of this.instances) {
+      for (const vertex of instance.vertices) {
+        const tmp = vertex.pos.z;
+        vertex.pos.z = -vertex.pos.y;
+        vertex.pos.y = tmp;
+      }
+    }
+    return this;
+  }
 }
 
 function sum(array) {
