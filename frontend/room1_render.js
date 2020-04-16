@@ -17,7 +17,7 @@ camera.position.z = 5;
 
 // * Room
 
-const roomEnvironment = createRoom(1);
+const roomEnvironment = createRoom(2);
 
 roomEnvironment.transformCoordinatesToViewSystem();
 
@@ -40,22 +40,11 @@ for (const instance of roomEnvironment.instances) {
   for (const surface of instance.surfaces) {
     let face;
     for (const patch of surface.patches) {
-      face = new THREE.Face3(
-        patch.vertices[0]._orderIndex,
-        patch.vertices[1]._orderIndex,
-        patch.vertices[2]._orderIndex,
-      );
-      face.color.setRGB(
-        surface.reflectance.r,
-        surface.reflectance.g,
-        surface.reflectance.b,
-      );
-      geometry.faces.push(face);
-      if (patch.isQuad) {
+      for (const element of patch.elements) {
         face = new THREE.Face3(
-          patch.vertices[0]._orderIndex,
-          patch.vertices[2]._orderIndex,
-          patch.vertices[3]._orderIndex,
+          element.vertices[0]._orderIndex,
+          element.vertices[1]._orderIndex,
+          element.vertices[2]._orderIndex,
         );
         face.color.setRGB(
           surface.reflectance.r,
@@ -63,6 +52,19 @@ for (const instance of roomEnvironment.instances) {
           surface.reflectance.b,
         );
         geometry.faces.push(face);
+        if (element.isQuad) {
+          face = new THREE.Face3(
+            element.vertices[0]._orderIndex,
+            element.vertices[2]._orderIndex,
+            element.vertices[3]._orderIndex,
+          );
+          face.color.setRGB(
+            surface.reflectance.r,
+            surface.reflectance.g,
+            surface.reflectance.b,
+          );
+          geometry.faces.push(face);
+        }
       }
     }
   }
@@ -71,6 +73,7 @@ for (const instance of roomEnvironment.instances) {
 
   const material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
+    // wireframe: true,
   });
 
   // * Add to scene
