@@ -6,7 +6,7 @@ export default class Vertex3 {
   constructor(point) {
     if (!(point instanceof Point3)) throw TypeError('vertex position must be Point3');
 
-    this.pos = point;                // Vertex co-ordinates (Point3)
+    this.pos = new Point3(point);    // Vertex co-ordinates (Point3)
     this._normal = null;             // Vertex normal (Vector3) (computed once in getter)
     this.elements = [];              // Elements that use this vertex
     this._exitance = new Spectra();  // Vertex exitance
