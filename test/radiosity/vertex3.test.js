@@ -8,7 +8,8 @@ test('constructor', () => {
   const p = new Point3(1, 2, 3);
   const v = new Vertex3(p);
 
-  expect(v.pos).toBe(p);
+  expect(v.pos).not.toBe(p);
+  expect(v.pos).toStrictEqual(p);
   expect(v.elements).toStrictEqual([]);
   expect(v.exitance).toStrictEqual(new Spectra());
 
