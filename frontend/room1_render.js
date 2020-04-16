@@ -17,10 +17,11 @@ camera.position.z = 5;
 
 // * Room
 
-const roomEnvironement = createRoom(1);
-// transformCoordinatesToViewSystem(roomEnvironement);
+const roomEnvironment = createRoom(1);
 
-for (const instance of roomEnvironement.instances) {
+roomEnvironment.transformCoordinatesToViewSystem();
+
+for (const instance of roomEnvironment.instances) {
   const geometry = new THREE.Geometry();
   geometry.colorsNeedupdate = true;
   const vertices = instance.vertices;
@@ -29,8 +30,8 @@ for (const instance of roomEnvironement.instances) {
   for (const vertex of vertices) {
     geometry.vertices.push(new THREE.Vector3(
       vertex.pos.x,
+      vertex.pos.y,
       vertex.pos.z,
-      -vertex.pos.y,
     ));
   }
   vertices.forEach((v, i) => { v._orderIndex = i; });
@@ -80,7 +81,7 @@ for (const instance of roomEnvironement.instances) {
 
 const controls = new OrbitControls(camera, renderer.domElement);
 
-const bounds = roomEnvironement.boundingBox;
+const bounds = roomEnvironment.boundingBox;
 const roomCenter = new Rad.Point3(
   (bounds[0].x + bounds[1].x) / 2,
   (bounds[0].y + bounds[1].y) / 2,
@@ -89,18 +90,18 @@ const roomCenter = new Rad.Point3(
 
 const diagonal = new Rad.Vector3(bounds[0], bounds[1]);
 
-controls.target = new THREE.Vector3(roomCenter.x, roomCenter.z, -roomCenter.y);
+controls.target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
 controls.maxDistance = diagonal.length * 2;
 controls.panBBox = {
   min: {
     x: bounds[0].x,
-    y: bounds[0].z,
-    z: -bounds[1].y,
+    y: bounds[0].y,
+    z: bounds[0].z,
   },
   max: {
     x: bounds[1].x,
-    y: bounds[1].z,
-    z: -bounds[0].y,
+    y: bounds[1].y,
+    z: bounds[1].z,
   },
 };
 controls.update();
