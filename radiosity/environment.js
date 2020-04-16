@@ -42,9 +42,9 @@ export default class Environment {
 
   get boundingBox() {
     let minX, minY, minZ;
-    minX = minY = minZ = 0;
+    minX = minY = minZ = Infinity;
     let maxX, maxY, maxZ;
-    maxX = maxY = maxZ = 0;
+    maxX = maxY = maxZ = -Infinity;
     for (const instance of this.instances) {
       for (const vertex of instance.vertices) {
         minX = Math.min(minX, vertex.pos.x);
