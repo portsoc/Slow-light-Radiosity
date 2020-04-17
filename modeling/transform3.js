@@ -1,86 +1,142 @@
 import Point3 from '../radiosity/point3.js';
+import Instance from '../radiosity/instance.js';
+
+const sin = Math.sin;
+const cos = Math.cos;
 
 export default class Transform3 {
-  constructor() {
-    this.scales = [1, 1, 1];         // Scaling factors
-    this.translations = [0, 0, 0];   // Translation distances
-    this.rotations = [0, 0, 0];      // Rotations (in radians)
-    this.matrix = [[], [], []];      // Transformation matrix
-    this.identity();
+  constructor(m) {
+    this.matrix = m || identity();
   }
 
-  identity() {
-    for (let i = 0; i < 3; i++) {
-      for (let j = 0; j < 4; j++) {
-        this.matrix[i][j] = (i === j) ? 1 : 0;
-      }
-    }
-    return this.matrix;
+  rotateX(deg) {   // Rotate counterclockwise
+    this.matrix = mmult(rotationX(deg), this.matrix);
+    return this;
   }
 
-  rotateX(rad) {   // Rotate counterclockwise
-    let tmp;
-    for (let i = 0; i < 4; i++) {
-      tmp = this.matrix[1][i] * Math.cos(rad) - this.matrix[2][i] * Math.sin(rad);
-      this.matrix[2][i] = this.matrix[1][i] * Math.sin(rad) + this.matrix[2][i] * Math.cos(rad);
-      this.matrix[1][i] = tmp;
-    }
-    return this.matrix;
+  rotateY(deg) {   // Rotate counterclockwise
+    this.matrix = mmult(rotationY(deg), this.matrix);
+    return this;
   }
 
-  rotateY(rad) {   // Rotate counterclockwise
-    let tmp;
-    for (let i = 0; i < 4; i++) {
-      tmp = this.matrix[0][i] * Math.cos(rad) + this.matrix[2][i] * Math.sin(rad);
-      this.matrix[2][i] = -this.matrix[0][i] * Math.sin(rad) + this.matrix[2][i] * Math.cos(rad);
-      this.matrix[0][i] = tmp;
-    }
-    return this.matrix;
+  rotateZ(deg) {   // Rotate counterclockwise
+    this.matrix = mmult(rotationZ(deg), this.matrix);
+    return this;
   }
 
-  rotateZ(rad) {   // Rotate counterclockwise
-    let tmp;
-    for (let i = 0; i < 4; i++) {
-      tmp = this.matrix[0][i] * Math.cos(rad) - this.matrix[1][i] * Math.sin(rad);
-      this.matrix[1][i] = this.matrix[0][i] * Math.sin(rad) + this.matrix[1][i] * Math.cos(rad);
-      this.matrix[0][i] = tmp;
-    }
-    return this.matrix;
+  rotate(x, y, z) {
+    this.matrix = mmult(rotationZ(z), rotationY(y), rotationX(x), this.matrix);
+    return this;
   }
 
-  scale() {
-    this.matrix[0][0] *= this.scales[0];
-    this.matrix[1][1] *= this.scales[1];
-    this.matrix[2][2] *= this.scales[2];
-    return this.matrix;
+  scale(x, y, z) {
+    this.matrix = mmult(scaling(x, y, z), this.matrix);
+    return this;
   }
 
-  translate() {
-    this.matrix[0][3] += this.translations[0];
-    this.matrix[1][3] += this.translations[1];
-    this.matrix[2][3] += this.translations[2];
-    return this.matrix;
+  translate(x, y, z) {
+    this.matrix = mmult(translation(x, y, z), this.matrix);
+    return this;
   }
 
-  buildTransform() {
-    this.identity();                   // Initialize identity matrix
-    this.scale();                      // Concatenate scales matrix
-    this.rotateX(this.rotations[0]);   // Concatenate rotation matrix
-    this.rotateY(this.rotations[1]);
-    this.rotateZ(this.rotations[2]);
-    this.translate();                  // Concatenate translation matrix
-    return this.matrix;
+  transform(obj) {
+    if (obj instanceof Point3) return this.transformPoint(obj);
+    if (obj instanceof Instance) return this.transformInstance(obj);
+
+    throw new TypeError('unknown object to transform');
   }
 
-  transform(p) {   // Premultiply point by 3D transformation matrix
-    const tmp = new Point3(
-      this.matrix[0][0] * p.x + this.matrix[0][1] * p.y + this.matrix[0][2] * p.z + this.matrix[0][3],
-      this.matrix[1][0] * p.x + this.matrix[1][1] * p.y + this.matrix[1][2] * p.z + this.matrix[1][3],
-      this.matrix[2][0] * p.x + this.matrix[2][1] * p.y + this.matrix[2][2] * p.z + this.matrix[2][3],
-    );
-    p.x = tmp.x;
-    p.y = tmp.y;
-    p.z = tmp.z;
+  transformPoint(p) {   // transform one point by 3D transformation matrix
+    const x = this.matrix[0][0] * p.x + this.matrix[0][1] * p.y + this.matrix[0][2] * p.z + this.matrix[0][3];
+    const y = this.matrix[1][0] * p.x + this.matrix[1][1] * p.y + this.matrix[1][2] * p.z + this.matrix[1][3];
+    const z = this.matrix[2][0] * p.x + this.matrix[2][1] * p.y + this.matrix[2][2] * p.z + this.matrix[2][3];
+    p.x = x;
+    p.y = y;
+    p.z = z;
     return p;
   }
+
+  transformInstance(i) {
+    // transform each vertex
+    for (const v of i.vertices) {
+      this.transformPoint(v.pos);
+    }
+    return i;
+  }
+}
+
+function identity() {
+  return [
+    [1, 0, 0, 0],
+    [0, 1, 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+  ];
+}
+
+function translation(x, y, z) {
+  return [
+    [1, 0, 0, x],
+    [0, 1, 0, y],
+    [0, 0, 1, z],
+    [0, 0, 0, 1],
+  ];
+}
+
+// if called with a single number, it applies to all axes
+function scaling(x, y = x, z = x) {
+  return [
+    [x, 0, 0, 0],
+    [0, y, 0, 0],
+    [0, 0, z, 0],
+    [0, 0, 0, 1],
+  ];
+}
+
+function rotationX(deg) {
+  const rad = toRad(deg);
+  return [
+    [1, 0, 0, 0],
+    [0, cos(rad), -sin(rad), 0],
+    [0, sin(rad), cos(rad), 0],
+    [0, 0, 0, 1],
+  ];
+}
+
+function rotationY(deg) {
+  const rad = toRad(deg);
+  return [
+    [cos(rad), 0, sin(rad), 0],
+    [0, 1, 0, 0],
+    [-sin(rad), 0, cos(rad), 0],
+    [0, 0, 0, 1],
+  ];
+}
+
+function rotationZ(deg) {
+  const rad = toRad(deg);
+  return [
+    [cos(rad), -sin(rad), 0, 0],
+    [sin(rad), cos(rad), 0, 0],
+    [0, 0, 1, 0],
+    [0, 0, 0, 1],
+  ];
+}
+
+// matrix multiplication, assuming 4x4 matrices
+export function mmult(a, b, ...more) {
+  const retval = [[], [], [], []];
+  for (let row = 0; row < 4; row += 1) {
+    for (let col = 0; col < 4; col += 1) {
+      retval[row][col] = 0;
+      for (let i = 0; i < 4; i += 1) {
+        retval[row][col] += a[row][i] * b[i][col];
+      }
+    }
+  }
+  return more.length === 0 ? retval : mmult(retval, ...more);
+}
+
+function toRad(deg) {
+  return deg / 180 * Math.PI;
 }
