@@ -4,13 +4,13 @@ import * as sub from './subdivision.js';
 /*
  * Create a new cube with side length 1 and the given reflectance/emittance.
  * Each side will be subdivided into `subdivide` x `subdivide` equal elements.
- *   7-----6
- *  /|    /|
- * 4-+---5 |
- * | |   | |
- * | 3---+-2
- * |/    |/
- * 0-----1
+ * z ^ 7-----6
+ *   |/|    /|
+ *   4-+---5 |
+ *   | |/y | |
+ *   | 3---+-2
+ *   |/    |/
+ *   0-----1 --> x
  */
 export function unitCube(reflectance, emittance, subdivide = 1) {
   const p = [
