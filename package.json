@@ -26,7 +26,7 @@
     "coverage": "jest --coverage --collect-coverage-from={modeling,radiosity,test}/**/*.js"
   },
   "jest": {
-    "verbose": true,
+    "verbose": false,
     "testRegex": "./test/.*\\.(js|jsx)$"
   },
   "repository": {
