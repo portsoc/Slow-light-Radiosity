@@ -102,10 +102,10 @@ describe('with a non-trivial environment', () => {
 
   beforeEach(() => {
     const points = [
-      new Point3(0, 0, 0),
-      new Point3(1, 0, 0),
-      new Point3(1, 1, 0),
-      new Point3(0, 1, 0),
+      new Point3(-1, -1, 2),
+      new Point3(1, 0, 2),
+      new Point3(1, 1, 2),
+      new Point3(0, 1, 2),
     ];
     const v1 = points.map(p => new Vertex3(p));
     const p1a = new Patch3(v1);
@@ -114,9 +114,9 @@ describe('with a non-trivial environment', () => {
     const i1 = new Instance([s1]);
 
     const points2 = [
-      new Point3(0, 0, 0),
-      new Point3(1, 0, 0),
-      new Point3(1, 1, 0),
+      new Point3(0, 0, 4),
+      new Point3(1, -4, 5),
+      new Point3(1, 1, 4),
     ];
     const p2a = new Patch3(points2.map(p => new Vertex3(p)));
     const p2b = new Patch3(points2.map(p => new Vertex3(p)));
@@ -145,7 +145,7 @@ describe('with a non-trivial environment', () => {
 
   test('get boundingBox', () => {
     expect(environment.boundingBox).toStrictEqual(
-      [new Point3(0, 0, 0), new Point3(1, 1, 0)],
+      [new Point3(-1, -4, 2), new Point3(1, 1, 5)],
     );
   });
 });
