@@ -61,32 +61,67 @@ function generateVertexGrid(corners, n) {
 
 // vertical line (parallel to Y axis) where the end points are already there
 function gridVLine(x, n, grid) {
-  const start = grid[x][0].pos;
-  const end = grid[x][n].pos;
-  const v = new Rad.Vector3(start, end);
+  const points = subdivideVertexLine(grid[x][0], grid[x][n], n);
 
   for (let y = 1; y < n; y += 1) {
-    grid[x][y] = vertexAlongVector(start, v, y, n);
+    grid[x][y] = points[y];
   }
 }
 
 function gridHLine(y, n, grid) {
-  const start = grid[0][y].pos;
-  const end = grid[n][y].pos;
-  const v = new Rad.Vector3(start, end);
+  const points = subdivideVertexLine(grid[0][y], grid[n][y], n);
 
   for (let x = 1; x < n; x += 1) {
-    grid[x][y] = vertexAlongVector(start, v, x, n);
+    grid[x][y] = points[x];
   }
 }
 
-function vertexAlongVector(start, v, i, n) {
-  const vy = new Rad.Vector3(v);
-  vy.scale(i).div(n); // allows precise integer arithmetic
+// return an array of n+1 vertices from (and including) start to end
+function subdivideVertexLine(start, end, n) {
+  const cachedSubdivision = getCachedSubdivision(start, end, n);
+  if (cachedSubdivision) return cachedSubdivision;
 
-  // copy start point, add scaled vector
-  const point = new Rad.Point3(start);
-  point.addVector(vy);
+  // compute new subdivision
+  const retval = [start];
 
-  return new Rad.Vertex3(point);
+  const s = start.pos; // start
+  const v = new Rad.Vector3(start.pos, end.pos);
+
+  for (let i = 1; i < n; i += 1) {
+    const vi = new Rad.Vector3(v); // vector to i-th point
+    vi.scale(i).div(n); // allows precise integer arithmetic
+
+    const pi = new Rad.Point3(s); // i-th point
+    pi.addVector(vi);
+
+    retval.push(new Rad.Vertex3(pi));
+  }
+  retval.push(end);
+
+  cacheSubdivision(start, end, n, retval);
+  cacheSubdivision(end, start, n, retval.slice().reverse());
+  return retval;
+}
+
+const subdivisionCache = new WeakMap();
+
+function getCachedSubdivision(start, end, n) {
+  const startCache = subdivisionCache.get(start);
+  if (!startCache) return null;
+
+  const endCache = startCache.get(end);
+  if (!endCache) return null;
+
+  const cachedSubdivision = endCache.get(n);
+  return cachedSubdivision;
+}
+
+function cacheSubdivision(start, end, n, retval) {
+  if (!subdivisionCache.has(start)) subdivisionCache.set(start, new WeakMap());
+  const startCache = subdivisionCache.get(start);
+
+  if (!startCache.has(end)) startCache.set(end, new Map());
+  const endCache = startCache.get(end);
+
+  endCache.set(n, retval);
 }
