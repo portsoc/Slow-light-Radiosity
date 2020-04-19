@@ -1,3 +1,5 @@
+/* istanbul ignore file */ // don't report as not covered by tests, we test these visually
+
 import * as Rad from '../../radiosity/index.js';
 import Transform3 from '../transform3.js';
 import * as Cube from '../cube.js';
