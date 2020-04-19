@@ -2,6 +2,7 @@ import * as THREE from '../lib/three.module.js';
 import createRoom from '../modeling/test-models/room1.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
 import * as Rad from '../radiosity/index.js';
+import * as Modeling from '../modeling/index.js';
 
 // * Three.js set up
 
@@ -19,7 +20,7 @@ camera.position.z = 5;
 
 const roomEnvironment = createRoom(2);
 
-roomEnvironment.transformCoordinatesToViewSystem();
+Modeling.coordinates.xyFloorToView(roomEnvironment);
 
 for (const instance of roomEnvironment.instances) {
   const geometry = new THREE.Geometry();
