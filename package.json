@@ -22,7 +22,7 @@
   },
   "scripts": {
     "test": "npm run lint && jest",
-    "lint": "eslint frontend modeling radiosity test",
+    "lint": "eslint .",
     "coverage": "jest --coverage --collect-coverage-from={modeling,radiosity,test}/**/*.js"
   },
   "jest": {
