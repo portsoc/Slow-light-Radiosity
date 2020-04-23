@@ -11,7 +11,7 @@ export default class FormClip { // No need to be abstract
     this.center = null;                // Polygone center
   }
 
-  static randomVector3() {
+  randomVector3() {
     return new Vector3(
       Math.rand() * 2 - 1,
       Math.rand() * 2 - 1,
