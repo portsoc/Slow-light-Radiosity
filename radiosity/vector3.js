@@ -1,5 +1,7 @@
 import Point3 from './point3.js';
 
+const MIN_VALUE = 1e-10;
+
 export default class Vector3 {
   constructor(x, y, z) {
     if ((x instanceof Point3 || x instanceof Vector3) && y === undefined) {
@@ -52,7 +54,7 @@ export default class Vector3 {
 
   normalize() {
     const len = this.length;
-    if (len > 0) {
+    if (len > MIN_VALUE) {
       this.x /= len;
       this.y /= len;
       this.z /= len;
