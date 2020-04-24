@@ -1,5 +1,4 @@
 import Point3 from './point3.js';
-import { EdgesGeometry } from 'three';
 
 class FormCellInfo {
   constructor() {
@@ -109,7 +108,7 @@ export default class FormScan {
         let scan = null;
         if (!edge.first) {
           scan = edge.isect[0];
-          EdgesGeometry.first = true;
+          edge.first = true;
         } else { scan = edge.isect[1]; }
 
         // Insert edge itersection info
