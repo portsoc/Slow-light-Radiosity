@@ -11,32 +11,24 @@ const RN = FPD * (EYE - BPD) / (EYE * (FPD - BPD));
 export default class HemiClip extends FormClip {
   constructor() {
     super();
-    // Enum faces
-    this.Plane = {
-      FRONT: 0,
-      LEFT: 1,
-      RIGHT: 2,
-      TOP: 3,
-      BOTTOM: 4,
-    };
     // Link edge-plane clippers
-    this.clippers[this.Plane.FRONT].add(this.clippers[this.Plane.LEFT]);
-    this.clippers[this.Plane.LEFT].add(this.clippers[this.Plane.RIGHT]);
-    this.clippers[this.Plane.RIGHT].add(this.clippers[this.Plane.TOP]);
-    this.clippers[this.Plane.TOP].add(this.clippers[this.Plane.BOTTOM]);
-    this.clippers[this.Plane.BOTTOM].add(null);
+    this.clippers.FRONT.add(this.clippers.LEFT);
+    this.clippers.LEFT.add(this.clippers.RIGTH);
+    this.clippers.RIGTH.add(this.clippers.TOP);
+    this.clippers.TOP.add(this.clippers.BOTTOM);
+    this.clippers.BOTTOM.add(null);
     // Set clipper plane normals
     let tmp;
     tmp = new Vector4(0, 0, 1, 0);
-    this.clippers[this.Plane.FRONT].normal = tmp.normalize();
+    this.clippers.FRONT.normal = tmp.normalize();
     tmp = new Vector4(1, 0, 0, 0);
-    this.clippers[this.Plane.LEFT].normal = tmp.normalize();
+    this.clippers.LEFT.normal = tmp.normalize();
     tmp = new Vector4(-1, 0, 0, 1);
-    this.clippers[this.Plane.RIGHT].normal = tmp.normalize();
+    this.clippers.RIGTH.normal = tmp.normalize();
     tmp = new Vector4(0, -1, 0, 1);
-    this.clippers[this.Plane.TOP].normal = tmp.normalize();
+    this.clippers.TOP.normal = tmp.normalize();
     tmp = new Vector4(0, 1, 0, 0);
-    this.clippers[this.Plane.BOTTOM].normal = tmp.normalize();
+    this.clippers.BOTTOM.normal = tmp.normalize();
   }
 
   setView(patch) {
