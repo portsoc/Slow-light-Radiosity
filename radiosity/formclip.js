@@ -7,7 +7,13 @@ export default class FormClip { // No need to be abstract
     this.numVert = 0;                  // Number of polygone vertices
     this.u = this.v = this.n = null;   // View system co-ordinates
     this.transMatrix = [];             // Transformation matrix
-    this.clippers = [];                 // Clipper array
+    this.clippers = {
+      FRONT: null,
+      LEFT: null,
+      RIGTH: null,
+      TOP: null,
+      BOTTOM: null,
+    };                 // Clipper array
     this.center = null;                // Polygone center
   }
 
@@ -32,7 +38,7 @@ export default class FormClip { // No need to be abstract
     const hv = new Vector4(0, 0, 0, 0);
     for (const vert of elem.vertices) {
       hv.projTransform(vert.pos);
-      this.clippers[0].clip(hv, out);
+      this.clippers.FRONT.clip(hv, out);
     }
     this.clippers[0].close(out);
     return out.numVert;
