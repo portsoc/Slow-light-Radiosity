@@ -9,6 +9,11 @@ export default class FormClipEdge {
     this.firstFlag = false;     // FIrst vertex seen flag
   }
 
+  add(c) {
+    this.next = c;
+    return this;
+  }
+
   isInside(v) {
     return this.normal.dot(v) >= 0;
   }
