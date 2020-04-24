@@ -2,6 +2,12 @@ import FormClip from './formclip.js';
 import Vector4 from './vector4.js';
 import Vector3 from './vector3.js';
 
+const EYE = -1;
+const FPD = -0.99;
+const BPD = 1e10;
+const SN = (EYE - BPD) * (EYE - FPD) / (EYE * EYE * (BPD - FPD));
+const RN = FPD * (EYE - BPD) / (EYE * (FPD - BPD));
+
 export default class HemiClip extends FormClip {
   constructor() {
     super();
@@ -79,12 +85,10 @@ export default class HemiClip extends FormClip {
     this.transMatrix[1][1] = 0.5 * (this.transMatrix[1][1] + this.transMatrix[3][1]);
     this.transMatrix[1][2] = 0.5 * (this.transMatrix[1][2] + this.transMatrix[3][2]);
     this.transMatrix[1][3] = 0.5 * (this.transMatrix[1][3] + this.transMatrix[3][3]);
-    const sn = (-1 - 1e10) * (-1 - (-0.99)) / ((-1) * (-1) * (1e10 - (-0.99)));
-    const rn = -0.99 * (-1 - 1e10) / (-1 * (-0.99 - 1e10));
-    this.transMatrix[2][0] = sn * this.transMatrix[2][0] + rn * this.transMatrix[3][0];
-    this.transMatrix[2][1] = sn * this.transMatrix[2][1] + rn * this.transMatrix[3][1];
-    this.transMatrix[2][2] = sn * this.transMatrix[2][2] + rn * this.transMatrix[3][2];
-    this.transMatrix[2][3] = sn * this.transMatrix[2][3] + rn * this.transMatrix[3][3];
+    this.transMatrix[2][0] = SN * this.transMatrix[2][0] + RN * this.transMatrix[3][0];
+    this.transMatrix[2][1] = SN * this.transMatrix[2][1] + RN * this.transMatrix[3][1];
+    this.transMatrix[2][2] = SN * this.transMatrix[2][2] + RN * this.transMatrix[3][2];
+    this.transMatrix[2][3] = SN * this.transMatrix[2][3] + RN * this.transMatrix[3][3];
   }
 
   updateView(faceId) {
