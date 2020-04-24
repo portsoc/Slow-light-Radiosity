@@ -40,7 +40,7 @@ export default class FormClip { // No need to be abstract
       hv.projTransform(vert.pos);
       this.clippers.FRONT.clip(hv, out);
     }
-    this.clippers[0].close(out);
+    this.clippers.FRONT.close(out);
     return out.numVert;
   }
 }
