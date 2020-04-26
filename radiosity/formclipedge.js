@@ -1,17 +1,17 @@
+import Vector4 from './vector4.js';
+
+const MIN_VALUE = 1e-10;
+
 export default class FormClipEdge {
-  constructor() {
-    this.next = null;           // Next clipper
-    this.normal = null;         // Plane normal (Vector4)
+  constructor(normal, next) {
+    this.normal = normal;       // Plane normal (Vector4)
+    this.nextPlane = next;      // Next clipper
+
     this.first = null;          // First vertex (Vector4)
     this.start = null;          // Start vertex (Vector4)
     this.firstInside = false;   // First vertex inside flag
     this.startInside = false;   // Start vertex inside flag
-    this.firstFlag = false;     // FIrst vertex seen flag
-  }
-
-  add(c) {
-    this.next = c;
-    return this;
+    this.firstSeen = false;     // First vertex seen flag
   }
 
   isInside(v) {
@@ -19,36 +19,55 @@ export default class FormClipEdge {
   }
 
   intersect(s, e) {
-    let r = e.sub(s);
+    const r = new Vector4(e).sub(s);
     const d = this.normal.dot(r);
-    r *= (Math.abs(d) > 0) ? (-this.normal.dot(s) / d) : 1;
-    return s.add(r);
+    if (Math.abs(d) > MIN_VALUE) {
+      r.scale(-this.normal.dot(s) / d);
+    }
+    return r.add(s);
   }
 
   output(v, out) {
-    if (this.next != null) this.next.clip(v, out);
-    else out.addVertex(v);
+    if (this.nextPlane != null) {
+      this.nextPlane.clip(v, out);
+    } else {
+      out.addVertex(v);
+    }
   }
 
   clip(current, out) {
     const currentInside = this.isInside(current);
-    if (!this.firstFlag) {
+
+    if (!this.firstSeen) {
       this.first = current;
       this.firstInside = currentInside;
-      this.firstFlag = true;
+      this.firstSeen = true;
     } else {
-      if (this.startInside ^ currentInside) this.output(this.intersect(this.start, current), out);
-      if (currentInside) this.output(current, out);
+      // does edge intersect plane?
+      if (this.startInside !== currentInside) {
+        const intersection = this.intersect(this.start, current);
+        this.output(intersection, out);
+      }
+      if (currentInside) {
+        this.output(current, out);
+      }
       this.start = current;
       this.startInside = currentInside;
     }
   }
 
   close(out) {
-    if (this.firstFlag) {
-      if (this.startInside ^ this.firstInside) this.output(this.intersect(this.start, this.first), out);
-      if (this.next != null) this.next.close(out);
-      this.firstFlag = false;
+    if (this.firstSeen) {
+      // does edge intersect plane?
+      if (this.startInside !== this.firstInside) {
+        const intersection = this.intersect(this.start, this.first);
+        this.output(intersection, out);
+      }
+      if (this.nextPlane != null) {
+        this.nextPlane.close(out);
+      }
+      // reset for next run
+      this.firstSeen = false;
     }
   }
 }

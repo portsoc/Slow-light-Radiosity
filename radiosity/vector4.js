@@ -1,5 +1,3 @@
-import Point3 from './point3.js';
-
 const MIN_VALUE = 1e-10;
 
 export default class Vector4 {
@@ -69,12 +67,12 @@ export default class Vector4 {
     return this.x * v.x + this.y * v.y + this.z * v.z + this.w * v.w;
   }
 
-  // Premultiply point/vector by projective matrix
-  projTransform(pv, m) {
-    this.x = (m[0][0] * pv.x + m[0][1] * pv.y + m[0][2] * pv.z + m[0][3]);
-    this.y = (m[1][0] * pv.x + m[1][1] * pv.y + m[1][2] * pv.z + m[1][3]);
-    this.z = (m[2][0] * pv.x + m[2][1] * pv.y + m[2][2] * pv.z + m[2][3]);
-    this.w = (m[3][0] * pv.x + m[3][1] * pv.y + m[3][2] * pv.z + m[3][3]);
+  // Set this vector to the projection of a point by a matrix
+  setToProjection(p, m) {
+    this.x = (m[0][0] * p.x + m[0][1] * p.y + m[0][2] * p.z + m[0][3]);
+    this.y = (m[1][0] * p.x + m[1][1] * p.y + m[1][2] * p.z + m[1][3]);
+    this.z = (m[2][0] * p.x + m[2][1] * p.y + m[2][2] * p.z + m[2][3]);
+    this.w = (m[3][0] * p.x + m[3][1] * p.y + m[3][2] * p.z + m[3][3]);
     return this;
   }
 

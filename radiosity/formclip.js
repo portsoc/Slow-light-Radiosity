@@ -1,46 +1,31 @@
 import Vector3 from './vector3.js';
 import Vector4 from './vector4.js';
 
-export default class FormClip { // No need to be abstract
+const MIN_VALUE = 1e-10;
+
+export default class FormClip {
   constructor() {
-    this.MIN_VALUE = 1e-10;
-    this.numVert = 0;                  // Number of polygone vertices
-    this.u = this.v = this.n = null;   // View system co-ordinates
-    this.transMatrix = [];             // Transformation matrix
-    this.clippers = {
-      FRONT: null,
-      LEFT: null,
-      RIGTH: null,
-      TOP: null,
-      BOTTOM: null,
-    };                 // Clipper array
-    this.center = null;                // Polygone center
+    this.transMatrix = null;   // Transformation matrix 4x4
+    this.firstFace = null;     // First face (FormClipEdge) to clip against
+    this.origin = null;        // Polygon center where we're looking from
   }
 
-  randomVector3() {
-    return new Vector3(
-      Math.rand() * 2 - 1,
-      Math.rand() * 2 - 1,
-      Math.rand() * 2 - 1,
-    );
-  }
-
-  backFaceCull(patch) {
+  isFacingAway(patch) {
     const view = new Vector3(
       patch.vertices[0].pos,
-      this.center,
+      this.origin,
     );
-    return patch.normal.dot(view) < this.MIN_VALUE;
+    return patch.normal.dot(view) < MIN_VALUE;
   }
 
   clip(elem, out, polyId) {
     out.reset(polyId);
     const hv = new Vector4(0, 0, 0, 0);
     for (const vert of elem.vertices) {
-      hv.projTransform(vert.pos);
-      this.clippers.FRONT.clip(hv, out);
+      hv.setToProjection(vert.pos, this.transMatrix);
+      this.firstFace.clip(hv, out);
     }
-    this.clippers.FRONT.close(out);
-    return out.numVert;
+    this.firstFace.close(out);
+    return out.numPoints;
   }
 }
