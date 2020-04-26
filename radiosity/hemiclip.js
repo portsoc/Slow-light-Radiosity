@@ -35,7 +35,7 @@ export default class HemiClip extends FormClip {
     this.center = patch.center;
     this.n = patch.normal;
     do {
-      this.u = this.n.cross(this.randomVector3());
+      this.u = this.n.cross(Vector3.random());
     } while (this.u.length < this.MIN_VALUE);
     this.u.normalize();
     this.v = this.u.cross(this.n);

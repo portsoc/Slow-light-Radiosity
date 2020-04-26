@@ -73,4 +73,12 @@ export default class Vector3 {
       this.x * v.y - this.y * v.x,
     );
   }
+
+  static random() {
+    return new Vector3(
+      Math.rand() * 2 - 1,
+      Math.rand() * 2 - 1,
+      Math.rand() * 2 - 1,
+    );
+  }
 }
