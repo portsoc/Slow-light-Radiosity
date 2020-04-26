@@ -1,9 +1,20 @@
+import Point3 from './point3.js';
+
+const MIN_VALUE = 1e-10;
+
 export default class Vector4 {
   constructor(x, y, z, w) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-    this.w = w;
+    if (x instanceof Vector4 && y === undefined) {
+      this.x = x.x;
+      this.y = x.y;
+      this.z = x.z;
+      this.w = x.w;
+    } else {
+      this.x = x;
+      this.y = y;
+      this.z = z;
+      this.w = w;
+    }
   }
 
   add(v) {
@@ -26,7 +37,7 @@ export default class Vector4 {
     this.x *= s;
     this.y *= s;
     this.z *= s;
-    this.w *= s.w;
+    this.w *= s;
     return this;
   }
 
@@ -45,7 +56,7 @@ export default class Vector4 {
 
   normalize() {
     const len = this.length;
-    if (len > 0) {
+    if (len > MIN_VALUE) {
       this.x /= len;
       this.y /= len;
       this.z /= len;
@@ -67,10 +78,10 @@ export default class Vector4 {
     return this;
   }
 
-  // Perform perspective division on point/vector
-  perspective(pv) {
-    pv.x = this.x / this.w;
-    pv.y = this.y / this.w;
-    pv.z = this.z / this.w;
+  // Perform perspective division into a Point3
+  projectToPoint(p) {
+    p.x = this.x / this.w;
+    p.y = this.y / this.w;
+    p.z = this.z / this.w;
   }
 }
