@@ -4,9 +4,9 @@ import Vector4 from './vector4.js';
 const MIN_VALUE = 1e-10;
 
 export default class FormClip {
-  constructor() {
+  constructor(clipper) {
     this.transMatrix = null;   // Transformation matrix 4x4
-    this.firstFace = null;     // First face (FormClipEdge) to clip against
+    this.clipper = clipper;    // (FormClipEdge) First face to clip against
     this.origin = null;        // Polygon center where we're looking from
   }
 
@@ -23,9 +23,9 @@ export default class FormClip {
     const hv = new Vector4(0, 0, 0, 0);
     for (const vert of elem.vertices) {
       hv.setToProjection(vert.pos, this.transMatrix);
-      this.firstFace.clip(hv, out);
+      this.clipper.clip(hv, out);
     }
-    this.firstFace.close(out);
+    this.clipper.close(out);
     return out.numPoints;
   }
 }
