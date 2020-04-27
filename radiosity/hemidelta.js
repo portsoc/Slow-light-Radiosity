@@ -1,53 +1,56 @@
-const ArrayRes = 100;
-const ArrayDim = ArrayRes / 2;
-
 export default class HemiDelta {
-  constructor() {
+  constructor(resolution) {
+    // a face is a square resolution x resolution big,
+    // it is symmetrical so we can only store a quarter of it
+    this.arrayDim = resolution / 2;
+
     // Initialize arrays
     this.sideArray = [];
     this.topArray = [];
-    for (let i = 0; i < ArrayDim; i++) {
+    for (let i = 0; i < this.arrayDim; i += 1) {
       this.sideArray.push([]);
       this.topArray.push([]);
-      for (let j = 0; j < ArrayDim; j++) {
-        this.sideArray[i][j] = undefined;
-      }
     }
 
-    // Initialize cell dimensions and area
-    const dx = 2 / ArrayRes;
-    const dy = dx;
-    const dz = dx;
-    const da = 4 / (ArrayRes ** 2);
+    // Initialize cell size and area
+    const size = 1 / this.arrayDim;
+    const area = 1 / (this.arrayDim ** 2);
 
     // Calculate faces delta form factors
-    let x = dx / 2;
-    for (let i = 0; i < ArrayDim; i++) {
-      let y = dy / 2;
-      let z = dz / 2;
-      for (let j = 0; j < ArrayDim; j++) {
-        const rt = x ** 2 + y ** 2 + 1;
-        const rs = x ** 2 + z ** 2 + 1;
-        this.topArray[j][i] = da / (Math.PI * rt ** 2);
-        this.sideArray[j][i] = (z * da) / (Math.PI * rs ** 2);
-        y += dy;
-        z += dy;
+    // i,j number cells from the centre of the face
+    // x,y are the centre of a cell
+    // on side face, j (y) goes up from hemicube base
+    for (let i = 0; i < this.arrayDim; i += 1) {
+      const x = (i + 0.5) * size;
+      for (let j = 0; j < this.arrayDim; j += 1) {
+        const y = (j + 0.5) * size;
+        const r2 = x ** 2 + y ** 2 + 1;
+        this.topArray[j][i] = area / (Math.PI * r2 ** 2);
+        this.sideArray[j][i] = (y * area) / (Math.PI * r2 ** 2);
       }
-      x += dx;
     }
   }
 
   getTopFactor(row, col) {
-    if (row >= ArrayDim) row -= ArrayDim;
-    else row = ArrayDim - row - 1;
-    if (col >= ArrayDim) col -= ArrayDim;
-    else col = ArrayDim - col - 1;
+    if (row >= this.arrayDim) {
+      row -= this.arrayDim;
+    } else {
+      row = this.arrayDim - row - 1;
+    }
+    if (col >= this.arrayDim) {
+      col -= this.arrayDim;
+    } else {
+      col = this.arrayDim - col - 1;
+    }
     return this.topArray[row][col];
   }
 
   getSideFactor(row, col) {
-    if (col >= ArrayDim) col -= ArrayDim;
-    else col = ArrayDim - col - 1;
-    return this.topArray[row - ArrayDim][col];
+    if (col >= this.arrayDim) {
+      col -= this.arrayDim;
+    } else {
+      col = this.arrayDim - col - 1;
+    }
+    return this.sideArray[row - this.arrayDim][col];
   }
 }
