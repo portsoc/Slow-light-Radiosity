@@ -1,4 +1,5 @@
 import FormClip from './formclip.js';
+import FormClipEdge from './formclipedge.js';
 import Vector4 from './vector4.js';
 import Vector3 from './vector3.js';
 
@@ -8,98 +9,108 @@ const BPD = 1e10;
 const SN = (EYE - BPD) * (EYE - FPD) / (EYE * EYE * (BPD - FPD));
 const RN = FPD * (EYE - BPD) / (EYE * (FPD - BPD));
 
+export const Faces = {
+  TOP: Symbol('hemicube top face'),
+  FRONT: Symbol('hemicube front face'),
+  RIGHT: Symbol('hemicube right face'),
+  BACK: Symbol('hemicube back face'),
+  LEFT: Symbol('hemicube left face'),
+};
+
 export default class HemiClip extends FormClip {
   constructor() {
-    super();
-    // Link edge-plane clippers
-    this.clippers.FRONT.add(this.clippers.LEFT);
-    this.clippers.LEFT.add(this.clippers.RIGTH);
-    this.clippers.RIGTH.add(this.clippers.TOP);
-    this.clippers.TOP.add(this.clippers.BOTTOM);
-    this.clippers.BOTTOM.add(null);
-    // Set clipper plane normals
-    let tmp;
-    tmp = new Vector4(0, 0, 1, 0);
-    this.clippers.FRONT.normal = tmp.normalize();
-    tmp = new Vector4(1, 0, 0, 0);
-    this.clippers.LEFT.normal = tmp.normalize();
-    tmp = new Vector4(-1, 0, 0, 1);
-    this.clippers.RIGTH.normal = tmp.normalize();
-    tmp = new Vector4(0, -1, 0, 1);
-    this.clippers.TOP.normal = tmp.normalize();
-    tmp = new Vector4(0, 1, 0, 0);
-    this.clippers.BOTTOM.normal = tmp.normalize();
+    // Set up clipper planes
+    const front = new FormClipEdge(new Vector4(0, 0, 1, 0).normalize());
+    const left = new FormClipEdge(new Vector4(1, 0, 0, 0).normalize());
+    const right = new FormClipEdge(new Vector4(-1, 0, 0, 1).normalize());
+    const top = new FormClipEdge(new Vector4(0, -1, 0, 1).normalize());
+    const bottom = new FormClipEdge(new Vector4(0, 1, 0, 0).normalize());
+
+    front.setNext(left);
+    left.setNext(right);
+    right.setNext(top);
+    top.setNext(bottom);
+
+    super(front);
   }
 
   setView(patch) {
     this.center = patch.center;
     this.n = patch.normal;
+    this.randomizeUV();
+  }
+
+  // generate a random this.u and this.v pair for the given normal this.n
+  randomizeUV() {
+    // create a random U vector
     do {
       this.u = this.n.cross(Vector3.random());
-    } while (this.u.length < this.MIN_VALUE);
+    } while (this.u.length <= this.MIN_VALUE);
+
     this.u.normalize();
     this.v = this.u.cross(this.n);
     return this;
   }
 
   buildTransform(u, v, n) {
-    const origin = new Vector3(this.center);
+    const origin = new Vector3(this.origin);
+
     // Set view transformation matrix
-    this.transMatrix[0][0] = u.pos.x;
-    this.transMatrix[0][1] = u.pos.y;
-    this.transMatrix[0][2] = u.pos.z;
-    this.transMatrix[0][3] = -origin.dot(u);
-    this.transMatrix[1][0] = v.pos.x;
-    this.transMatrix[1][1] = v.pos.y;
-    this.transMatrix[1][2] = v.pos.z;
-    this.transMatrix[1][3] = -origin.dot(v);
-    this.transMatrix[2][0] = n.pos.x;
-    this.transMatrix[2][1] = n.pos.y;
-    this.transMatrix[2][2] = n.pos.z;
-    this.transMatrix[2][3] = -origin.dot(n);
-    this.transMatrix[3][0] = 0;
-    this.transMatrix[3][1] = 0;
-    this.transMatrix[3][2] = 0;
-    this.transMatrix[3][3] = 1;
-    // Premultiply by translation matrix
-    this.transMatrix[2][3] -= 1;
-    // Premultiply by perspective transformation matrix
-    this.transMatrix[3][0] += this.transMatrix[2][0];
-    this.transMatrix[3][1] += this.transMatrix[2][1];
-    this.transMatrix[3][2] += this.transMatrix[2][2];
-    this.transMatrix[3][3] += this.transMatrix[2][3];
-    // Premultiply by normalization matrix
-    this.transMatrix[0][0] = 0.5 * (this.transMatrix[0][0] + this.transMatrix[3][0]);
-    this.transMatrix[0][1] = 0.5 * (this.transMatrix[0][1] + this.transMatrix[3][1]);
-    this.transMatrix[0][2] = 0.5 * (this.transMatrix[0][2] + this.transMatrix[3][2]);
-    this.transMatrix[0][3] = 0.5 * (this.transMatrix[0][3] + this.transMatrix[3][3]);
-    this.transMatrix[1][0] = 0.5 * (this.transMatrix[1][0] + this.transMatrix[3][0]);
-    this.transMatrix[1][1] = 0.5 * (this.transMatrix[1][1] + this.transMatrix[3][1]);
-    this.transMatrix[1][2] = 0.5 * (this.transMatrix[1][2] + this.transMatrix[3][2]);
-    this.transMatrix[1][3] = 0.5 * (this.transMatrix[1][3] + this.transMatrix[3][3]);
-    this.transMatrix[2][0] = SN * this.transMatrix[2][0] + RN * this.transMatrix[3][0];
-    this.transMatrix[2][1] = SN * this.transMatrix[2][1] + RN * this.transMatrix[3][1];
-    this.transMatrix[2][2] = SN * this.transMatrix[2][2] + RN * this.transMatrix[3][2];
-    this.transMatrix[2][3] = SN * this.transMatrix[2][3] + RN * this.transMatrix[3][3];
+
+    /* eslint-disable no-multi-spaces, array-bracket-spacing */
+    const m = [
+      [ u.x, u.y, u.z, -origin.dot(u) ],
+      [ v.x, v.y, v.z, -origin.dot(v) ],
+      [ n.x, n.y, n.z, -origin.dot(n) ],
+      [ 0,   0,   0,   1              ],
+    ];
+    /* eslint-enable */
+
+    // multiply by translation matrix
+    m[2][3] -= 1;
+
+    // multiply by perspective transformation matrix
+    m[3][0] += m[2][0];
+    m[3][1] += m[2][1];
+    m[3][2] += m[2][2];
+    m[3][3] += m[2][3];
+
+    // multiply by normalization matrix
+    m[0][0] = 0.5 * (m[0][0] + m[3][0]);
+    m[0][1] = 0.5 * (m[0][1] + m[3][1]);
+    m[0][2] = 0.5 * (m[0][2] + m[3][2]);
+    m[0][3] = 0.5 * (m[0][3] + m[3][3]);
+
+    m[1][0] = 0.5 * (m[1][0] + m[3][0]);
+    m[1][1] = 0.5 * (m[1][1] + m[3][1]);
+    m[1][2] = 0.5 * (m[1][2] + m[3][2]);
+    m[1][3] = 0.5 * (m[1][3] + m[3][3]);
+
+    m[2][0] = SN * m[2][0] + RN * m[3][0];
+    m[2][1] = SN * m[2][1] + RN * m[3][1];
+    m[2][2] = SN * m[2][2] + RN * m[3][2];
+    m[2][3] = SN * m[2][3] + RN * m[3][3];
+
+    this.transMatrix = m;
   }
 
   updateView(faceId) {
     let u, v, n;
     switch (faceId) {
-      case this.Plane.TOP:
+      case Faces.TOP:
         u = this.u; v = this.v; n = this.n;
         break;
-      case this.Plane.FRONT:
-        u = -this.u; v = this.n; n = this.v;
+      case Faces.FRONT:
+        u = this.u.negated(); v = this.n; n = this.v;
         break;
-      case this.Plane.RIGHT:
+      case Faces.RIGHT:
         u = this.v; v = this.n; n = this.u;
         break;
-      case this.Plane.BOTTOM:
-        u = this.u; v = this.n; n = -this.v;
+      case Faces.BOTTOM:
+        u = this.u; v = this.n; n = this.v.negated();
         break;
-      case this.Plane.LEFT:
-        u = -this.v; v = this.n; n = -this.u;
+      case Faces.LEFT:
+        u = this.v.negated(); v = this.n; n = this.u.negated();
         break;
     }
     this.buildTransform(u, v, n);

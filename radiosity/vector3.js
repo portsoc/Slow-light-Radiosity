@@ -74,6 +74,14 @@ export default class Vector3 {
     );
   }
 
+  negated() {
+    return new Vector3(
+      -this.x,
+      -this.y,
+      -this.z,
+    );
+  }
+
   static random() {
     return new Vector3(
       Math.rand() * 2 - 1,
