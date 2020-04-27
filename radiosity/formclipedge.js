@@ -3,15 +3,19 @@ import Vector4 from './vector4.js';
 const MIN_VALUE = 1e-10;
 
 export default class FormClipEdge {
-  constructor(normal, next) {
+  constructor(normal) {
     this.normal = normal;       // Plane normal (Vector4)
-    this.nextPlane = next;      // Next clipper
+    this.nextPlane = null;      // Next clipper
 
     this.first = null;          // First vertex (Vector4)
     this.start = null;          // Start vertex (Vector4)
     this.firstInside = false;   // First vertex inside flag
     this.startInside = false;   // Start vertex inside flag
     this.firstSeen = false;     // First vertex seen flag
+  }
+
+  setNext(next) {
+    this.nextPlane = next;
   }
 
   isInside(v) {
