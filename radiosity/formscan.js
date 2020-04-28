@@ -31,7 +31,7 @@ export class FormEdgeInfo {
   }
 }
 
-const ArrayRes = 100;
+const ARRAY_RES = 100;
 
 export default class FormScan {
   constructor() {
@@ -48,7 +48,7 @@ export default class FormScan {
   getVertexInfo(poly) {
     // Initialize polygon y-axis limits
     this.yMax = 0;
-    this.yMin = ArrayRes - 1;
+    this.yMin = ARRAY_RES - 1;
 
     // Get number of vertices
     this.numVert = poly.numVert;
@@ -59,8 +59,8 @@ export default class FormScan {
       const pos = poly.getVertex(i);
       // Scale view space u-v co-ordinates
       v.pos = new Point3(
-        pos.x * ArrayRes,
-        pos.y * ArrayRes,
+        pos.x * ARRAY_RES,
+        pos.y * ARRAY_RES,
         pos.z,
       );
       // Convert to cell array x-y co-ordinates
