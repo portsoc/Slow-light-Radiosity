@@ -1,13 +1,13 @@
 import Point3 from './point3.js';
 
-class FormCellInfo {
+export class FormCellInfo {
   constructor() {
     this.depth = 0;   // Polygon cell depth
     this.id = undefined;      // Polygon identifier
   }
 }
 
-class FormVertexInfo {
+export class FormVertexInfo {
   constructor() {
     this.face = {      // Face cell array offsets
       x: undefined,    // Width offset
@@ -17,14 +17,14 @@ class FormVertexInfo {
   }
 }
 
-class FormScanInfo {
+export class FormScanInfo {
   constructor() {
     this.x = undefined;   // X-axis co-ordinate
     this.z = 0;           // Pseudodepth
   }
 }
 
-class FormEdgeInfo {
+export class FormEdgeInfo {
   constructor() {
     this.first = false;   // First intersection flag
     this.isect = [];      // Scan line intersection array (FormScanInfo[2])
@@ -35,14 +35,14 @@ const ArrayRes = 100;
 
 export default class FormScan {
   constructor() {
-    this.status = false;        // Object status
-    this.yMin = undefined;      // Minimum y-axis co-ord
-    this.yMax = undefined;      // Maximum y-axis co-ord
-    this.numVert = undefined;   // Number of vetices
-    this.cellBuffer = [];       // Cell info buffer ([[]])
-    this.edgeList = [];         // Edge list
-    this.vInfo = [];            // Vertex info table
-    this.polyId = undefined;    // Polygon identifer
+    this.status = false;         // Object status
+    this.yMin = undefined;       // Minimum y-axis co-ord
+    this.yMax = undefined;       // Maximum y-axis co-ord
+    this.numVert = undefined;    // Number of vetices
+    this.cellBuffer = null;        // Cell info buffer ([[]])
+    this.edgeList = null;          // Edge list
+    this.vInfo = new Array(8);   // Vertex info table
+    this.polyId = undefined;     // Polygon identifer
   }
 
   getVertexInfo(poly) {
