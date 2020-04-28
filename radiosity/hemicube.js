@@ -2,7 +2,7 @@ import FormPoly from './formpoly.js';
 import HemiClip from './hemiclip.js';
 import HemiScan from './hemiscan.js';
 
-const HemiFaceNum = 5;
+const HEMI_FACE_NUM = 5;
 
 export default class HemiCube {
   constructor() {
@@ -25,7 +25,7 @@ export default class HemiCube {
     this.clip.setView(patch);
 
     // Project environment onto each hemi-cube face
-    for (let i = 0; i < HemiFaceNum; i++) {
+    for (let i = 0; i < HEMI_FACE_NUM; i++) {
       // Update view transformation matrix
       this.clip.updateView(i);
       // Reinitialize depth uffer
