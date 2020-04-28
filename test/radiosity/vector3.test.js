@@ -142,10 +142,12 @@ test('negated()', () => {
 });
 
 test('random()', () => {
-  // mock Math.rand
-  const mockMath = Object.create(global.Math);
-  mockMath.random = () => 0.5;
-  global.Math = mockMath;
+  // mock
+  const mockRandom = jest.spyOn(global.Math, 'random').mockImplementation(() => 0.75);
 
-  expect(Vector3.random()).toStrictEqual(new Vector3(0, 0, 0));
+  expect(Vector3.random()).toStrictEqual(new Vector3(0.5, 0.5, 0.5));
+  expect(mockRandom).toHaveBeenCalled();
+
+  // restore mock
+  mockRandom.mockRestore();
 });
