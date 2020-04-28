@@ -81,5 +81,6 @@ export default class Vector4 {
     p.x = this.x / this.w;
     p.y = this.y / this.w;
     p.z = this.z / this.w;
+    return p;
   }
 }
