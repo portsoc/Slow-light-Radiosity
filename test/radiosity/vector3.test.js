@@ -135,3 +135,17 @@ test('cross()', () => {
   expect(v010.cross(v001)).toStrictEqual(v100);
   expect(v001.cross(v100)).toStrictEqual(v010);
 });
+
+test('negated()', () => {
+  const v = new Vector3(5, -11, 1);
+  expect(v.negated()).toStrictEqual(new Vector3(-5, 11, -1));
+});
+
+test('random()', () => {
+  // mock Math.rand
+  const mockMath = Object.create(global.Math);
+  mockMath.random = () => 0.5;
+  global.Math = mockMath;
+
+  expect(Vector3.random()).toStrictEqual(new Vector3(0, 0, 0));
+});
