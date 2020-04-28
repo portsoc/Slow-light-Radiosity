@@ -84,9 +84,9 @@ export default class Vector3 {
 
   static random() {
     return new Vector3(
-      Math.rand() * 2 - 1,
-      Math.rand() * 2 - 1,
-      Math.rand() * 2 - 1,
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1,
+      Math.random() * 2 - 1,
     );
   }
 }
