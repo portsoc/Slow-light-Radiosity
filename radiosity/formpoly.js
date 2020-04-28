@@ -20,7 +20,7 @@ export default class FormPoly {
   }
 
   addVertex(v) {
-    v.projectToPoint(this.pos[this.numPoints]);
+    v.projectToPoint(this.points[this.numPoints]);
     this.numPoints += 1;
     return this;
   }
