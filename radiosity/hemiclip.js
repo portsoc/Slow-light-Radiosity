@@ -9,13 +9,13 @@ const BPD = 1e10;
 const SN = (EYE - BPD) * (EYE - FPD) / (EYE * EYE * (BPD - FPD));
 const RN = FPD * (EYE - BPD) / (EYE * (FPD - BPD));
 
-export const Faces = {
-  TOP: Symbol('hemicube top face'),
-  FRONT: Symbol('hemicube front face'),
-  RIGHT: Symbol('hemicube right face'),
-  BACK: Symbol('hemicube back face'),
-  LEFT: Symbol('hemicube left face'),
-};
+export const TOP = Symbol('hemicube top face');
+export const FRONT = Symbol('hemicube front face');
+export const RIGHT = Symbol('hemicube right face');
+export const BACK = Symbol('hemicube back face');
+export const LEFT = Symbol('hemicube left face');
+
+export const FACES = [TOP, FRONT, RIGHT, BACK, LEFT];
 
 export default class HemiClip extends FormClip {
   constructor() {
@@ -97,19 +97,19 @@ export default class HemiClip extends FormClip {
   updateView(faceId) {
     let u, v, n;
     switch (faceId) {
-      case Faces.TOP:
+      case TOP:
         u = this.u; v = this.v; n = this.n;
         break;
-      case Faces.FRONT:
+      case FRONT:
         u = this.u.negated(); v = this.n; n = this.v;
         break;
-      case Faces.RIGHT:
+      case RIGHT:
         u = this.v; v = this.n; n = this.u;
         break;
-      case Faces.BOTTOM:
+      case BACK:
         u = this.u; v = this.n; n = this.v.negated();
         break;
-      case Faces.LEFT:
+      case LEFT:
         u = this.v.negated(); v = this.n; n = this.u.negated();
         break;
     }
