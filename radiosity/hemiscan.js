@@ -1,66 +1,99 @@
-import FormScan, { FormEdgeInfo, FormCellInfo } from './formscan.js';
+import FormScan from './formscan.js';
 import HemiDelta from './hemidelta.js';
+import { TOP } from './hemiclip.js';
 
-const FACE = {
-  TOP: 0,
-  FRONT: 1,
-  RIGHT: 2,
-  BACK: 3,
-  LEFT: 4,
-};
-const INFINITY = 1e10;
-const NONE = 0;
-const ARRAY_RES = 100;
-const ARRAY_DIM = ARRAY_RES / 2;
+class FormCellInfo {
+  reset() {
+    this.depth = 0;      // Polygon cell depth
+    this.polyId = null;  // Polygon identifier
+  }
+}
 
 export default class HemiScan extends FormScan {
-  constructor() {
-    super();
-    this.dff = new HemiDelta(ARRAY_RES);
-    this.status = true;
+  constructor(resolution) {
+    super(resolution);
 
-    // Initialize edge list
-    this.edgeList = new Array(ARRAY_RES);
-    for (let i = 0; i < ARRAY_RES; i++) {
-      this.edgeList[i] = new FormEdgeInfo();
-    }
+    this.dff = new HemiDelta(resolution);
 
-    // Initialize cell buffer
-    this.cellBuffer = new Array(ARRAY_RES);
-    for (let i = 0; i < ARRAY_RES; i++) {
-      const a = new Array(ARRAY_RES);
-      for (let j = 0; j < ARRAY_RES; j++) {
-        a[j] = new FormCellInfo();
+    // Initialize cell buffer - 2d array of FormCellInfo
+    this.cellBuffer = [];
+    for (let i = 0; i < resolution; i++) {
+      const row = [];
+      for (let j = 0; j < resolution; j++) {
+        row[j] = new FormCellInfo();
       }
-      this.cellBuffer[i].push(a);
+      this.cellBuffer[i] = row;
     }
   }
 
   initBuffer() {
-    for (let row = 0; row < ARRAY_RES; row++) {
-      for (let col = 0; col < ARRAY_RES; col++) {
-        this.cellBuffer[row][col].depth = INFINITY;
-        this.cellBuffer[row][col].id = NONE;
+    for (let row = 0; row < this.resolution; row++) {
+      for (let col = 0; col < this.resolution; col++) {
+        this.cellBuffer[row][col].reset();
+      }
+    }
+  }
+
+  drawEdgeList(poly) {
+    for (let y = this.yMin; y < this.yMax; y++) {
+      const edge = this.edgeList[y];
+
+      // Get scan line info, scan start and end
+      let ss = edge.start;
+      let se = edge.end;
+
+      if (ss.x > se.x) {
+        // Swap scan line info
+        [ss, se] = [se, ss];
+      }
+
+      // Get scan line x-axis co-ordinates
+      const sx = ss.x;
+      const ex = se.x;
+
+      if (sx < ex) { // Ignore zero-length segments
+        // Determine inverse slopes
+        const xDist = se.x - ss.x;
+        const dz = (se.z - ss.z) / xDist;
+
+        // Determine scan line start info
+        let iz = ss.z;
+
+        // Enter scan line
+        for (let x = sx; x < ex; x++) {
+          const cell = this.cellBuffer[y][x];
+
+          // Check element visibility
+          if (iz < cell.depth) {
+            // update z buffer with new depth and polygon ID
+            cell.depth = iz;
+            cell.polyId = poly.id;
+          }
+          // Update element pseudodepth
+          iz += dz;
+        }
       }
     }
   }
 
   sumDeltas(array, faceId) {
-    if (faceId === FACE.TOP) {
+    if (faceId === TOP) {
       // Scan entire face buffer
-      for (let row = 0; row < ARRAY_RES; row++) {
-        for (let col = 0; col < ARRAY_RES; col++) {
-          if ((this.polyId = this.cellBuffer[row][col].id) !== NONE) {
-            array[this.polyId - 1] += this.dff.getTopFactor(row, col);
+      for (let row = 0; row < this.resolution; row++) {
+        for (let col = 0; col < this.resolution; col++) {
+          const polyId = this.cellBuffer[row][col].polyId;
+          if (polyId != null) {
+            array[polyId] += this.dff.getTopFactor(row, col);
           }
         }
       }
     } else {
       // Scan upper half of face buffer only
-      for (let row = ARRAY_DIM; row < ARRAY_RES; row++) {
-        for (let col = 0; col < ARRAY_RES; col++) {
-          if ((this.polyId = this.cellBuffer[row][col].id) !== NONE) {
-            array[this.polyId - 1] += this.dff.getSideFactor(row, col);
+      for (let row = this.resolution / 2; row < this.resolution; row++) {
+        for (let col = 0; col < this.resolution; col++) {
+          const polyId = this.cellBuffer[row][col].polyId;
+          if (polyId != null) {
+            array[polyId] += this.dff.getSideFactor(row, col);
           }
         }
       }

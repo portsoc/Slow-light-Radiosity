@@ -1,54 +1,63 @@
 import Point3 from './point3.js';
-
-export class FormCellInfo {
-  constructor() {
-    this.depth = 0;   // Polygon cell depth
-    this.id = undefined;      // Polygon identifier
-  }
-}
+import { MAX_VERT } from './formpoly.js';
 
 export class FormVertexInfo {
   constructor() {
-    this.face = {      // Face cell array offsets
-      x: undefined,    // Width offset
-      y: undefined,    // Height offset
-    };
-    this.pos = null;   // Scaled position
-  }
-}
+    // Face cell array offsets
+    this.faceX = null;          // Width offset
+    this.faceY = null;          // Height offset
 
-export class FormScanInfo {
-  constructor() {
-    this.x = undefined;   // X-axis co-ordinate
-    this.z = 0;           // Pseudodepth
+    this.pos = new Point3();    // Scaled position
   }
 }
 
 export class FormEdgeInfo {
   constructor() {
-    this.first = false;   // First intersection flag
-    this.isect = [];      // Scan line intersection array (FormScanInfo[2])
+    this.start = {              // Scan line intersection start
+      x: null,                  // X-axis co-ordinate
+      z: null,                  // Pseudodepth
+    };
+    this.end = {                // Scan line intersection end
+      x: null,
+      z: null,
+    };
+  }
+
+  reset() {
+    this.start.x = this.start.z = null;
+    this.end.x = this.end.z = null;
+  }
+
+  // set the start, or if that's already set, set the end
+  add(x, z) {
+    const where = this.start.x == null ? this.start : this.end;
+    where.x = x;
+    where.z = z;
   }
 }
 
-const ARRAY_RES = 100;
-
 export default class FormScan {
-  constructor() {
-    this.status = false;         // Object status
-    this.yMin = undefined;       // Minimum y-axis co-ord
-    this.yMax = undefined;       // Maximum y-axis co-ord
-    this.numVert = undefined;    // Number of vetices
-    this.cellBuffer = null;        // Cell info buffer ([[]])
-    this.edgeList = null;          // Edge list
-    this.vInfo = new Array(8);   // Vertex info table
-    this.polyId = undefined;     // Polygon identifer
+  constructor(resolution) {
+    this.resolution = resolution;
+    this.yMin = null;           // Minimum y-axis co-ord
+    this.yMax = null;           // Maximum y-axis co-ord
+
+    this.edgeList = [];         // Edge list
+    for (let i = 0; i < resolution; i += 1) {
+      this.edgeList[i] = new FormEdgeInfo();
+    }
+
+    this.numVert = null;        // Number of vetices
+    this.vInfo = [];            // Vertex info table
+    for (let i = 0; i < MAX_VERT; i += 1) {
+      this.vInfo[i] = new FormVertexInfo();
+    }
   }
 
   getVertexInfo(poly) {
     // Initialize polygon y-axis limits
     this.yMax = 0;
-    this.yMin = ARRAY_RES - 1;
+    this.yMin = this.resolution - 1;
 
     // Get number of vertices
     this.numVert = poly.numVert;
@@ -57,39 +66,38 @@ export default class FormScan {
       const v = this.vInfo[i];
       // Get vertex normalized view space co-ordinates
       const pos = poly.getVertex(i);
+
       // Scale view space u-v co-ordinates
-      v.pos = new Point3(
-        pos.x * ARRAY_RES,
-        pos.y * ARRAY_RES,
-        pos.z,
-      );
+      v.pos.x = pos.x * this.resolution;
+      v.pos.y = pos.y * this.resolution;
+      v.pos.z = pos.z;
+
       // Convert to cell array x-y co-ordinates
-      v.face.x = v.pos.x;
-      v.face.y = v.pos.y;
+      v.faceX = Math.trunc(v.pos.x);
+      v.faceY = Math.trunc(v.pos.y);
+
       // Update polygon y-axis limits
-      if (v.face.y < this.yMin) this.yMin = v.face.y;
-      if (v.face.y < this.yMax) this.yMax = v.face.y;
+      if (v.faceY < this.yMin) this.yMin = v.faceY;
+      if (v.faceY > this.yMax) this.yMax = v.faceY;
     }
   }
 
   scanEdges() {
     // Initialize edge list
-    for (let i = 0; i < this.yMax; i++) {
-      this.edgeList[i] = new FormEdgeInfo();
+    for (let i = this.yMin; i < this.yMax; i++) {
+      this.edgeList[i].reset();
     }
 
     for (let i = 0; i < this.numVert; i++) {
-      // Get edge vertex
+      // Get edge vertices: start vertex, end vertex
       let sv = this.vInfo[i];
-      let ev = this.vInfo[i + 1] % this.numVert;
+      let ev = this.vInfo[(i + 1) % this.numVert];
 
-      if (sv.face.y === ev.face.y) continue; // Ignore horizontal edges
+      if (sv.faceY === ev.faceY) continue; // Ignore horizontal edges
 
-      if (sv.face.y > ev.face.y) {
-        // Swap edge vertex info
-        const tmp = sv;
-        sv = ev;
-        ev = tmp;
+      if (sv.faceY > ev.faceY) {
+        // Swap edge vertices
+        [sv, ev] = [ev, sv];
       }
 
       // Get start vertex info
@@ -97,23 +105,14 @@ export default class FormScan {
       let iz = sv.pos.z;
 
       // Determine inverse slopes
-      const yDist = ev.face.y - sv.face.y;
-      const dx = (ev.pos.x - ix) / yDist;
-      const dz = (ev.pos.z - iz) / yDist;
+      const yDist = ev.faceY - sv.faceY;
+      const dx = (ev.pos.x - sv.pos.x) / yDist;
+      const dz = (ev.pos.z - sv.pos.z) / yDist;
 
       // Scan convert edge
-      const edge = this.edgeList[sv.face.y + i];
-      for (let j = 0; j < ev.face.y; j++) {
-        // Determine intersection info element
-        let scan = null;
-        if (!edge.first) {
-          scan = edge.isect[0];
-          edge.first = true;
-        } else { scan = edge.isect[1]; }
-
+      for (let j = sv.faceY; j < ev.faceY; j++) {
         // Insert edge itersection info
-        scan.x = ix;
-        scan.z = iz;
+        this.edgeList[j].add(ix, iz);
 
         // Update edge intersection info
         ix += dx;
@@ -123,54 +122,12 @@ export default class FormScan {
   }
 
   drawEdgeList() {
-    for (let y = this.yMin; y < this.yMax; y++) {
-      const edge = this.edgeList[y];
-
-      // Get scan line info
-      let ss = edge.isect[0];
-      let se = edge.isect[1];
-
-      if (ss.x > ss.y) {
-        // Swap scan line info
-        const tmp = ss;
-        ss = se;
-        se = tmp;
-      }
-
-      // Get scan line x-axis co-ordinates
-      const sx = ss.x;
-      const ex = se.x;
-
-      if (sx < ex) { // Ignore zero-length segments
-        // Determine scan line start info
-        let iz = ss.z;
-
-        // Dtermine inverse slopes
-        const xDist = se.x - ss.x;
-        const dz = (se.z - iz) / xDist;
-
-        // Enter scan line
-        for (let x = sx; x < ex; x++) {
-          // Check element visibility
-          if (iz < this.cellBuffer[y][x].depth) {
-            // Update Z_buffer
-            this.cellBuffer[y][x].depth = iz;
-
-            // Set polygon indentifier
-            this.cellBuffer[y][x].id = this.polyId;
-          }
-
-          // Update element pseudodepth
-          iz += dz;
-        }
-      }
-    }
+    throw new TypeError('FormScan is an abstract class, a subclass must provide drawEdgeList()');
   }
 
   scan(poly) {
-    this.polyId = poly.polyId;
     this.getVertexInfo(poly);
     this.scanEdges();
-    this.drawEdgeList();
+    this.drawEdgeList(poly);
   }
 }
