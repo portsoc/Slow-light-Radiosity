@@ -138,7 +138,9 @@ test('cross()', () => {
 
 test('negated()', () => {
   const v = new Vector3(5, -11, 1);
-  expect(v.negated()).toStrictEqual(new Vector3(-5, 11, -1));
+  const vNeg = v.negated();
+  expect(vNeg).not.toBe(v);
+  expect(vNeg).toStrictEqual(new Vector3(-5, 11, -1));
 });
 
 test('random()', () => {
