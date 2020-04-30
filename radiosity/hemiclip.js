@@ -35,7 +35,7 @@ export default class HemiClip extends FormClip {
   }
 
   setView(patch) {
-    this.center = patch.center;
+    this.origin = patch.center;
     this.n = patch.normal;
     this.randomizeUV();
   }

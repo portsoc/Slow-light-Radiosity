@@ -6,24 +6,24 @@ export default class Environment {
     this.elementsNumbered = null;
   }
 
-  get numSurf() {
+  get surfaceCount() {
     return sum(this.instances.map(i => i.surfaces.length));
   }
 
-  get numPatch() {
+  get patchCount() {
     return sum(
       this.instances.flatMap(i =>
         i.surfaces.map(s => s.patches.length)));
   }
 
-  get numElem() {
+  get elementCount() {
     return sum(
       this.instances.flatMap(i =>
         i.surfaces.flatMap(s =>
           s.patches.map(p => p.elements.length))));
   }
 
-  get numVert() {
+  get vertexCount() {
     return sum(this.instances.map(i => i.vertices.length));
   }
 
