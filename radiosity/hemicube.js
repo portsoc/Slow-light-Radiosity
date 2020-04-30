@@ -3,10 +3,10 @@ import HemiClip, { FACES } from './hemiclip.js';
 import HemiScan from './hemiscan.js';
 
 export default class HemiCube {
-  constructor() {
+  constructor(resolution = 100) {
     this.out = new FormPoly();
     this.clipper = new HemiClip();
-    this.scanner = new HemiScan();
+    this.scanner = new HemiScan(resolution);
   }
 
   calculateFormFactors(originPatch, env, ffArray) {
