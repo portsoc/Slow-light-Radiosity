@@ -3,6 +3,7 @@ import Point3 from '../radiosity/point3.js';
 export default class Environment {
   constructor(instances) {
     this.instances = instances;
+    this.elementsNumbered = null;
   }
 
   get numSurf() {
@@ -56,6 +57,25 @@ export default class Environment {
       }
     }
     return [new Point3(minX, minY, minZ), new Point3(maxX, maxY, maxZ)];
+  }
+
+  numberElements() {
+    if (this.elementsNumbered != null) return this.elementsNumbered;
+
+    let elementNumber = 0;
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          for (const e of p.elements) {
+            e.number = elementNumber;
+            elementNumber += 1;
+          }
+        }
+      }
+    }
+
+    this.elementsNumbered = elementNumber;
+    return elementNumber;
   }
 }
 

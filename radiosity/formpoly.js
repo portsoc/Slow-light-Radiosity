@@ -6,16 +6,14 @@ export default class FormPoly {
   constructor() {
     this.points = new Array(MAX_VERT); // Output vertex array
     this.numPoints = 0;                // current number of points
-    this.id = null;                    // Polygon identifier
 
     for (let i = 0; i < MAX_VERT; i += 1) {
       this.points[i] = new Point3();
     }
   }
 
-  reset(polyId) {
+  reset() {
     this.numPoints = 0;
-    this.id = polyId;
     return this;
   }
 

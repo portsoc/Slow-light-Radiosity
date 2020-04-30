@@ -18,8 +18,8 @@ export default class FormClip {
     return patch.normal.dot(view) < MIN_VALUE;
   }
 
-  clip(elem, out, polyId) {
-    out.reset(polyId);
+  clip(elem, out) {
+    out.reset();
     const hv = new Vector4(0, 0, 0, 0);
     for (const vert of elem.vertices) {
       hv.setToProjection(vert.pos, this.transMatrix);
