@@ -6,10 +6,8 @@ test('reset()', () => {
   const f1 = new FormPoly();
 
   // reset
-  const polyId = 2;
-  expect(f1.reset(polyId)).toBe(f1);
+  expect(f1.reset()).toBe(f1);
   expect(f1.numPoints).toBe(0);
-  expect(f1.id).toBe(polyId);
 });
 
 test('addVertex()', () => {

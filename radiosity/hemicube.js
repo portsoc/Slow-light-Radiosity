@@ -5,54 +5,45 @@ import HemiScan from './hemiscan.js';
 export default class HemiCube {
   constructor() {
     this.out = new FormPoly();
-    this.clip = new HemiClip();
-    this.scan = new HemiScan();
+    this.clipper = new HemiClip();
+    this.scanner = new HemiScan();
   }
 
-  get status() {
-    return this.scan.status;
-  }
-
-  calculateFormFactors(patch, instArray, array, numElem) {
-    // Clear the form factors array
-    for (let i = 0; i < numElem; i++) {
-      array[i] = 0;
-    }
-
+  calculateFormFactors(originPatch, env, ffArray) {
     // Set the hemi-cube view transformations matrix
-    this.clip.setView(patch);
+    this.clipper.setView(originPatch);
+
+    // make sure all the elements in the environment have consecutive numbers
+    const numElements = env.numberElements();
+
+    // Clear the form factors array
+    ffArray.fill(0, 0, numElements);
 
     // Project environment onto each hemi-cube face
     for (const faceId of FACES) {
       // Update view transformation matrix
-      this.clip.updateView(faceId);
-      // Reinitialize depth uffer
-      this.scan.initBuffer();
-      // Walk the instance list
-      let elemId = 0;
-      for (const instance of instArray) {
-        // Walk the surface list
+      this.clipper.updateView(faceId);
+      // Clear depth uffer
+      this.scanner.initBuffer();
+
+      for (const instance of env.instances) {
         for (const surface of instance.surfaces) {
-          // Walk the patch list
-          for (const _patch of surface.patches) {
-            // Check for self patch
-            const _self = (_patch === patch);
+          for (const patch of surface.patches) {
             // Determine patch visibility
-            const hidden = this.clip.isFacingAway(_patch);
-            // Walk the element list
-            for (const element of _patch.elements) {
-              if (!hidden && _self) {
+            const visible = !this.clipper.isFacingAway(patch);
+            if (patch !== originPatch && !visible) {
+              for (const element of patch.elements) {
                 // Clip element to face view volume
-                if (this.clip.clip(element, this.out, elemId) > 0) {
-                  this.scan.scan(this.out);
-                }
+                this.clipper.clip(element, this.out);
+
+                // Draw the clipped polygon on the hemicube face
+                this.scanner.scan(this.out, element.number);
               }
-              elemId++;
             }
           }
         }
       }
-      this.scan.sumDeltas(array, faceId);
+      this.scanner.sumDeltas(ffArray, faceId);
     }
     return this;
   }

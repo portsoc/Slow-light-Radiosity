@@ -34,7 +34,7 @@ export default class HemiScan extends FormScan {
     }
   }
 
-  drawEdgeList(poly) {
+  drawEdgeList(poly, polyId) {
     for (let y = this.yMin; y < this.yMax; y++) {
       const edge = this.edgeList[y];
 
@@ -67,7 +67,7 @@ export default class HemiScan extends FormScan {
           if (iz < cell.depth) {
             // update z buffer with new depth and polygon ID
             cell.depth = iz;
-            cell.polyId = poly.id;
+            cell.polyId = polyId;
           }
           // Update element pseudodepth
           iz += dz;
@@ -76,14 +76,14 @@ export default class HemiScan extends FormScan {
     }
   }
 
-  sumDeltas(array, faceId) {
+  sumDeltas(ffArray, faceId) {
     if (faceId === TOP) {
       // Scan entire face buffer
       for (let row = 0; row < this.resolution; row++) {
         for (let col = 0; col < this.resolution; col++) {
           const polyId = this.cellBuffer[row][col].polyId;
           if (polyId != null) {
-            array[polyId] += this.dff.getTopFactor(row, col);
+            ffArray[polyId] += this.dff.getTopFactor(row, col);
           }
         }
       }
@@ -93,7 +93,7 @@ export default class HemiScan extends FormScan {
         for (let col = 0; col < this.resolution; col++) {
           const polyId = this.cellBuffer[row][col].polyId;
           if (polyId != null) {
-            array[polyId] += this.dff.getSideFactor(row, col);
+            ffArray[polyId] += this.dff.getSideFactor(row, col);
           }
         }
       }

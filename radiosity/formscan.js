@@ -125,9 +125,11 @@ export default class FormScan {
     throw new TypeError('FormScan is an abstract class, a subclass must provide drawEdgeList()');
   }
 
-  scan(poly) {
+  scan(poly, polyId) {
+    if (poly.numPoints === 0) return;
+
     this.getVertexInfo(poly);
     this.scanEdges();
-    this.drawEdgeList(poly);
+    this.drawEdgeList(poly, polyId);
   }
 }
