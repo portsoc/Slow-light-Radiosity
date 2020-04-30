@@ -127,20 +127,20 @@ describe('with a non-trivial environment', () => {
     environment = new Environment([i1, i2]);
   });
 
-  test('get numSurf', () => {
-    expect(environment.numSurf).toBe(3);
+  test('get surfaceCount', () => {
+    expect(environment.surfaceCount).toBe(3);
   });
 
-  test('get numPatch', () => {
-    expect(environment.numPatch).toBe(5);
+  test('get patchCount', () => {
+    expect(environment.patchCount).toBe(5);
   });
 
-  test('get numElem', () => {
-    expect(environment.numElem).toBe(5);
+  test('get elementCount', () => {
+    expect(environment.elementCount).toBe(5);
   });
 
-  test('get numVert', () => {
-    expect(environment.numVert).toBe(13);
+  test('get vertexCount', () => {
+    expect(environment.vertexCount).toBe(13);
   });
 
   test('get boundingBox', () => {

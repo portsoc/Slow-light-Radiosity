@@ -3,41 +3,28 @@ import Point3 from '../radiosity/point3.js';
 export default class Environment {
   constructor(instances) {
     this.instances = instances;
+    this.elementsNumbered = null;
   }
 
-  get numSurf() {
+  get surfaceCount() {
     return sum(this.instances.map(i => i.surfaces.length));
   }
 
-  get numPatch() {
+  get patchCount() {
     return sum(
       this.instances.flatMap(i =>
         i.surfaces.map(s => s.patches.length)));
   }
 
-  get numElem() {
+  get elementCount() {
     return sum(
       this.instances.flatMap(i =>
         i.surfaces.flatMap(s =>
           s.patches.map(p => p.elements.length))));
   }
 
-  get numVert() {
+  get vertexCount() {
     return sum(this.instances.map(i => i.vertices.length));
-  }
-
-  checkNoVerticesAreShared() {
-    for (const i of this.instances) {
-      for (const s of i.surfaces) {
-        for (const p of s.patches) {
-          if (!allVerticesBelongToSurface(p.vertices, s)) return false;
-          for (const e of p.elements) {
-            if (!allVerticesBelongToSurface(e.vertices, s)) return false;
-          }
-        }
-      }
-    }
-    return true;
   }
 
   get boundingBox() {
@@ -56,6 +43,39 @@ export default class Environment {
       }
     }
     return [new Point3(minX, minY, minZ), new Point3(maxX, maxY, maxZ)];
+  }
+
+  numberElements() {
+    if (this.elementsNumbered != null) return this.elementsNumbered;
+
+    let elementNumber = 0;
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          for (const e of p.elements) {
+            e.number = elementNumber;
+            elementNumber += 1;
+          }
+        }
+      }
+    }
+
+    this.elementsNumbered = elementNumber;
+    return elementNumber;
+  }
+
+  checkNoVerticesAreShared() {
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          if (!allVerticesBelongToSurface(p.vertices, s)) return false;
+          for (const e of p.elements) {
+            if (!allVerticesBelongToSurface(e.vertices, s)) return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 }
 

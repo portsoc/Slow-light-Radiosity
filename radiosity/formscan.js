@@ -67,7 +67,7 @@ export default class FormScan {
     for (let i = 0; i < this.numVert; i++) {
       const v = this.vInfo[i];
       // Get vertex normalized view space co-ordinates
-      const pos = poly.getVertex(i);
+      const pos = poly.points[i];
 
       // Scale view space u-v co-ordinates
       v.pos.x = pos.x * this.resolution;
@@ -127,9 +127,11 @@ export default class FormScan {
     throw new TypeError('FormScan is an abstract class, a subclass must provide drawEdgeList()');
   }
 
-  scan(poly) {
+  scan(poly, polyId) {
+    if (poly.numPoints === 0) return;
+
     this.getVertexInfo(poly);
     this.scanEdges();
-    this.drawEdgeList(poly);
+    this.drawEdgeList(poly, polyId);
   }
 }
