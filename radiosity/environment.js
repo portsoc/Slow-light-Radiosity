@@ -27,20 +27,6 @@ export default class Environment {
     return sum(this.instances.map(i => i.vertices.length));
   }
 
-  checkNoVerticesAreShared() {
-    for (const i of this.instances) {
-      for (const s of i.surfaces) {
-        for (const p of s.patches) {
-          if (!allVerticesBelongToSurface(p.vertices, s)) return false;
-          for (const e of p.elements) {
-            if (!allVerticesBelongToSurface(e.vertices, s)) return false;
-          }
-        }
-      }
-    }
-    return true;
-  }
-
   get boundingBox() {
     let minX, minY, minZ;
     minX = minY = minZ = Infinity;
@@ -76,6 +62,20 @@ export default class Environment {
 
     this.elementsNumbered = elementNumber;
     return elementNumber;
+  }
+
+  checkNoVerticesAreShared() {
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          if (!allVerticesBelongToSurface(p.vertices, s)) return false;
+          for (const e of p.elements) {
+            if (!allVerticesBelongToSurface(e.vertices, s)) return false;
+          }
+        }
+      }
+    }
+    return true;
   }
 }
 
