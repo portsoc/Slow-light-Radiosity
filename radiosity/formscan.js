@@ -26,6 +26,7 @@ export class FormEdgeInfo {
   reset() {
     this.start.x = this.start.z = null;
     this.end.x = this.end.z = null;
+    return this;
   }
 
   // set the start, or if that's already set, set the end
@@ -33,6 +34,7 @@ export class FormEdgeInfo {
     const where = this.start.x == null ? this.start : this.end;
     where.x = x;
     where.z = z;
+    return this;
   }
 }
 
