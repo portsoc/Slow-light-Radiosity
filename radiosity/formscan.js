@@ -62,12 +62,12 @@ export default class FormScan {
     this.yMin = this.resolution - 1;
 
     // Get number of vertices
-    this.numVert = poly.numVert;
+    this.numVert = poly.numPoints;
 
     for (let i = 0; i < this.numVert; i++) {
       const v = this.vInfo[i];
       // Get vertex normalized view space co-ordinates
-      const pos = poly.points[i];
+      const pos = poly.getPoint(i);
 
       // Scale view space u-v co-ordinates
       v.pos.x = pos.x * this.resolution;
@@ -128,10 +128,11 @@ export default class FormScan {
   }
 
   scan(poly, polyId) {
-    if (poly.numPoints === 0) return;
+    if (poly.numPoints === 0) return -1;
 
     this.getVertexInfo(poly);
     this.scanEdges();
     this.drawEdgeList(poly, polyId);
+    return this;
   }
 }
