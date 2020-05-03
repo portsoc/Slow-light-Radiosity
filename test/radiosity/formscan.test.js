@@ -213,7 +213,7 @@ test('scan()', () => {
   // set up FormPoly
   const poly = new FormPoly();
 
-  expect(fs.scan(poly, 2)).toBe(-1);
+  expect(fs.scan(poly, 2)).toBeUndefined();
 
   // ? Non-empty FormPoly
 
