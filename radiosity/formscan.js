@@ -62,7 +62,7 @@ export default class FormScan {
     this.yMin = this.resolution - 1;
 
     // Get number of vertices
-    this.numVert = poly.numPoints;
+    this.numVert = poly.numVert;
 
     for (let i = 0; i < this.numVert; i++) {
       const v = this.vInfo[i];
@@ -128,7 +128,7 @@ export default class FormScan {
   }
 
   scan(poly, polyId) {
-    if (poly.numPoints === 0) return -1;
+    if (poly.numVert === 0) return;
 
     this.getVertexInfo(poly);
     this.scanEdges();

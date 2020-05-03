@@ -26,6 +26,6 @@ export default class FormClip {
       this.clipper.clip(hv, out);
     }
     this.clipper.close(out);
-    return out.numPoints;
+    return out.numVert;
   }
 }

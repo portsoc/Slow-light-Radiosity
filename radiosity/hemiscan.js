@@ -48,8 +48,8 @@ export default class HemiScan extends FormScan {
       }
 
       // Get scan line x-axis co-ordinates
-      const sx = ss.x;
-      const ex = se.x;
+      const sx = Math.trunc(ss.x);
+      const ex = Math.trunc(se.x);
 
       if (sx < ex) { // Ignore zero-length segments
         // Determine inverse slopes

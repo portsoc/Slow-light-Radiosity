@@ -31,7 +31,7 @@ export default class HemiCube {
           for (const patch of surface.patches) {
             // Determine patch visibility
             const visible = !this.clipper.isFacingAway(patch);
-            if (patch !== originPatch && !visible) {
+            if (patch !== originPatch && visible) {
               for (const element of patch.elements) {
                 // Clip element to face view volume
                 this.clipper.clip(element, this.out);
