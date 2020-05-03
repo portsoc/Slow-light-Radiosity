@@ -22,7 +22,7 @@ test('getVertexInfo()', () => {
   poly.addVertex(new Vector4(13, 14, 15, 16));
 
   fs.getVertexInfo(poly);
-  expect(fs.numVert).toBe(poly.numPoints);
+  expect(fs.numVert).toBe(poly.numVert);
   expect(fs.yMin).toBe(60);
   expect(fs.yMax).toBe(105);
   expect(fs.vInfo).toMatchObject([

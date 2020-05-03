@@ -52,12 +52,12 @@ export default class FormClipEdge {
         const intersection = this.intersect(this.start, current);
         this.output(intersection, out);
       }
-      if (currentInside) {
-        this.output(current, out);
-      }
-      this.start = current;
-      this.startInside = currentInside;
     }
+    if (currentInside) {
+      this.output(current, out);
+    }
+    this.start = current;
+    this.startInside = currentInside;
   }
 
   close(out) {

@@ -5,7 +5,7 @@ export const MAX_VERT = 10; // maximum vertices in a quad clipped by six planes
 export default class FormPoly {
   constructor() {
     this.points = new Array(MAX_VERT); // Output vertex array
-    this.numPoints = 0;                // current number of points
+    this.numVert = 0;                  // current number of vertices
 
     for (let i = 0; i < MAX_VERT; i += 1) {
       this.points[i] = new Point3();
@@ -13,13 +13,13 @@ export default class FormPoly {
   }
 
   reset() {
-    this.numPoints = 0;
+    this.numVert = 0;
     return this;
   }
 
   addVertex(v) {
-    v.projectToPoint(this.points[this.numPoints]);
-    this.numPoints += 1;
+    v.projectToPoint(this.points[this.numVert]);
+    this.numVert += 1;
     return this;
   }
 
