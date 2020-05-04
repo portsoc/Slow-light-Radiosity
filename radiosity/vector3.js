@@ -23,6 +23,13 @@ export default class Vector3 {
     return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
   }
 
+  setTo(v) {
+    this.x = v.x;
+    this.y = v.y;
+    this.z = v.z;
+    return this;
+  }
+
   add(v) {
     this.x += v.x;
     this.y += v.y;

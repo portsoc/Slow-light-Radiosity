@@ -7,14 +7,16 @@ export default class FormClipEdge {
     this.normal = normal;       // Plane normal (Vector4)
     this.nextPlane = null;      // Next clipper
 
-    this.first = null;          // First vertex (Vector4)
-    this.start = null;          // Start vertex (Vector4)
+    this.first = new Vector4(); // First vertex
+    this.start = new Vector4(); // Start vertex
     this.firstInside = false;   // First vertex inside flag
     this.startInside = false;   // Start vertex inside flag
     this.firstSeen = false;     // First vertex seen flag
+
+    this.intersection = new Vector4(); // temporary object used in intersect()
   }
 
-  setNext(next) {
+  setNext(next) { // public
     this.nextPlane = next;
   }
 
@@ -23,12 +25,12 @@ export default class FormClipEdge {
   }
 
   intersect(s, e) {
-    const r = new Vector4(e).sub(s);
-    const d = this.normal.dot(r);
+    this.intersection.setTo(e).sub(s);
+    const d = this.normal.dot(this.intersection);
     if (Math.abs(d) > MIN_VALUE) {
-      r.scale(-this.normal.dot(s) / d);
+      this.intersection.scale(-this.normal.dot(s) / d);
     }
-    return r.add(s);
+    return this.intersection.add(s);
   }
 
   output(v, out) {
@@ -39,11 +41,11 @@ export default class FormClipEdge {
     }
   }
 
-  clip(current, out) {
+  clip(current, out) { // public
     const currentInside = this.isInside(current);
 
     if (!this.firstSeen) {
-      this.first = current;
+      this.first.setTo(current);
       this.firstInside = currentInside;
       this.firstSeen = true;
     } else {
@@ -56,11 +58,11 @@ export default class FormClipEdge {
     if (currentInside) {
       this.output(current, out);
     }
-    this.start = current;
+    this.start.setTo(current);
     this.startInside = currentInside;
   }
 
-  close(out) {
+  close(out) { // public
     if (this.firstSeen) {
       // does edge intersect plane?
       if (this.startInside !== this.firstInside) {

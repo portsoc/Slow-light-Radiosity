@@ -140,3 +140,16 @@ test('projectTPoint()', () => {
   expect(v1.projectToPoint(p1)).toBe(p1);
   expect(p1).toStrictEqual(new Point3(0.25, 0.5, 0.75));
 });
+
+test('setTo()', () => {
+  const v1 = new Vector4(1, 2, 3, 4);
+  const v2 = new Vector4(6, 7, 8, 9);
+
+  expect(v1).toStrictEqual(new Vector4(1, 2, 3, 4));
+  expect(v2).toStrictEqual(new Vector4(6, 7, 8, 9));
+
+  v1.setTo(v2);
+  expect(v1).not.toBe(v2);
+  expect(v1).toStrictEqual(new Vector4(6, 7, 8, 9));
+  expect(v2).toStrictEqual(new Vector4(6, 7, 8, 9));
+});

@@ -14,13 +14,13 @@ test('isFacingAway()', () => {
   // ? In front of test
 
   /*
- * ^ y
- * |
- * p3 ----- p2
- * |        |
- * |        |
- * p0 ----- p1  -> x
- */
+   * ^ y
+   * |
+   * p3 ----- p2
+   * |        |
+   * |        |
+   * p0 ----- p1  -> x
+   */
 
   // set FromClip's origin
   const origin1 = new Point3(0.5, 0.5, -2);
@@ -44,16 +44,16 @@ test('isFacingAway()', () => {
   // ? Behind test
 
   /*
- *               ^ y
- *               |
- *           p0 -|------ p3
- *           /   |      /
- *    z <---/----0     /
- *         /    /     /
- *       p1 -------- p2
- *            /
- *           x
- */
+   *               ^ y
+   *               |
+   *           p0 -|------ p3
+   *           /   |      /
+   *    z <---/----0     /
+   *         /    /     /
+   *       p1 -------- p2
+   *            /
+   *           x
+   */
 
   // set FromClip's origin
   const origin2 = new Point3(3, 2, 1.5);
