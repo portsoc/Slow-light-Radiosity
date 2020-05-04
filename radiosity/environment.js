@@ -1,4 +1,4 @@
-import Point3 from '../radiosity/point3.js';
+import Point3 from './point3.js';
 
 export default class Environment {
   constructor(instances) {
