@@ -9,7 +9,8 @@ export default class RadEqnSolve {
     this.totalFlux = 0;             // Total environment flux
     this.totalUnsent = 0;           // Total unsent exitence
     this.ambFlag = false;           // Ambient exitance flag
-    this.maxStep = 100;             // Maximm number of steps
+    this.stepCount = 0;             // Step count
+    this.maxStep = 100;             // Maximum number of steps
     this.stopCriterion = 0.001;     // Stopping criterion
     this.convergence = null;        // Convergence
     this.max = null;                // Maximum unsent flux patch
