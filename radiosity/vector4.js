@@ -15,6 +15,14 @@ export default class Vector4 {
     }
   }
 
+  setTo(v) {
+    this.x = v.x;
+    this.y = v.y;
+    this.z = v.z;
+    this.w = v.w;
+    return this;
+  }
+
   add(v) {
     this.x += v.x;
     this.y += v.y;
