@@ -4,9 +4,6 @@ import Vector4 from '../../radiosity/vector4.js';
 import Patch3 from '../../radiosity/patch3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
 import Point3 from '../../radiosity/point3.js';
-import Element3 from '../../radiosity/element3.js';
-import FormPoly from '../../radiosity/formpoly.js';
-import HemiClip from '../../radiosity/hemiclip.js';
 
 test('isFacingAway()', () => {
   // set up FormClip
