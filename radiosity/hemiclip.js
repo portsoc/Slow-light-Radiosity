@@ -32,10 +32,13 @@ export default class HemiClip extends FormClip {
     top.setNext(bottom);
 
     super(front);
+
+    this.originVector = new Vector3(); // object used in buildTransform
   }
 
   setView(patch) {
     this.origin = patch.center;
+    this.originVector.setTo(this.origin);
     this.n = patch.normal;
     this.randomizeUV();
   }
@@ -53,29 +56,29 @@ export default class HemiClip extends FormClip {
   }
 
   buildTransform(u, v, n) {
-    const origin = new Vector3(this.origin);
-
-    // Set view transformation matrix
+    // Set view transformation matrix from world to view coordinates
+    // transform so that u, v, n become the three axes
 
     /* eslint-disable no-multi-spaces, array-bracket-spacing */
     const m = [
-      [ u.x, u.y, u.z, -origin.dot(u) ],
-      [ v.x, v.y, v.z, -origin.dot(v) ],
-      [ n.x, n.y, n.z, -origin.dot(n) ],
-      [ 0,   0,   0,   1              ],
+      [ u.x, u.y, u.z, -this.originVector.dot(u) ],
+      [ v.x, v.y, v.z, -this.originVector.dot(v) ],
+      [ n.x, n.y, n.z, -this.originVector.dot(n) ],
+      [ 0,   0,   0,   1                         ],
     ];
     /* eslint-enable */
 
-    // multiply by translation matrix
+    // the clip plane is at n-axis coordinate 1
+    // translate so it's at origin
     m[2][3] -= 1;
 
-    // multiply by perspective transformation matrix
+    // multiply by perspective transformation matrix (eq. 5.36)
     m[3][0] += m[2][0];
     m[3][1] += m[2][1];
     m[3][2] += m[2][2];
     m[3][3] += m[2][3];
 
-    // multiply by normalization matrix
+    // multiply by normalization matrix (eq. 5.37)
     m[0][0] = 0.5 * (m[0][0] + m[3][0]);
     m[0][1] = 0.5 * (m[0][1] + m[3][1]);
     m[0][2] = 0.5 * (m[0][2] + m[3][2]);

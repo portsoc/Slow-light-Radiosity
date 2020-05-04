@@ -67,7 +67,7 @@ export default class FormScan {
     for (let i = 0; i < this.numVert; i++) {
       const v = this.vInfo[i];
       // Get vertex normalized view space co-ordinates
-      const pos = poly.getPoint(i);
+      const pos = poly.vertices[i];
 
       // Scale view space u-v co-ordinates
       v.pos.x = pos.x * this.resolution;

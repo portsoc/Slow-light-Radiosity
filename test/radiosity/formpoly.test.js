@@ -13,39 +13,20 @@ test('reset()', () => {
 test('addVertex()', () => {
   const f1 = new FormPoly();
 
+  const v1orig = f1.vertices[0];
+  const v2orig = f1.vertices[0];
+
   // add vertex
   const v1 = new Vector4(1, 2, 3, 4);
   expect(f1.addVertex(v1)).toBe(f1);
-  expect(f1.points[0]).toStrictEqual(new Point3(0.25, 0.5, 0.75));
+  expect(f1.vertices[0]).toStrictEqual(new Point3(0.25, 0.5, 0.75));
+  expect(f1.vertices[0]).toBe(v1orig); // the vertices don't change
   expect(f1.numVert).toBe(1);
 
   // add a second vertex
   const v2 = new Vector4(-21, 12, 6, -6);
   f1.addVertex(v2);
-  expect(f1.points[1]).toStrictEqual(new Point3(3.5, -2, -1));
+  expect(f1.vertices[1]).toStrictEqual(new Point3(3.5, -2, -1));
   expect(f1.numVert).toBe(2);
-});
-
-test('getPoint()', () => {
-  const f1 = new FormPoly();
-
-  // get point
-  expect(f1.getPoint(0)).toEqual({ x: undefined, y: undefined, z: undefined });
-  expect(f1.getPoint(1)).toEqual({ x: undefined, y: undefined, z: undefined });
-
-  // add vertex
-  const v1 = new Vector4(1, 2, 3, 4);
-  f1.addVertex(v1);
-
-  // get point
-  expect(f1.getPoint(0)).toStrictEqual(new Point3(0.25, 0.5, 0.75));
-  expect(f1.getPoint(1)).toEqual({ x: undefined, y: undefined, z: undefined });
-
-  // add second vertex
-  const v2 = new Vector4(-21, 12, 6, -6);
-  f1.addVertex(v2);
-
-  /// get point
-  expect(f1.getPoint(0)).toStrictEqual(new Point3(0.25, 0.5, 0.75));
-  expect(f1.getPoint(1)).toStrictEqual(new Point3(3.5, -2, -1));
+  expect(f1.vertices[0]).toBe(v2orig); // the vertices don't change
 });
