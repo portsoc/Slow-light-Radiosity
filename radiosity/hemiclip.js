@@ -52,7 +52,6 @@ export default class HemiClip extends FormClip {
 
     this.u.normalize();
     this.v = this.u.cross(this.n);
-    return this;
   }
 
   buildTransform(u, v, n) {
