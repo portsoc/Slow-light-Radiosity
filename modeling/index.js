@@ -9,6 +9,9 @@ export { subdivision };
 import * as cube from './cube.js';
 export { cube };
 
+import * as singleFace from './singleface.js';
+export { singleFace };
+
 import * as coordinates from './coordinates.js';
 export { coordinates };
 
