@@ -1,10 +1,5 @@
 import FormClipEdge from '../../radiosity/formclipedge.js';
-import HemiClip, { FACES } from '../../radiosity/hemiclip.js';
 import Vector4 from '../../radiosity/vector4.js';
-import Vector3 from '../../radiosity/vector3.js';
-import Vertex3 from '../../radiosity/vertex3.js';
-import Point3 from '../../radiosity/point3.js';
-import Patch3 from '../../radiosity/patch3.js';
 
 test('constructor', () => {
   const n1 = new Vector4(1, 2, 3, 4).normalize();
@@ -66,6 +61,11 @@ test('intersect()', () => {
   expect(fce1.intersect(s2, e2)).toStrictEqual(new Vector4(0, 2, 0, 0));
   expect(fce2.intersect(s2, e2)).toStrictEqual(new Vector4(-2, 2, 0, 0));
   expect(fce3.intersect(s2, e2)).toStrictEqual(new Vector4(-1, 2, 0, 0));
+
+  // intersecting the line with the X axis (normal at Y) returns end of line
+  const ny = new Vector4(0, 1, 0, 0).normalize();
+  const fcey = new FormClipEdge(ny);
+  expect(fcey.intersect(s, e)).toStrictEqual(new Vector4(2, 2, 0, 0));
 });
 
 describe('clip(), output(), close()', () => {
