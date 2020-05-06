@@ -24,9 +24,9 @@ test('addVertex()', () => {
   expect(f1.numVert).toBe(1);
 
   // add a second vertex
-  const v2 = new Vector4(-21, 12, 6, -6);
+  const v2 = new Vector4(-11, -12, 6, -16);
   f1.addVertex(v2);
-  expect(f1.vertices[1]).toStrictEqual(new Point3(3.5, -2, -1));
+  expect(f1.vertices[1]).toStrictEqual(new Point3(0.6875, 0.75, -0.375));
   expect(f1.numVert).toBe(2);
   expect(f1.vertices[0]).toBe(v2orig); // the vertices don't change
 });
