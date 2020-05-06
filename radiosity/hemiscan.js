@@ -4,7 +4,7 @@ import { TOP } from './hemiclip.js';
 
 export class FormCellInfo {
   reset() {
-    this.depth = 0;      // Polygon cell depth
+    this.depth = Infinity;      // Polygon cell depth
     this.polyId = null;  // Polygon identifier
   }
 }
@@ -34,7 +34,7 @@ export default class HemiScan extends FormScan {
     }
   }
 
-  drawEdgeList(poly, polyId) {
+  drawEdgeList(polyId) {
     for (let y = this.yMin; y < this.yMax; y++) {
       const edge = this.edgeList[y];
 
