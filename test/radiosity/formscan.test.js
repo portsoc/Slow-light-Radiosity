@@ -3,147 +3,11 @@ import FormPoly from '../../radiosity/formpoly.js';
 import Vector4 from '../../radiosity/vector4.js';
 
 test('constructor()', () => {
-  const resolution = 120;
+  const resolution = 10;
   const fs = new FormScan(resolution);
 
   expect(fs.resolution).toBe(resolution);
   expect(fs.edgeList.length).toBe(resolution);
-});
-
-test('getVertexInfo()', () => {
-  const resolution = 120;
-  const fs = new FormScan(resolution);
-
-  // set up FormPoly
-  const poly = new FormPoly();
-  poly.addVertex(new Vector4(9, 10, 11, 12));
-  poly.addVertex(new Vector4(1, 2, 3, 4));
-  poly.addVertex(new Vector4(5, 6, 7, 8));
-  poly.addVertex(new Vector4(13, 14, 15, 16));
-
-  fs.getVertexInfo(poly);
-  expect(fs.numVert).toBe(poly.numVert);
-  expect(fs.yMin).toBe(60);
-  expect(fs.yMax).toBe(105);
-  expect(fs.vInfo).toMatchObject([
-    {
-      faceX: 90,
-      faceY: 100,
-      pos: { x: 90, y: 100, z: 0.9166666666666666 },
-    },
-    {
-      faceX: 30,
-      faceY: 60,
-      pos: { x: 30, y: 60, z: 0.75 },
-    },
-    {
-      faceX: 75,
-      faceY: 90,
-      pos: { x: 75, y: 90, z: 0.875 },
-    },
-    {
-      faceX: 97,
-      faceY: 105,
-      pos: { x: 97.5, y: 105, z: 0.9375 },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-  ]);
-});
-
-test('scanEdges()', () => {
-  const resolution = 12;
-  const fs = new FormScan(resolution);
-
-  // set up FormPoly
-  const poly = new FormPoly();
-  poly.addVertex(new Vector4(9, 10, 11, 12));
-  poly.addVertex(new Vector4(1, 2, 3, 4));
-  poly.addVertex(new Vector4(5, 6, 7, 8));
-  poly.addVertex(new Vector4(13, 14, 15, 16));
-  fs.getVertexInfo(poly);
-
-  fs.scanEdges();
-  expect(fs.vInfo).toMatchObject([
-    {
-      faceX: 9,
-      faceY: 10,
-      pos: { x: 9, y: 10, z: 0.9166666666666666 },
-    },
-    {
-      faceX: 3,
-      faceY: 6,
-      pos: { x: 3, y: 6, z: 0.75 },
-    },
-    {
-      faceX: 7,
-      faceY: 9,
-      pos: { x: 7.5, y: 9, z: 0.875 },
-    },
-    {
-      faceX: 9,
-      faceY: 10,
-      pos: { x: 9.75, y: 10.5, z: 0.9375 },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-    {
-      faceX: null,
-      faceY: null,
-      pos: { x: undefined, y: undefined, z: undefined },
-    },
-  ]);
 
   expect(fs.edgeList).toMatchObject([
     {
@@ -170,18 +34,13 @@ test('scanEdges()', () => {
       start: { x: null, z: null },
       end: { x: null, z: null },
     },
-    { start: { x: 3, z: 0.75 }, end: { x: 3, z: 0.75 } },
     {
-      start: { x: 4.5, z: 0.7916666666666666 },
-      end: { x: 4.5, z: 0.7916666666666666 },
+      start: { x: null, z: null },
+      end: { x: null, z: null },
     },
     {
-      start: { x: 6, z: 0.8333333333333333 },
-      end: { x: 6, z: 0.8333333333333333 },
-    },
-    {
-      start: { x: 7.5, z: 0.8749999999999999 },
-      end: { x: 7.5, z: 0.875 },
+      start: { x: null, z: null },
+      end: { x: null, z: null },
     },
     {
       start: { x: null, z: null },
@@ -194,29 +53,107 @@ test('scanEdges()', () => {
   ]);
 });
 
+test('getVertexInfo()', () => {
+  const resolution = 100;
+  const fs = new FormScan(resolution);
+
+  // set up FormPoly
+  const poly = new FormPoly();
+
+  // use w=1 so the projected points have the same coordinates
+  poly.addVertex(new Vector4(0.1, 0.4, 1, 1));
+  poly.addVertex(new Vector4(0.3, 0.2, 1, 1));
+  poly.addVertex(new Vector4(0.8005, 0.7005, 2, 1));
+  poly.addVertex(new Vector4(0.6005, 0.9005, 2, 1));
+
+  fs.getVertexInfo(poly);
+  expect(fs.numVert).toBe(poly.numVert);
+  expect(fs.yMin).toBe(20);
+  expect(fs.yMax).toBe(90);
+
+  compareVertInfo(fs.vInfo[0], 10, 40, 10, 40, 1, fs);
+  compareVertInfo(fs.vInfo[1], 30, 20, 30, 20, 1, fs);
+  compareVertInfo(fs.vInfo[2], 80, 70, 80.05, 70.05, 2, fs);
+  compareVertInfo(fs.vInfo[3], 60, 90, 60.05, 90.05, 2, fs);
+
+  expect(fs.vInfo[4]).toMatchObject({ faceX: null, faceY: null, pos: { x: undefined, y: undefined, z: undefined } });
+});
+
+test('scanEdges()', () => {
+  const resolution = 10;
+  const fs = new FormScan(resolution);
+
+  // set up FormPoly
+  const poly = new FormPoly();
+  poly.addVertex(new Vector4(0.1, 0.4, 1, 1));
+  poly.addVertex(new Vector4(0.3, 0.2, 1, 1));
+  poly.addVertex(new Vector4(0.8, 0.7, 2, 1));
+  poly.addVertex(new Vector4(0.6, 0.9, 2, 1));
+
+  fs.getVertexInfo(poly);
+  fs.scanEdges();
+
+  compareVertInfo(fs.vInfo[0], 1, 4, 1, 4, 1, fs);
+  compareVertInfo(fs.vInfo[1], 3, 2, 3, 2, 1, fs);
+  compareVertInfo(fs.vInfo[2], 8, 7, 8, 7, 2, fs);
+  compareVertInfo(fs.vInfo[3], 6, 9, 6, 9, 2, fs);
+
+  expect(fs.vInfo[4]).toMatchObject({ faceX: null, faceY: null, pos: { x: undefined, y: undefined, z: undefined } });
+
+  // the edges should be scanned like this:
+  // y:    x:      z:
+  // 2-3   30-20   1-1
+  // 2-6   30-70   1-2
+  // 7-8   80-70   2-2
+  // 4-8   10-50   1-2
+
+  expect(fs.edgeList[0]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+  expect(fs.edgeList[1]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+  compareEdgeInfo(fs.edgeList[2], 3, 1, 3, 1);
+  compareEdgeInfo(fs.edgeList[3], 2, 1, 4, 1.2);
+  compareEdgeInfo(fs.edgeList[4], 5, 1.4, 1, 1);
+  compareEdgeInfo(fs.edgeList[5], 6, 1.6, 2, 1.2);
+  compareEdgeInfo(fs.edgeList[6], 7, 1.8, 3, 1.4);
+  compareEdgeInfo(fs.edgeList[7], 8, 2, 4, 1.6);
+  compareEdgeInfo(fs.edgeList[8], 7, 2, 5, 1.8);
+  compareEdgeInfo(fs.edgeList[9], null, null, null, null);
+  expect(fs.edgeList[9]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+});
+
 test('drawEdgeList()', () => {
   const fs = new FormScan(10);
 
-  function drawEdgeList() {
-    fs.drawEdgeList();
-  }
-
-  expect(drawEdgeList).toThrowError(TypeError);
+  expect(() => fs.drawEdgeList()).toThrowError(TypeError);
 });
 
 test('scan()', () => {
   const resolution = 12;
   const fs = new FormScan(resolution);
 
-  // ? Empty FormPoly
-
-  // set up FormPoly
+  // Empty FormPoly
   const poly = new FormPoly();
+  expect().toBeUndefined();
 
-  expect(fs.scan(poly, 2)).toBeUndefined();
-
-  // ? Non-empty FormPoly
-
-  // maybe need to test the function in HemiScan to avoid the
-  // draxEdgeList() error
+  // Non-empty FormPoly is fully tested in HemiScan
+  poly.addVertex(new Vector4(0.1, 0.4, 1, 1));
+  expect(() => fs.scan(poly, 2)).toThrowError(TypeError);
 });
+
+function compareVertInfo(vInfo, faceX, faceY, x, y, z, fs) {
+  expect(Number.isInteger(vInfo.faceX)).toBe(true);
+  expect(Number.isInteger(vInfo.faceY)).toBe(true);
+  expect(vInfo.faceY).toBeGreaterThanOrEqual(fs.yMin);
+  expect(vInfo.faceY).toBeLessThanOrEqual(fs.yMax);
+  expect(vInfo.faceX).toBe(faceX);
+  expect(vInfo.faceY).toBe(faceY);
+  expect(vInfo.pos.x).toBeCloseTo(x, 5);
+  expect(vInfo.pos.y).toBeCloseTo(y, 5);
+  expect(vInfo.pos.z).toBeCloseTo(z, 5);
+}
+
+function compareEdgeInfo(eInfo, x1, z1, x2, z2) {
+  if (x1 == null) expect(eInfo.start.x).toBeNull(); else expect(eInfo.start.x).toBeCloseTo(x1, 5);
+  if (z1 == null) expect(eInfo.start.z).toBeNull(); else expect(eInfo.start.z).toBeCloseTo(z1, 5);
+  if (x2 == null) expect(eInfo.end.x).toBeNull(); else expect(eInfo.end.x).toBeCloseTo(x2, 5);
+  if (z2 == null) expect(eInfo.end.z).toBeNull(); else expect(eInfo.end.z).toBeCloseTo(z2, 5);
+}
