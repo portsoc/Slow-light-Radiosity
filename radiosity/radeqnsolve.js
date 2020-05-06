@@ -68,7 +68,7 @@ export default class RadEqnSolve {
           patch.exitance = emit;
 
           // Update total envnironment flux
-          this.totalFlux = patch.unsentFlux();
+          this.totalFlux += patch.unsentFlux;
 
           // Walk the element list
           for (const element of patch.elements) {
