@@ -85,7 +85,7 @@ export default class RadEqnSolve {
     }
   }
 
-  updateUnsetStats() {
+  updateUnsentStats() {
     // Initialize unset fluw values
     this.totalUnsent = 0;
     let maxUnsent = 0;
@@ -97,7 +97,7 @@ export default class RadEqnSolve {
         // Walk the patch list
         for (const patch of surface.patches) {
           // Get current unsent flux value
-          const currentUnsent = patch.unsetFlux;
+          const currentUnsent = patch.unsentFlux;
 
           // Update total unsent flux
           this.totalUnsent += currentUnsent;
