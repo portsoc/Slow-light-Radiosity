@@ -2,21 +2,22 @@ import { FormEdgeInfo } from '../../radiosity/formscan.js';
 
 test('reset()', () => {
   const fei = new FormEdgeInfo();
+  expect(fei.start).toStrictEqual({ x: null, z: null });
+  expect(fei.end).toStrictEqual({ x: null, z: null });
+
+  const start = fei.start;
+  const end = fei.end;
 
   // set up
-  const start = {
-    x: 0,
-    z: -1,
-  };
-  const end = {
-    x: 5,
-    z: 2,
-  };
-  fei.start = start;
-  fei.end = end;
+  fei.start.x = 0;
+  fei.start.z = -1;
+  fei.end.x = 5;
+  fei.end.z = 2;
 
   expect(fei.reset()).toBe(fei);
+  expect(fei.start).toBe(start);
   expect(fei.start).toStrictEqual({ x: null, z: null });
+  expect(fei.end).toBe(end);
   expect(fei.end).toStrictEqual({ x: null, z: null });
 });
 
@@ -42,11 +43,11 @@ test('add()', () => {
 
   // set the end, the start is unchanged
   expect(fei.add(end.x, end.z)).toBe(fei);
-  expect(fei.end).toStrictEqual(end);
   expect(fei.start).toStrictEqual(start);
+  expect(fei.end).toStrictEqual(end);
 
   // set the end again, the start is still unchanged
   expect(fei.add(end2.x, end2.z)).toBe(fei);
-  expect(fei.end).toStrictEqual(end2);
   expect(fei.start).toStrictEqual(start);
+  expect(fei.end).toStrictEqual(end2);
 });
