@@ -163,9 +163,6 @@ export default class RadEqnSolve {
           const unsent = patch.parentSurface.reflectance;
           unsent.scale(patch.area);
           sum.add(unsent);
-
-          // Update sum of patch areas
-          this.totalArea += patch.area;
         }
       }
     }
