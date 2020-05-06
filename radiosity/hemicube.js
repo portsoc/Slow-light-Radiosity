@@ -20,6 +20,8 @@ export default class HemiCube {
     ffArray.fill(0, 0, numElements);
 
     // Project environment onto each hemi-cube face
+    // we project the whole environment on each side in turn,
+    // adding the contributions in ffArray
     for (const faceId of FACES) {
       // Update view transformation matrix
       this.clipper.updateView(faceId);
