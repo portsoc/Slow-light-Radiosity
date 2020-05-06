@@ -118,6 +118,42 @@ test('scanEdges()', () => {
   compareEdgeInfo(fs.edgeList[8], 7, 2, 5, 1.8);
   compareEdgeInfo(fs.edgeList[9], null, null, null, null);
   expect(fs.edgeList[9]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+
+  // one vertex moved
+  poly.reset();
+  poly.addVertex(new Vector4(0.2, 0.7, 1, 1));
+  poly.addVertex(new Vector4(0.3, 0.2, 1, 1));
+  poly.addVertex(new Vector4(0.8, 0.7, 2, 1));
+  poly.addVertex(new Vector4(0.6, 0.9, 2, 1));
+
+  fs.getVertexInfo(poly);
+  fs.scanEdges();
+
+  compareVertInfo(fs.vInfo[0], 2, 7, 2, 7, 1, fs);
+  compareVertInfo(fs.vInfo[1], 3, 2, 3, 2, 1, fs);
+  compareVertInfo(fs.vInfo[2], 8, 7, 8, 7, 2, fs);
+  compareVertInfo(fs.vInfo[3], 6, 9, 6, 9, 2, fs);
+
+  expect(fs.vInfo[4]).toMatchObject({ faceX: null, faceY: null, pos: { x: undefined, y: undefined, z: undefined } });
+
+  // the edges should be scanned like this:
+  // y:    x:    z:
+  // 2-7   3-2   1-1
+  // 2-7   3-8   1-2
+  // 7-9   8-6   2-2
+  // 7-9   2-6   1-2
+
+  expect(fs.edgeList[0]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+  expect(fs.edgeList[1]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
+  compareEdgeInfo(fs.edgeList[2], 3, 1, 3, 1);
+  compareEdgeInfo(fs.edgeList[3], 2.8, 1, 4, 1.2);
+  compareEdgeInfo(fs.edgeList[4], 2.6, 1, 5, 1.4);
+  compareEdgeInfo(fs.edgeList[5], 2.4, 1, 6, 1.6);
+  compareEdgeInfo(fs.edgeList[6], 2.2, 1, 7, 1.8);
+  compareEdgeInfo(fs.edgeList[7], 8, 2, 2, 1);
+  compareEdgeInfo(fs.edgeList[8], 7, 2, 4, 1.5);
+  compareEdgeInfo(fs.edgeList[9], null, null, null, null);
+  expect(fs.edgeList[9]).toMatchObject({ start: { x: null, z: null }, end: { x: null, z: null } });
 });
 
 test('drawEdgeList()', () => {

@@ -132,7 +132,7 @@ export default class FormScan {
 
     this.getVertexInfo(poly);
     this.scanEdges();
-    this.drawEdgeList(poly, polyId);
+    this.drawEdgeList(polyId);
     return this;
   }
 }
