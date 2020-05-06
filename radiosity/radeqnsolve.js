@@ -40,12 +40,14 @@ export default class RadEqnSolve {
 
   disableAmbient() {
     this.ambFlag = false;
+    return this;
   }
 
   disableOverShoot() {}
 
   enableAmbient() {
     this.ambFlag = true;
+    return this;
   }
 
   enableOverShoot() {}
@@ -83,6 +85,8 @@ export default class RadEqnSolve {
         }
       }
     }
+
+    return this;
   }
 
   updateUnsentStats() {
@@ -117,6 +121,8 @@ export default class RadEqnSolve {
     } else {
       this.convergence = 0;
     }
+
+    return this;
   }
 
   calcInterReflect() {
@@ -148,6 +154,8 @@ export default class RadEqnSolve {
     this.irf.r = 1 / (1 - sum.r);
     this.irf.g = 1 / (1 - sum.g);
     this.irf.b = 1 / (1 - sum.b);
+
+    return this;
   }
 
   calcAmbient() {
@@ -174,5 +182,7 @@ export default class RadEqnSolve {
     this.ambient.r = this.irf.r * sum.r;
     this.ambient.g = this.irf.g * sum.g;
     this.ambient.b = this.irf.b * sum.b;
+
+    return this;
   }
 }
