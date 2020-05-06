@@ -2,7 +2,7 @@ import FormScan from './formscan.js';
 import HemiDelta from './hemidelta.js';
 import { TOP } from './hemiclip.js';
 
-class FormCellInfo {
+export class FormCellInfo {
   reset() {
     this.depth = 0;      // Polygon cell depth
     this.polyId = null;  // Polygon identifier
