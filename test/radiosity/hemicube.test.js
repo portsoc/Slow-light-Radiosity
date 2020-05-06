@@ -11,6 +11,8 @@ test('book section 5.18.1', () => {
   // Allocate form factor array
   const ffArray = new Array(env.elementCount);
 
+  const results = [];
+
   // Calculate and display form factors from each patch to each other
   for (const instance of env.instances) {
     for (const surface of instance.surfaces) {
@@ -20,15 +22,17 @@ test('book section 5.18.1', () => {
 
         // ffArray is indexed by element.number
         for (let i = 0; i < env.elementCount; i++) {
-          const samePatch = patch.elements[0].number === i;
-          if (samePatch) {
-            expect(ffArray[i]).toBe(0);
-          } else {
-            // as shown in the book, page 341
-            expect(ffArray[i]).toBeCloseTo(0.24, 2);
-          }
+          results.push(ffArray[i]);
         }
       }
     }
   }
+
+  expect(results).toHaveLength(4);
+
+  // check the results against those reported in the book, page 341
+  expect(results[0]).toBe(0); // first patch against its own element
+  expect(results[1]).toBeCloseTo(0.24, 2); // first patch against the other
+  expect(results[2]).toBeCloseTo(0.24, 2); // second patch against the other
+  expect(results[3]).toBe(0); // second patch against its own element
 });
