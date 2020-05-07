@@ -52,7 +52,11 @@ export default class ProgRad extends RadEqnSolve {
     }
 
     // Update unsent flux statistics
-    this.updateUnsetStats();
+    this.updateUnsentStats();
+
+    // ! DEBUG
+    console.log(this.max);
+
 
     // Check for convergence
     if (this.convergence < this.stopCriterion) {
@@ -61,7 +65,7 @@ export default class ProgRad extends RadEqnSolve {
     }
 
     // Calculate form factors
-    this.ffd.calculateFormFactors(this.max, this.env.instances, this.ffArray, this.env.numberElements());
+    this.ffd.calculateFormFactors(this.max, this.env, this.ffArray);
 
     if (this.overFlag) this.calcOverShoot();
 
@@ -190,7 +194,7 @@ export default class ProgRad extends RadEqnSolve {
     }
 
     // Get shooting patch reflectance
-    const spr = this.max.reflectance;
+    const spr = this.max.parentSurface.reflectance;
 
     // Multiply overshooting parameters by shootingpatch reflectance
     this.overshoot.r *= spr.r;
