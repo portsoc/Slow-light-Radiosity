@@ -1,5 +1,6 @@
 import * as THREE from '../lib/three.module.js';
-import createRoom from '../modeling/test-models/room1.js';
+// import createRoom as createEnv from '../modeling/test-models/room1.js';
+import { createTwoCubesInRoom as createEnv } from '../modeling/test-models/two-cubes.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
@@ -18,7 +19,7 @@ camera.position.z = 5;
 
 // * Room
 
-const roomEnvironment = createRoom(2);
+const roomEnvironment = createEnv(2);
 
 Modeling.coordinates.xyFloorToView(roomEnvironment);
 
@@ -75,6 +76,10 @@ for (const instance of roomEnvironment.instances) {
   const material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
     // wireframe: true,
+  });
+
+  document.addEventListener('keydown', (e) => {
+    if (e.key === 'w') material.wireframe = !material.wireframe;
   });
 
   // * Add to scene
