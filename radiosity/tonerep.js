@@ -44,7 +44,7 @@ export default class ToneRep {
       }
     }
 
-    // Chekc for non-zero maximum vertex exitance
+    // Check for non-zero maximum vertex exitance
     if (rMax > MIN_VALUE) {
       // Walk the instance list
       for (const instance of instanceArray) {
