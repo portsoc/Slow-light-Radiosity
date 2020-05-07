@@ -43,18 +43,20 @@ for (const instance of roomEnvironment.instances) {
 
   // * Read faces
   for (const surface of instance.surfaces) {
-    let face;
+    const color = new Rad.Spectra(surface.reflectance);
+    color.add(surface.emittance);
+
     for (const patch of surface.patches) {
       for (const element of patch.elements) {
-        face = new THREE.Face3(
+        let face = new THREE.Face3(
           element.vertices[0]._orderIndex,
           element.vertices[1]._orderIndex,
           element.vertices[2]._orderIndex,
         );
         face.color.setRGB(
-          surface.reflectance.r,
-          surface.reflectance.g,
-          surface.reflectance.b,
+          color.r,
+          color.g,
+          color.b,
         );
         geometry.faces.push(face);
         if (element.isQuad) {
@@ -64,9 +66,9 @@ for (const instance of roomEnvironment.instances) {
             element.vertices[3]._orderIndex,
           );
           face.color.setRGB(
-            surface.reflectance.r,
-            surface.reflectance.g,
-            surface.reflectance.b,
+            color.r,
+            color.g,
+            color.b,
           );
           geometry.faces.push(face);
         }
