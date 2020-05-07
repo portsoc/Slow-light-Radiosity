@@ -54,6 +54,7 @@ export default class RadEqnSolve {
 
   shade(instanceArray) {
     this.tone.shade(instanceArray);
+    return this;
   }
 
   initExitance() {
