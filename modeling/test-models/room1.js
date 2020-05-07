@@ -141,7 +141,7 @@ function makeBench() {
   s3patches.push(new Rad.Patch3([v[16], v[20], v[28], v[24]], p7elements));
   s3patches.push(new Rad.Patch3([v[19], v[27], v[28], v[20]], p8elements));
   s3patches.push(new Rad.Patch3([v[14], v[17], v[23], v[22]], p9elements));
-  s3patches.push(new Rad.Patch3([v[10], v[27], v[19], v[18]], p10elements));
+  s3patches.push(new Rad.Patch3([v[26], v[27], v[19], v[18]], p10elements)); // fixed v10 to 26 so surfaces don't share vertices
   s3patches.push(new Rad.Patch3([v[14], v[22], v[25], v[15]], p11elements));
   s3patches.push(new Rad.Patch3([v[21], v[15], v[25], v[29]], p12elements));
   s3patches.push(new Rad.Patch3([v[26], v[18], v[21], v[29]], p13elements));
@@ -159,7 +159,7 @@ function makeLight() {
   const y = 8;
   const z = 0.2;
 
-  const retval = Cube.unitCubeMultiSurface();
+  const retval = Cube.unitCubeMultiSurface([1, 5, 1]);
 
   // The sides are in order of front (standing on x), back, right, left, top, bottom.
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // front
