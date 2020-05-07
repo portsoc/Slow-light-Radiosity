@@ -54,10 +54,6 @@ export default class ProgRad extends RadEqnSolve {
     // Update unsent flux statistics
     this.updateUnsentStats();
 
-    // ! DEBUG
-    console.log(this.max);
-
-
     // Check for convergence
     if (this.convergence < this.stopCriterion) {
       if (this.ambFlag) this.addAmbient();
