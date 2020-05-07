@@ -1,4 +1,3 @@
-import ToneRep from './tonerep.js';
 import Spectra from './spectra.js';
 
 const MIN_VALUE = 1e-10;
@@ -14,7 +13,6 @@ export default class RadEqnSolve {
     this.stopCriterion = 0.001;      // Stopping criterion
     this.convergence = null;         // Convergence
     this.max = null;                 // Maximum unsent flux patch
-    this.tone = new ToneRep();       // Tone reproduction object
     this.env = null;                 // Environment
     this.ambient = new Spectra();    // Ambient exitance
     this.irf = new Spectra();        // Interreflection factors
@@ -29,6 +27,7 @@ export default class RadEqnSolve {
   }
 
   open(env) {
+    this.env = env;
     return true;
   }
 
@@ -51,11 +50,6 @@ export default class RadEqnSolve {
   }
 
   enableOverShoot() {}
-
-  shade(instanceArray) {
-    this.tone.shade(instanceArray);
-    return this;
-  }
 
   initExitance() {
     // Walk the instance list

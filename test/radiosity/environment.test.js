@@ -149,3 +149,5 @@ describe('with a non-trivial environment', () => {
     );
   });
 });
+
+test.todo('interpolateVertexExitances()');

@@ -33,11 +33,8 @@ export default class ProgRad extends RadEqnSolve {
     this.ffArray = null;
 
     if (this.env != null) {
-      // Interpolate vertex exitances
-      this.tone.interpolate(this.env.instances);
-
-      // Normalize vertex exitances
-      this.tone.normalize(this.env.instances);
+      // progressive radiosity computes element exitance
+      this.env.interpolateVertexExitances();
     }
   }
 
