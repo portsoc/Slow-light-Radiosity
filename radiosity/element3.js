@@ -6,7 +6,7 @@ export default class Element3 {
     this.parentPatch = null;          // Parent patch
     this._area = null;                // Element area (computed once in getter)
     this._normal = null;              // Normal vector (computed once in getter)
-    this.exitance = new Spectra();   // Spectral exitance
+    this._exitance = new Spectra();   // Spectral exitance
 
     if (!Array.isArray(vertices) || ![3, 4].includes(vertices.length)) {
       throw new TypeError('Element must have 3 or 4 vertices');
@@ -43,5 +43,10 @@ export default class Element3 {
       this._normal = va.cross(vb).normalize();
     }
     return this._normal;
+  }
+
+  // exitance should not be reassigned
+  get exitance() {
+    return this._exitance;
   }
 }
