@@ -3,8 +3,8 @@ import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
 
 export default class ProgRad extends RadEqnSolve {
-  constructor(env) {
-    super(env);
+  constructor() {
+    super();
     this.overFlag = true;             // Overshoot flag
     this.ffArray = null;              // Form factor array
     this.ffd = new HemiCube();        // Form factor determination

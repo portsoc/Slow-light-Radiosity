@@ -4,20 +4,20 @@ import Spectra from './spectra.js';
 const MIN_VALUE = 1e-10;
 
 export default class RadEqnSolve {
-  constructor(env) {
-    this.totalArea = 0;             // Total patch area
-    this.totalFlux = 0;             // Total environment flux
-    this.totalUnsent = 0;           // Total unsent exitence
-    this.ambFlag = false;           // Ambient exitance flag
-    this.stepCount = 0;             // Step count
-    this.maxStep = 100;             // Maximum number of steps
-    this.stopCriterion = 0.001;     // Stopping criterion
-    this.convergence = null;        // Convergence
-    this.max = null;                // Maximum unsent flux patch
-    this.tone = new ToneRep();      // Tone reproduction object
-    this.env = env;                 // Environment
-    this.ambient = new Spectra();   // Ambient exitance
-    this.irf = new Spectra();       // Interreflection factors
+  constructor() {
+    this.totalArea = 0;              // Total patch area
+    this.totalFlux = 0;              // Total environment flux
+    this.totalUnsent = 0;            // Total unsent exitence
+    this.ambFlag = false;            // Ambient exitance flag
+    this.stepCount = 0;              // Step count
+    this.maxStep = 100;              // Maximum number of steps
+    this.stopCriterion = 0.001;      // Stopping criterion
+    this.convergence = null;         // Convergence
+    this.max = null;                 // Maximum unsent flux patch
+    this.tone = new ToneRep();       // Tone reproduction object
+    this.env = null;                 // Environment
+    this.ambient = new Spectra();    // Ambient exitance
+    this.irf = new Spectra();        // Interreflection factors
   }
 
   calculate() {
