@@ -45,6 +45,14 @@ export function unitCube(reflectance, emittance, subdivide = 1) {
  * Create a unit cube whose every side is a separate surface;
  * reflectances and emittances are all default (black) Spectra().
  * Each side will be subdivided into `subdivide` x `subdivide` equal elements.
+ * The sides are in order of front (standing on x), back, right, left, top, bottom.
+ * z ^ 7-----6
+ *   |/|    /|
+ *   4-+---5 |
+ *   | |/y | |
+ *   | 3---+-2
+ *   |/    |/
+ *   0-----1 --> x
  */
 export function unitCubeMultiSurface(subdivide = 1) {
   const p = [

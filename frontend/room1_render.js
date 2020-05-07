@@ -1,6 +1,6 @@
 import * as THREE from '../lib/three.module.js';
-// import createRoom as createEnv from '../modeling/test-models/room1.js';
-import { createTwoCubesInRoom as createEnv } from '../modeling/test-models/two-cubes.js';
+import createEnv from '../modeling/test-models/room1.js';
+// import { createTwoCubesInRoom as createEnv } from '../modeling/test-models/two-cubes.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
@@ -85,6 +85,16 @@ for (const instance of roomEnvironment.instances) {
   // * Add to scene
   scene.add(new THREE.Mesh(geometry, material));
 }
+
+// * Axes
+
+const axesHelper = new THREE.AxesHelper(1);
+// rotate to agree with model coordinates
+axesHelper.rotation.x = -Math.PI / 2;
+axesHelper.position.x = -0.5;
+axesHelper.position.y = -0.5;
+axesHelper.position.z = 0.5;
+scene.add(axesHelper);
 
 // * Controls
 
