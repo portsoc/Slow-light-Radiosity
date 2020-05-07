@@ -8,4 +8,4 @@ test('todo', () => {
   expect(() => Cube.unitCubeMultiSurface()).not.toThrow();
 });
 
-test.todo('more');
+test.todo('more, e.g. cube with different x,y,z subdivisions');

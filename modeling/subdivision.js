@@ -2,18 +2,39 @@ import * as Rad from '../radiosity/index.js';
 
 /*
  * Take the quad defined by the given array of 4 vertices,
- * and generate `size` x `size` subdivisions as Element3 instances.
+ * and generate `sizes[0]` x `sizes[1]` subdivisions as Element3 instances.
+ * If sizes is a single number, it will be used for both directions.
  * The given vertices form the corners of the subdivisions and
  * are used by the corner elements.
+ *
+ * sizes=[4,2]
+ * 3 -+--+--+- 2
+ * |  |  |  |  |
+ * +--+--+--+--+
+ * |  |  |  |  |
+ * 0 -+--+--+- 1
+ *
+ * sizes=[1,3]
+ * 3 -- 2
+ * |    |
+ * +----+
+ * |    |
+ * +----+
+ * |    |
+ * 0 -- 1
  */
-export function quad(vertices, size = 1) {
-  if (size <= 1) return [new Rad.Element3(vertices)];
+export function quad(vertices, sizes = [1, 1]) {
+  if (typeof sizes === 'number') sizes = [sizes, sizes];
 
-  const grid = generateVertexGrid(vertices, size);
+  const [sizex, sizey] = sizes;
+
+  if (sizex <= 1 && sizey <= 1) return [new Rad.Element3(vertices)];
+
+  const grid = generateVertexGrid(vertices, sizex, sizey);
   const retval = [];
 
-  for (let x = 0; x < size; x += 1) {
-    for (let y = 0; y < size; y += 1) {
+  for (let x = 0; x < sizex; x += 1) {
+    for (let y = 0; y < sizey; y += 1) {
       retval.push(new Rad.Element3([
         grid[x][y],
         grid[x + 1][y],
@@ -31,29 +52,29 @@ export function quad(vertices, size = 1) {
  *
  * ^ y
  * |
- * 0,n .... n,n
+ * 0,ny ... nx,ny
  * :        :
  * :        :
- * 0,0 .... n,0 --> x
+ * 0,0 .... nx,0 --> x
  */
-function generateVertexGrid(corners, n) {
-  // start with empty (n+1 x n+1) 2D array
+function generateVertexGrid(corners, nx, ny) {
+  // start with empty (nx+1 x ny+1) 2D array
   const grid = [];
-  for (let i = 0; i <= n; i += 1) grid[i] = [];
+  for (let i = 0; i <= nx; i += 1) grid[i] = [];
 
   // put corners in
   grid[0][0] = corners[0];
-  grid[n][0] = corners[1];
-  grid[n][n] = corners[2];
-  grid[0][n] = corners[3];
+  grid[nx][0] = corners[1];
+  grid[nx][ny] = corners[2];
+  grid[0][ny] = corners[3];
 
   // fill in left and right side
-  gridVLine(0, n, grid);
-  gridVLine(n, n, grid);
+  gridVLine(0, ny, grid);
+  gridVLine(nx, ny, grid);
 
   // fill in the rest
-  for (let i = 0; i <= n; i += 1) {
-    gridHLine(i, n, grid);
+  for (let i = 0; i <= ny; i += 1) {
+    gridHLine(i, nx, grid);
   }
 
   return grid;

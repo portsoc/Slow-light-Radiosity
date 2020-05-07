@@ -12,7 +12,13 @@ import * as sub from './subdivision.js';
  *   |/    |/
  *   0-----1 --> x
  */
-export function unitCube(reflectance, emittance, subdivide = 1) {
+export function unitCube(reflectance, emittance, subdivide = [1, 1, 1]) {
+  if (typeof subdivide === 'number') {
+    subdivide = [subdivide, subdivide, subdivide]; // subdivision along the X,Y,Z axes
+  }
+
+  const [subx, suby, subz] = subdivide;
+
   const p = [
     new Rad.Point3(0, 0, 0),
     new Rad.Point3(1, 0, 0),
@@ -34,7 +40,16 @@ export function unitCube(reflectance, emittance, subdivide = 1) {
     [v[0], v[3], v[2], v[1]], // bottom
   ];
 
-  const patches = faces.map(face => new Rad.Patch3(face, sub.quad(face, subdivide)));
+  const subs = [
+    [subx, subz], // front
+    [subx, subz], // back
+    [suby, subz], // right
+    [subz, suby], // left
+    [subx, suby], // top
+    [suby, subx], // bottom
+  ];
+
+  const patches = faces.map((face, i) => new Rad.Patch3(face, sub.quad(face, subs[i])));
 
   const surface = new Rad.Surface3(reflectance, emittance, patches);
 
@@ -55,6 +70,12 @@ export function unitCube(reflectance, emittance, subdivide = 1) {
  *   0-----1 --> x
  */
 export function unitCubeMultiSurface(subdivide = 1) {
+  if (typeof subdivide === 'number') {
+    subdivide = [subdivide, subdivide, subdivide]; // subdivision along the X,Y,Z axes
+  }
+
+  const [subx, suby, subz] = subdivide;
+
   const p = [
     new Rad.Point3(0, 0, 0),
     new Rad.Point3(1, 0, 0),
@@ -67,12 +88,12 @@ export function unitCubeMultiSurface(subdivide = 1) {
   ];
 
   const surfaces = [
-    surfaceFromPoints([p[0], p[1], p[5], p[4]], subdivide), // front
-    surfaceFromPoints([p[2], p[3], p[7], p[6]], subdivide), // back
-    surfaceFromPoints([p[1], p[2], p[6], p[5]], subdivide), // right
-    surfaceFromPoints([p[0], p[4], p[7], p[3]], subdivide), // left
-    surfaceFromPoints([p[4], p[5], p[6], p[7]], subdivide), // top
-    surfaceFromPoints([p[0], p[3], p[2], p[1]], subdivide), // bottom
+    surfaceFromPoints([p[0], p[1], p[5], p[4]], [subx, subz]), // front
+    surfaceFromPoints([p[2], p[3], p[7], p[6]], [subx, subz]), // back
+    surfaceFromPoints([p[1], p[2], p[6], p[5]], [suby, subz]), // right
+    surfaceFromPoints([p[0], p[4], p[7], p[3]], [subz, suby]), // left
+    surfaceFromPoints([p[4], p[5], p[6], p[7]], [subx, suby]), // top
+    surfaceFromPoints([p[0], p[3], p[2], p[1]], [suby, subx]), // bottom
   ];
 
   return new Rad.Instance(surfaces);
