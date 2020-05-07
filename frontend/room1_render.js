@@ -20,6 +20,9 @@ camera.position.z = 5;
 // * Room
 
 const roomEnvironment = createEnv(2);
+if (!roomEnvironment.checkNoVerticesAreShared()) {
+  console.log('environment has vertices shared between surfaces and it should not!');
+}
 
 Modeling.coordinates.xyFloorToView(roomEnvironment);
 
