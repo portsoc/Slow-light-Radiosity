@@ -3,8 +3,8 @@ import RayCast from './raycast.js';
 import Spectra from './spectra.js';
 
 export default class RayRad extends RadEqnSolve {
-  constructor(env) {
-    super(env);
+  constructor() {
+    super();
     this.ffd = new RayCast();
   }
 
