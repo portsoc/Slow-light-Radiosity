@@ -4,9 +4,10 @@ import * as sub from './subdivision.js';
 /*
  * Create a new single face with side length 1 and the given reflectance/emittance.
  * The created face is in the XY plane and is facing upwards.
- * The face will be subdivided into `subdivide` x `subdivide` equal elements.
+ * The face will be subdivided into `subdivide[0]` x `subdivide[1]` equal elements.
+ * If subdivide is a single number, it will be used for both directions.
  */
-export function singleFace(reflectance, emittance, subdivide = 1) {
+export function singleFace(reflectance, emittance, subdivide = [1, 1]) {
   const p = [
     new Rad.Point3(0, 0, 0),
     new Rad.Point3(1, 0, 0),
