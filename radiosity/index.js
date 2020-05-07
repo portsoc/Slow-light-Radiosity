@@ -17,7 +17,6 @@ export { default as RayCast } from './raycast.js';
 export { default as RayRad } from './rayrad.js';
 export { default as Spectra } from './spectra.js';
 export { default as Surface3 } from './surface3.js';
-export { default as ToneRep } from './tonerep.js';
 export { default as Vector3 } from './vector3.js';
 export { default as Vector4 } from './vector4.js';
 export { default as Vertex3 } from './vertex3.js';

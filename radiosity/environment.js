@@ -77,6 +77,21 @@ export default class Environment {
     }
     return true;
   }
+
+  // interpolate vertex reflected exitances from their surrounding elements
+  interpolateVertexExitances() {
+    for (const instance of this.instances) {
+      for (const vertex of instance.vertices) {
+        vertex.exitance.reset();
+
+        // average surrounding element exitances
+        for (const element of vertex.elements) {
+          vertex.exitance.add(element.exitance);
+        }
+        vertex.exitance.scale(1 / vertex.elements.length);
+      }
+    }
+  }
 }
 
 function sum(array) {

@@ -1,5 +1,4 @@
 import RadEqnSolve from '../../radiosity/radeqnsolve.js';
-import ToneRep from '../../radiosity/tonerep.js';
 import Spectra from '../../radiosity/spectra.js';
 import Patch3 from '../../radiosity/patch3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
@@ -20,7 +19,6 @@ test('constructor', () => {
   expect(r.stopCriterion).toBe(0.001);
   expect(r.convergence).toBeNull();
   expect(r.max).toBeNull();
-  expect(r.tone).toStrictEqual(new ToneRep());
   expect(r.env).toBeNull();
   expect(r.ambient).toStrictEqual(new Spectra());
   expect(r.irf).toStrictEqual(new Spectra());
@@ -62,96 +60,6 @@ test('enableAmbient()', () => {
 
   expect(r.enableAmbient()).toBe(r);
   expect(r.ambFlag).toBe(true);
-});
-
-/*
- * ^ y
- * |
- * |       7 ----- 6 ----- 5
- * |       |   p   |   p   |
- * |       |   3   |   4   |
- * 9 ----- 8 ----- 3 ----- 4
- * |   p   |   p   |
- * |   1   |   2   |
- * 0 ----- 1 ----- 2  -> x
- */
-test('shade()', () => {
-  // ? Set up the environment
-
-  // Points
-  const p0 = new Point3(0, 0, 0);
-  const p1 = new Point3(1, 0, 0);
-  const p2 = new Point3(2, 0, 0);
-  const p3 = new Point3(2, 1, 0);
-  const p4 = new Point3(3, 1, 0);
-  const p5 = new Point3(3, 2, 0);
-  const p6 = new Point3(2, 2, 0);
-  const p7 = new Point3(1, 2, 0);
-  const p8 = new Point3(1, 1, 0);
-  const p9 = new Point3(0, 1, 0);
-
-  // Patches
-  const patch1 = new Patch3([
-    new Vertex3(p0),
-    new Vertex3(p1),
-    new Vertex3(p8),
-    new Vertex3(p9),
-  ]);
-  const patch2 = new Patch3([
-    new Vertex3(p1),
-    new Vertex3(p2),
-    new Vertex3(p3),
-    new Vertex3(p8),
-  ]);
-  const patch3 = new Patch3([
-    new Vertex3(p8),
-    new Vertex3(p3),
-    new Vertex3(p6),
-    new Vertex3(p7),
-  ]);
-  const patch4 = new Patch3([
-    new Vertex3(p3),
-    new Vertex3(p4),
-    new Vertex3(p5),
-    new Vertex3(p6),
-  ]);
-
-  // Surfaces
-  const surface1 = new Surface3(
-    new Spectra(0.1, 0.2, 0.3),
-    new Spectra(0.4, 0.5, 0.6),
-    [patch1, patch2],
-  );
-  const surface2 = new Surface3(
-    new Spectra(0.0, 1.0, 0.5),
-    new Spectra(0.9, 0.2, 0.7),
-    [patch3, patch4],
-  );
-
-  // Instances
-  const instance1 = new Instance([surface1]);
-  const instance2 = new Instance([surface2]);
-
-  // Environment
-  const env = new Environment([instance1, instance2]);
-
-  // ? Test
-
-  const r = new RadEqnSolve();
-  r.env = env;
-
-  expect(r.shade(r.env.instances)).toBe(r);
-
-  // Check vertices exitances
-  for (const instance of r.env.instances) {
-    for (const surface of instance.surfaces) {
-      for (const patch of surface.patches) {
-        for (const vertex of patch.vertices) {
-          expect(vertex.exitance).toStrictEqual(surface.reflectance);
-        }
-      }
-    }
-  }
 });
 
 /*
