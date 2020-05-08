@@ -1,5 +1,6 @@
 import * as THREE from '../lib/three.module.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
+import { CSS2DRenderer, CSS2DObject } from '../lib/CSS2DRenderer.js';
 
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
@@ -19,6 +20,7 @@ const environmentFunctions = [
 let environment;
 let renderer;
 let renderer2;
+let labelRenderer;
 let camera;
 let camera2;
 let scene;
@@ -26,7 +28,6 @@ let scene2;
 let controls;
 let material;
 let geometry;
-let cubeHelper;
 
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
@@ -161,24 +162,104 @@ function setupHelper() {
   // scene
   scene2 = new THREE.Scene();
   scene2.background = new THREE.Color(0x2d3436);
+  const root = new THREE.Group();
+  scene2.add(root);
 
   // camera
   camera2 = new THREE.PerspectiveCamera(50, frame.clientWidth / frame.clientHeight, 1, 1000);
   camera2.up = camera.up;
-  scene2.add(camera2);
+  root.add(camera2);
 
-  // cube
-  const geometry = new THREE.BoxGeometry(50, 50, 50);
+  // label
+  labelRenderer = new CSS2DRenderer();
+  labelRenderer.setSize(frame.clientWidth, frame.clientHeight);
+  labelRenderer.domElement.style.position = 'absolute';
+  labelRenderer.domElement.style.top = '0px';
+  labelRenderer.domElement.style.pointerEvents = 'none';
+  frame.appendChild(labelRenderer.domElement);
 
-  geometry.faces[0].color = geometry.faces[1].color = geometry.faces[2].color = geometry.faces[3].color = new THREE.Color('red');
-  geometry.faces[4].color = geometry.faces[5].color = geometry.faces[6].color = geometry.faces[7].color = new THREE.Color('blue');
-  geometry.faces[8].color = geometry.faces[9].color = geometry.faces[10].color = geometry.faces[11].color = new THREE.Color('green');
-  const material = new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors });
+  // line
+  let material;
+  let points;
+  let geometry;
+  let line;
 
-  cubeHelper = new THREE.Mesh(geometry, material);
-  cubeHelper.rotation.x = -Math.PI / 2;
+  // x
+  material = new THREE.LineBasicMaterial({
+    color: new THREE.Color('red'),
+    linewidth: 3,
+  });
+  points = [
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(1.5, 0, 0),
+  ];
+  geometry = new THREE.BufferGeometry().setFromPoints(points);
 
-  scene2.add(cubeHelper);
+  line = new THREE.Line(geometry, material).rotateX(-Math.PI / 2);
+  root.add(line);
+
+  const textX = document.createElement('div');
+  textX.className = 'label';
+  textX.style.fontFamily = 'Arial Black';
+  textX.style.fontWeight = 'bold';
+  textX.textContent = 'X';
+  textX.style.color = 'red';
+
+  const labelX = new CSS2DObject(textX);
+  labelX.position.set(1.8, 0, 0);
+  line.add(labelX);
+
+  // y
+  material = new THREE.LineBasicMaterial({
+    color: new THREE.Color('green'),
+    linewidth: 3,
+  });
+  points = [
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 1.5, 0),
+  ];
+  geometry = new THREE.BufferGeometry().setFromPoints(points);
+  root.add(new THREE.Line(geometry, material).rotateX(-Math.PI / 2));
+
+  line = new THREE.Line(geometry, material).rotateX(-Math.PI / 2);
+  root.add(line);
+
+  const textY = document.createElement('div');
+  textY.className = 'label';
+  textY.style.fontFamily = 'Arial Black';
+  textY.style.fontWeight = 'bold';
+  textY.textContent = 'Y';
+  textY.style.color = 'green';
+
+  const labelY = new CSS2DObject(textY);
+  labelY.position.set(0, 1.8, 0);
+  line.add(labelY);
+
+  // z
+  material = new THREE.LineBasicMaterial({
+    color: new THREE.Color('blue'),
+    linewidth: 3,
+  });
+  points = [
+    new THREE.Vector3(0, 0, 0),
+    new THREE.Vector3(0, 0, 1.5),
+  ];
+  geometry = new THREE.BufferGeometry().setFromPoints(points);
+  root.add(new THREE.Line(geometry, material).rotateX(-Math.PI / 2));
+
+  line = new THREE.Line(geometry, material).rotateX(-Math.PI / 2);
+  root.add(line);
+
+  const textZ = document.createElement('div');
+  textZ.className = 'label';
+  textZ.style.fontFamily = 'Arial Black';
+  textZ.style.fontWeight = 'bold';
+  textZ.textContent = 'Z';
+  textZ.style.color = 'blue';
+
+  const labelZ = new CSS2DObject(textZ);
+  labelZ.position.set(0, 0, 1.8);
+  line.add(labelZ);
 }
 
 function updateColors() {
@@ -262,8 +343,9 @@ function animate() {
   if (scene2) {
     renderer2.render(scene2, camera2);
     camera2.position.set(camera.position.x, camera.position.y, camera.position.z);
-    camera2.position.setLength(105);
-    camera2.lookAt(cubeHelper.position);
+    camera2.position.setLength(5);
+    camera2.lookAt(0, 0, 0);
+    labelRenderer.render(scene2, camera2);
   }
 }
 
