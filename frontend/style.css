@@ -4,7 +4,7 @@
 }
 
 /* Radiosity Statistics*/
-stats-hover {
+#stats-hover {
   position: absolute;
   top: 15px;
   left: 15px;
@@ -15,7 +15,7 @@ stats-hover {
   width: 15px;
 }
 
-stats {
+#stats {
   position: absolute;
   top: 37px;
   left: 41px;
@@ -31,13 +31,18 @@ stats {
   color: white;
 }
 
-stats-hover:hover + stats{
+#stats > div > div {
+  display: table-cell;
+  white-space: nowrap;
+}
+
+#stats-hover:hover + #stats{
   display: flex;
   flex-direction: column;
 }
 
 /* Axis helper */
-cube-helper {
+#cube-helper-frame {
   position: absolute;
   bottom: 15px;
   left: 15px;
