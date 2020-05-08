@@ -154,14 +154,14 @@ function setupHelper() {
   const frame = document.getElementById('cube-helper-frame');
 
   // renderer
-  renderer2 = new THREE.WebGLRenderer();
+  renderer2 = new THREE.WebGLRenderer({ alpha: true });
   renderer2.setSize(frame.clientWidth, frame.clientHeight);
   renderer2.setPixelRatio(window.devicePixelRatio);
+  renderer2.setClearColor(0x000000, 0);
   frame.appendChild(renderer2.domElement);
 
   // scene
   scene2 = new THREE.Scene();
-  scene2.background = new THREE.Color(0x2d3436);
   const root = new THREE.Group();
   scene2.add(root);
 
