@@ -342,9 +342,10 @@ function animate() {
   if (scene) renderer.render(scene, camera);
   if (scene2) {
     renderer2.render(scene2, camera2);
-    camera2.position.set(camera.position.x, camera.position.y, camera.position.z);
+    camera2.position.copy(camera.position);
+    camera2.position.sub(controls.target);
     camera2.position.setLength(5);
-    camera2.lookAt(0, 0, 0);
+    camera2.lookAt(scene2.position);
     labelRenderer.render(scene2, camera2);
   }
 }
