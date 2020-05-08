@@ -32,6 +32,8 @@ let geometry;
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
 
+let overshooting = false;
+
 let gamma = 22; // scaled by 10, so really 2.2
 let exposure = 10; // scaled by 10, so really 1.0
 
@@ -376,17 +378,26 @@ function keyListener(e) {
     gamma += e.shiftKey ? 1 : -1;
     console.log(`gamma ${(gamma / 10).toFixed(1)}`);
     updateColors();
+    e.preventDefault();
   }
   if (e.key.toLowerCase() === 'e') {
     exposure += e.shiftKey ? 1 : -1;
     console.log(`exposure ${(exposure / 10).toFixed(1)}`);
     updateColors();
+    e.preventDefault();
+  }
+  if (e.key === 'o') {
+    overshooting = !overshooting;
+    console.log('overshooting', overshooting ? 'on' : 'off');
+    e.preventDefault();
   }
 }
 
 async function runRadiosity() {
   console.log('running radiosity');
   const rad = new Rad.ProgRad();
+  rad.overFlag = overshooting;
+
   rad.open(environment);
 
   const computationStart = Date.now();
@@ -397,7 +408,7 @@ async function runRadiosity() {
     rad.prepareForDisplay();
     updateColors();
 
-    await delayTimeout(100);
+    await delays.default();
   }
 
   const computationEnd = Date.now();
@@ -417,6 +428,20 @@ async function runRadiosity() {
   window.env = environment;
 }
 
-function delayTimeout(ms = 1) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
+const delays = {
+  timeout(ms = 1) {
+    return new Promise(resolve => setTimeout(resolve, ms));
+  },
+
+  timeout1() {
+    return delays.timeout(1);
+  },
+
+  timeout100() {
+    return delays.timeout(100);
+  },
+
+  none() {},
+};
+
+delays.default = delays.timeout1;
