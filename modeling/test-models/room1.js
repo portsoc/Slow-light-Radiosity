@@ -8,7 +8,7 @@ import * as Cube from '../cube.js';
 // base size is 10 (the shorter side of the room)
 // the book seems to use base size 1 but that's harder to work with
 export default function createRoom() {
-  const room = makeRoom();
+  const room = makeRoom(20);
   const bench = makeBench();
   const light1 = makeLight();
   const light2 = makeLight();
@@ -159,15 +159,18 @@ function makeLight() {
   const y = 8;
   const z = 0.2;
 
-  const retval = Cube.unitCubeMultiSurface([1, 5, 1]);
+  // lightness
+  const L = 10;
+
+  const retval = Cube.unitCubeMultiSurface([1, 15, 1]);
 
   // The sides are in order of front (standing on x), back, right, left, top, bottom.
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // front
   retval.surfaces[1].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // back
   retval.surfaces[2].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // right
   retval.surfaces[3].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // left
-  retval.surfaces[4].emittance.add(new Rad.Spectra(0.5, 0.5, 0.5)); // top
-  retval.surfaces[5].emittance.add(new Rad.Spectra(1, 1, 1)); // bottom
+  retval.surfaces[4].emittance.add(new Rad.Spectra(L * 0.5, L * 0.5, L * 0.5)); // top
+  retval.surfaces[5].emittance.add(new Rad.Spectra(L, L, L)); // bottom
 
   const roomXform = new Transform3();
   roomXform.scale(x, y, z);
