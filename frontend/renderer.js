@@ -31,6 +31,9 @@ let cubeHelper;
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
 
+let gamma = 22; // scaled by 10, so really 2.2
+let exposure = 10; // scaled by 10, so really 1.0
+
 // init on load
 
 window.addEventListener('load', init);
@@ -72,6 +75,10 @@ function setupRenderer() {
   renderer = new THREE.WebGLRenderer();
   renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
+
+  // include default gamma correction with the following line
+  // renderer.outputEncoding = THREE.sRGBEncoding;
+
   document.body.appendChild(renderer.domElement);
 
   camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -118,7 +125,7 @@ function setupRendererScene() {
   }
   scene.add(new THREE.Mesh(geometry, material));
 
-  updateSceneColors();
+  updateColors();
 }
 
 function addFace(geometry, element, vertexIndices) {
@@ -174,38 +181,28 @@ function setupHelper() {
   scene2.add(cubeHelper);
 }
 
-function updateSceneColors() {
-  if (currentViewVertex) {
-    // vertex view - every vertex gets its color from the radiosity model
-    console.log('vertex colors');
-    for (const instance of environment.instances) {
-      for (const surface of instance.surfaces) {
-        for (const patch of surface.patches) {
-          for (const element of patch.elements) {
-            for (const face of element._threeFaces) {
-              for (let i = 0; i < 3; i += 1) {
-                if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
-                setThreeColorFromRad(face.vertexColors[i], face._radVertices[i].exitance);
-              }
-            }
-          }
-        }
-      }
-    }
-  } else {
-    // shaded view - every surface has a solid color
-    console.log('shaded colors');
-    for (const instance of environment.instances) {
-      for (const surface of instance.surfaces) {
-        const color = new Rad.Spectra(surface.reflectance);
-        color.add(surface.emittance);
+function updateColors() {
+  for (const instance of environment.instances) {
+    for (const surface of instance.surfaces) {
+      for (const patch of surface.patches) {
+        for (const element of patch.elements) {
+          for (const face of element._threeFaces) {
+            for (let i = 0; i < 3; i += 1) {
+              if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
 
-        for (const patch of surface.patches) {
-          for (const element of patch.elements) {
-            for (const face of element._threeFaces) {
-              for (let i = 0; i < 3; i += 1) {
-                if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
-                setThreeColorFromRad(face.vertexColors[i], color);
+              if (currentViewVertex) {
+                setThreeColorFromRad(
+                  face.vertexColors[i],
+                  face._radVertices[i].exitance,
+                  surface.emittance,
+                  exposure,
+                  gamma);
+              } else {
+                // shaded
+                setThreeColorFromRad(
+                  face.vertexColors[i],
+                  surface.reflectance,
+                  surface.emittance);
               }
             }
           }
@@ -217,11 +214,13 @@ function updateSceneColors() {
   material.needsUpdate = true;
 }
 
-function setThreeColorFromRad(col, spectra) {
+function setThreeColorFromRad(col, exit, emit, exposure = 10, gamma = 10) {
+  exposure /= 10;
+  gamma = 10 / gamma;
   col.setRGB(
-    spectra.r,
-    spectra.g,
-    spectra.b,
+    ((exit.r + emit.r) * exposure) ** gamma,
+    ((exit.g + emit.g) * exposure) ** gamma,
+    ((exit.b + emit.b) * exposure) ** gamma,
   );
 }
 
@@ -280,7 +279,45 @@ function keyListener(e) {
   }
   if (e.key === 'Tab') {
     currentViewVertex = !currentViewVertex;
-    updateSceneColors();
+    updateColors();
     e.preventDefault();
   }
+  if (e.key === 'Enter') {
+    runRadiosity();
+    e.preventDefault();
+  }
+  if (e.key.toLowerCase() === 'g') {
+    gamma += e.shiftKey ? 1 : -1;
+    console.log(`gamma ${(gamma / 10).toFixed(1)}`);
+    updateColors();
+  }
+  if (e.key.toLowerCase() === 'e') {
+    exposure += e.shiftKey ? 1 : -1;
+    console.log(`exposure ${(exposure / 10).toFixed(1)}`);
+    updateColors();
+  }
+}
+
+async function runRadiosity() {
+  console.log('running radiosity');
+  const rad = new Rad.ProgRad();
+  rad.open(environment);
+  while (!rad.calculate()) {
+    console.log('pass');
+
+    rad.prepareForDisplay();
+    updateColors();
+
+    await delayTimeout(100);
+  }
+  rad.close();
+  console.log('done');
+
+  updateColors();
+
+  window.env = environment;
+}
+
+function delayTimeout(ms = 1) {
+  return new Promise(resolve => setTimeout(resolve, ms));
 }
