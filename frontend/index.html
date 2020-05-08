@@ -6,6 +6,20 @@
     <title>Radiosity Visualization</title>
 </head>
 <body>
+    <stats-hover></stats-hover>
+    <stats>
+        <stats-title><u>Rendering statistics</u></stats-title>
+        <separator>----------</separator>
+        <stat-record>Number of Instances : <instance-count>☕</instance-count></stat-record>
+        <stat-record>Number of Surfaces : <surface-count>☕</surface-count></stat-record>
+        <stat-record>Number of Patches : <patche-count>☕</patche-count></stat-record>
+        <stat-record>Number of Elements : <element-count>☕</element-count></stat-record>
+        <stat-record>Number of Vertices : <vertice-count>☕</vertice-count></stat-record>
+        <separator>----------</separator>
+        <stat-record>Running time : <running-time>☕</running-time> ms</stat-record>
+    </stats>
+
+    <script type="module" src="../lib/OrbitControls.js"></script>
     <script type="module" src="renderer.js"></script>
 </body>
 </html>

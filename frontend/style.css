@@ -1,5 +1,36 @@
-body,
-html {
+* {
   padding: 0;
   margin: 0;
+}
+
+stats-hover {
+  position: absolute;
+  top: 15px;
+  left: 15px;
+
+  background-color: white;
+
+  height: 15px;
+  width: 15px;
+}
+
+stats {
+  position: absolute;
+  top: 37px;
+  left: 41px;
+
+  height: 210px;
+  width: 290px;
+  
+  display: none;
+
+  font-size: larger;
+  font-family: 'Courier', Arial, monospace;
+  font-weight: bold;
+  color: white;
+}
+
+stats-hover:hover + stats{
+  display: flex;
+  flex-direction: column;
 }
