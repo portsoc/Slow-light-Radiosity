@@ -18,11 +18,15 @@ const environmentFunctions = [
 
 let environment;
 let renderer;
+let renderer2;
 let camera;
+let camera2;
 let scene;
+let scene2;
 let controls;
 let material;
 let geometry;
+let cubeHelper;
 
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
@@ -33,6 +37,7 @@ window.addEventListener('load', init);
 
 function init() {
   setupRenderer();
+  setupHelper();
   selectNextEnvironment();
   animate();
 
@@ -113,7 +118,6 @@ function setupRendererScene() {
   }
   scene.add(new THREE.Mesh(geometry, material));
 
-  addAxes(scene);
   updateSceneColors();
 }
 
@@ -137,15 +141,37 @@ function addFace(geometry, element, vertexIndices) {
   ];
 }
 
-function addAxes(scene) {
-  const axesHelper = new THREE.AxesHelper(1);
+function setupHelper() {
+  // container
+  const frame = document.getElementById('cube-helper-frame');
 
-  // rotate to agree with model coordinates
-  axesHelper.rotation.x = -Math.PI / 2;
-  axesHelper.position.x = -0.5;
-  axesHelper.position.y = -0.5;
-  axesHelper.position.z = 0.5;
-  scene.add(axesHelper);
+  // renderer
+  renderer2 = new THREE.WebGLRenderer();
+  renderer2.setSize(frame.clientWidth, frame.clientHeight);
+  renderer2.setPixelRatio(window.devicePixelRatio);
+  frame.appendChild(renderer2.domElement);
+
+  // scene
+  scene2 = new THREE.Scene();
+  scene2.background = new THREE.Color(0x2d3436);
+
+  // camera
+  camera2 = new THREE.PerspectiveCamera(50, frame.clientWidth / frame.clientHeight, 1, 1000);
+  camera2.up = camera.up;
+  scene2.add(camera2);
+
+  // cube
+  const geometry = new THREE.BoxGeometry(50, 50, 50);
+
+  geometry.faces[0].color = geometry.faces[1].color = geometry.faces[2].color = geometry.faces[3].color = new THREE.Color('red');
+  geometry.faces[4].color = geometry.faces[5].color = geometry.faces[6].color = geometry.faces[7].color = new THREE.Color('blue');
+  geometry.faces[8].color = geometry.faces[9].color = geometry.faces[10].color = geometry.faces[11].color = new THREE.Color('green');
+  const material = new THREE.MeshBasicMaterial({ vertexColors: THREE.FaceColors });
+
+  cubeHelper = new THREE.Mesh(geometry, material);
+  cubeHelper.rotation.x = -Math.PI / 2;
+
+  scene2.add(cubeHelper);
 }
 
 function updateSceneColors() {
@@ -234,6 +260,12 @@ function updateControls() {
 function animate() {
   requestAnimationFrame(animate);
   if (scene) renderer.render(scene, camera);
+  if (scene2) {
+    renderer2.render(scene2, camera2);
+    camera2.position.set(camera.position.x, camera.position.y, camera.position.z);
+    camera2.position.setLength(105);
+    camera2.lookAt(cubeHelper.position);
+  }
 }
 
 function setupEventListeners() {

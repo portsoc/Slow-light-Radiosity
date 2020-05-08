@@ -3,6 +3,7 @@
   margin: 0;
 }
 
+/* Radiosity Statistics*/
 stats-hover {
   position: absolute;
   top: 15px;
@@ -33,4 +34,14 @@ stats {
 stats-hover:hover + stats{
   display: flex;
   flex-direction: column;
+}
+
+/* Axis helper */
+cube-helper {
+  position: absolute;
+  bottom: 15px;
+  left: 15px;
+
+  height: 125px;
+  width: 125px;
 }
