@@ -64,6 +64,34 @@ export default class Environment {
     return elementNumber;
   }
 
+  * _vertexIterator() {
+    for (const i of this.instances) {
+      for (const v of i.vertices) {
+        yield v;
+      }
+    }
+  }
+
+  get vertices() {
+    return this._vertexIterator();
+  }
+
+  * _elementsIterator() {
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          for (const e of p.elements) {
+            yield e;
+          }
+        }
+      }
+    }
+  }
+
+  get elements() {
+    return this._elementsIterator();
+  }
+
   checkNoVerticesAreShared() {
     for (const i of this.instances) {
       for (const s of i.surfaces) {

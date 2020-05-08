@@ -13,10 +13,9 @@ test('constructor', () => {
   expect(r.totalArea).toBe(0);
   expect(r.totalFlux).toBe(0);
   expect(r.totalUnsent).toBe(0);
-  expect(r.ambFlag).toBe(false);
   expect(r.stepCount).toBe(0);
-  expect(r.maxStep).toBe(100);
-  expect(r.stopCriterion).toBe(0.001);
+  expect(r.maxStep).toBe(10000);
+  expect(r.stopCriterion).toBe(0.00001);
   expect(r.convergence).toBeNull();
   expect(r.max).toBeNull();
   expect(r.env).toBeNull();
@@ -27,39 +26,13 @@ test('constructor', () => {
 test('calculate()', () => {
   const r = new RadEqnSolve();
 
-  expect(r.calculate()).toBe(true);
-});
-
-test('status()', () => {
-  const r = new RadEqnSolve();
-
-  expect(r.status).toBe(true);
+  expect(r.calculate).not.toBeDefined();
 });
 
 test('open()', () => {
   const r = new RadEqnSolve();
 
-  expect(r.open(null)).toBe(true);
-});
-
-test('overShootFlag()', () => {
-  const r = new RadEqnSolve();
-
-  expect(r.overShootFalg()).toBe(false);
-});
-
-test('disableAmbient()', () => {
-  const r = new RadEqnSolve();
-
-  expect(r.disableAmbient()).toBe(r);
-  expect(r.ambFlag).toBe(false);
-});
-
-test('enableAmbient()', () => {
-  const r = new RadEqnSolve();
-
-  expect(r.enableAmbient()).toBe(r);
-  expect(r.ambFlag).toBe(true);
+  expect(() => r.open(null)).toThrow(TypeError);
 });
 
 /*
@@ -341,7 +314,7 @@ test('calcInterReflect()', () => {
  * |   1   |   2   |
  * 0 ----- 1 ----- 2  -> x
  */
-test('calcAmbient()', () => {
+test.skip('calcAmbient()', () => {
   // ? Set up the environment
 
   // Points

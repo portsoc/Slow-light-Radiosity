@@ -18,6 +18,12 @@ export default class Spectra {
     this.r = this.g = this.b = 0;
   }
 
+  setTo(s) {
+    this.r = s.r;
+    this.g = s.g;
+    this.b = s.b;
+  }
+
   add(s) {
     this.r += s.r;
     this.g += s.g;
@@ -29,6 +35,13 @@ export default class Spectra {
     this.r -= s.r;
     this.g -= s.g;
     this.b -= s.b;
+    return this;
+  }
+
+  multiply(s) {
+    this.r *= s.r;
+    this.g *= s.g;
+    this.b *= s.b;
     return this;
   }
 

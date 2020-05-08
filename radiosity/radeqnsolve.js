@@ -4,76 +4,42 @@ const MIN_VALUE = 1e-10;
 
 export default class RadEqnSolve {
   constructor() {
-    this.totalArea = 0;              // Total patch area
     this.totalFlux = 0;              // Total environment flux
     this.totalUnsent = 0;            // Total unsent exitence
-    this.ambFlag = false;            // Ambient exitance flag
     this.stepCount = 0;              // Step count
-    this.maxStep = 100;              // Maximum number of steps
-    this.stopCriterion = 0.001;      // Stopping criterion
+    this.maxStep = 10000;              // Maximum number of steps
+    this.stopCriterion = 0.00001;      // Stopping criterion
     this.convergence = null;         // Convergence
     this.max = null;                 // Maximum unsent flux patch
     this.env = null;                 // Environment
+
+    this.ambFlag = false;            // whether we're showing ambient exitance
     this.ambient = new Spectra();    // Ambient exitance
     this.irf = new Spectra();        // Interreflection factors
+    this.totalArea = 0;              // Total patch area
   }
 
-  calculate() {
-    return true;
+  open() {
+    throw new TypeError('RadEqnSolve is an abstract class');
   }
-
-  get status() {
-    return true;
-  }
-
-  open(env) {
-    this.env = env;
-    return true;
-  }
-
-  overShootFalg() {
-    return false;
-  }
-
-  close() {}
-
-  disableAmbient() {
-    this.ambFlag = false;
-    return this;
-  }
-
-  disableOverShoot() {}
-
-  enableAmbient() {
-    this.ambFlag = true;
-    return this;
-  }
-
-  enableOverShoot() {}
 
   initExitance() {
-    // Walk the instance list
     for (const instance of this.env.instances) {
-      // Walk the surface list
       for (const surface of instance.surfaces) {
         // Get surface emittance
         const emit = surface.emittance;
 
-        // Walk the patch list
         for (const patch of surface.patches) {
           // Set patch unsent exitance
-          patch.exitance = emit;
+          patch.exitance.setTo(emit);
 
           // Update total envnironment flux
           this.totalFlux += patch.unsentFlux;
 
-          // Walk the element list
+          // Initialize element and vertex exitance
           for (const element of patch.elements) {
-            // Initialize element exitance
             element.exitance.reset();
-
             for (const vertex of patch.vertices) {
-              // Initialize vertex exitance
               vertex.exitance.reset();
             }
           }
@@ -85,15 +51,12 @@ export default class RadEqnSolve {
   }
 
   updateUnsentStats() {
-    // Initialize unset fluw values
+    // Initialize unsent flux values
     this.totalUnsent = 0;
     let maxUnsent = 0;
 
-    // Walk the instance list
     for (const instance of this.env.instances) {
-      // Walk the surface list
       for (const surface of instance.surfaces) {
-        // Walk the patch list
         for (const patch of surface.patches) {
           // Get current unsent flux value
           const currentUnsent = patch.unsentFlux;
@@ -124,17 +87,15 @@ export default class RadEqnSolve {
     this.irf.reset();
     this.totalArea = 0;
     const sum = new Spectra();
+    const tmp = new Spectra();
 
-    // Walk the instance list
     for (const instance of this.env.instances) {
-      // Walk the surface list
       for (const surface of instance.surfaces) {
-        // Walk the patch list
         for (const patch of surface.patches) {
           // Update sum of patch areas times reflectances
-          const sr = patch.parentSurface.reflectance;
-          sr.scale(patch.area);
-          sum.add(sr);
+          tmp.setTo(patch.parentSurface.reflectance);
+          tmp.scale(patch.area);
+          sum.add(tmp);
 
           // Update sum of patch areas
           this.totalArea += patch.area;
@@ -155,22 +116,20 @@ export default class RadEqnSolve {
 
   calcAmbient() {
     const sum = new Spectra();
+    const tmp = new Spectra();
 
-    // Walk the instance list
     for (const instance of this.env.instances) {
-      // Walk the surface list
       for (const surface of instance.surfaces) {
-        // Walk the patch list
         for (const patch of surface.patches) {
           // Update sum of unsent exitances times areas
-          const unsent = patch.parentSurface.reflectance;
-          unsent.scale(patch.area);
-          sum.add(unsent);
+          tmp.setTo(patch.exitance);
+          tmp.scale(patch.area);
+          sum.add(tmp);
         }
       }
     }
 
-    // Calculate atea-weighted average reflectance
+    // Calculate area-weighted average reflectance
     sum.scale(1 / this.totalArea);
 
     // Calculate interreflectance factors
