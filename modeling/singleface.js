@@ -16,7 +16,7 @@ export function singleFace(reflectance, emittance, subdivide = [1, 1]) {
   ];
   const v = p.map(p => new Rad.Vertex3(p));
 
-  const patch = new Rad.Patch3(v, sub.quad(v, subdivide));
+  const patch = new Rad.Patch3(v, sub.quadElements(v, subdivide));
 
   const surface = new Rad.Surface3(reflectance, emittance, [patch]);
 

@@ -11,24 +11,27 @@ export function createTwoCubes(subdivision = 2) {
   return new Rad.Environment([c1, c2]);
 }
 
-export function createTwoCubesInRoom(subdivision = 2) {
-  const c1 = cube1(subdivision);
-  const c2 = cube2(subdivision);
-  const r = room(subdivision * 2);
+export function createTwoCubesInRoom(subdivision = 2, subPatches) {
+  const c1 = cube1(subdivision, subPatches);
+  const c2 = cube2(subdivision, subPatches);
+  const r = room(subdivision * 2, subPatches);
 
   return new Rad.Environment([c1, c2, r]);
 }
 
-function cube1(subdivision) {
-  return Cube.unitCube(new Rad.Spectra(0.12, 0.81, 0.21), null, subdivision);
+function cube1(subdivision, subPatches) {
+  return Cube.unitCube(new Rad.Spectra(0.12, 0.81, 0.21), null, subdivision, subPatches);
 }
 
-function cube2(subdivision) {
-  const retval = Cube.unitCubeMultiSurface(subdivision);
+function cube2(subdivision, subPatches) {
+  const retval = Cube.unitCubeMultiSurface(subdivision, subPatches);
+
+  // light intensity
+  const L = 10;
 
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.7, 0.2, 0.2));
   retval.surfaces[1].reflectance.add(new Rad.Spectra(0.7, 0.7, 0.2));
-  retval.surfaces[2].reflectance.add(new Rad.Spectra(0.2, 0.7, 0.2));
+  retval.surfaces[2].emittance.add(new Rad.Spectra(L, L, L));
   retval.surfaces[3].reflectance.add(new Rad.Spectra(0.2, 0.7, 0.7));
   retval.surfaces[4].reflectance.add(new Rad.Spectra(0.2, 0.2, 0.7));
   retval.surfaces[5].reflectance.add(new Rad.Spectra(0.7, 0.2, 0.7));
@@ -40,8 +43,8 @@ function cube2(subdivision) {
   return retval;
 }
 
-function room(subdivision) {
-  const retval = Cube.unitCubeMultiSurface(subdivision);
+function room(subdivision, subPatches) {
+  const retval = Cube.unitCubeMultiSurface(subdivision, subPatches);
 
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.9, 0.8, 0.7));
   retval.surfaces[1].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.7));

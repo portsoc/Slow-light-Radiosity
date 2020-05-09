@@ -1,7 +1,7 @@
 import * as Rad from '../../radiosity/index.js';
 import * as subdivision from '../../modeling/subdivision.js';
 
-test('quad 0 and 1', () => {
+test('quadElements 0 and 1', () => {
   const points = [
     new Rad.Point3(0, 0, 0),
     new Rad.Point3(12, 0, 1),
@@ -10,20 +10,20 @@ test('quad 0 and 1', () => {
   ];
   const vertices = points.map(p => new Rad.Vertex3(p));
 
-  const elements0 = subdivision.quad(vertices, 0);
+  const elements0 = subdivision.quadElements(vertices, 0);
   expect(elements0).toHaveLength(1);
   expect(elements0[0].vertices).toStrictEqual(vertices);
 
-  const elements1 = subdivision.quad(vertices, 1);
+  const elements1 = subdivision.quadElements(vertices, 1);
   expect(elements1).toHaveLength(1);
   expect(elements1[0].vertices).toStrictEqual(vertices);
 
-  const elements1b = subdivision.quad(vertices);
+  const elements1b = subdivision.quadElements(vertices);
   expect(elements1b).toHaveLength(1);
   expect(elements1b[0].vertices).toStrictEqual(vertices);
 });
 
-test.each([2, 3, 4])('quad of %d squared', (n) => {
+test.each([2, 3, 4])('quadElements of %d squared', (n) => {
   const points = [
     new Rad.Point3(0, 0, 2),
     new Rad.Point3(12, 0, 2),
@@ -32,7 +32,7 @@ test.each([2, 3, 4])('quad of %d squared', (n) => {
   ];
   const vertices = points.map(p => new Rad.Vertex3(p));
 
-  const elements = subdivision.quad(vertices, n);
+  const elements = subdivision.quadElements(vertices, n);
   expect(elements).toHaveLength(n * n);
 
   const patch = new Rad.Patch3(vertices, elements);
@@ -67,9 +67,9 @@ test('subdivision caching', () => {
   ];
   const vertices = points.map(p => new Rad.Vertex3(p));
 
-  const sub1 = subdivision.quad(vertices, 3);
+  const sub1 = subdivision.quadElements(vertices, 3);
   const sub1vertices = sub1.flatMap(el => el.vertices);
-  const sub2 = subdivision.quad(vertices, 2);
+  const sub2 = subdivision.quadElements(vertices, 2);
   const sub2vertices = sub2.flatMap(el => el.vertices);
 
   // check the two subdivisions don't share vertices except the ones in the corners
@@ -84,14 +84,14 @@ test('subdivision caching', () => {
     }
   }
 
-  const sub3 = subdivision.quad(vertices, 3);
+  const sub3 = subdivision.quadElements(vertices, 3);
   const sub3vertices = sub3.flatMap(el => el.vertices);
 
   // check sub3 uses all the same vertices as sub1 - same n=3
   expect(sub3vertices.every(v => sub1vertices.includes(v))).toBe(true);
   expect(sub1vertices.every(v => sub3vertices.includes(v))).toBe(true);
 
-  const sub4 = subdivision.quad(vertices, 2);
+  const sub4 = subdivision.quadElements(vertices, 2);
   const sub4vertices = sub4.flatMap(el => el.vertices);
 
   // check sub4 uses all the same vertices as sub2 - same n=2
@@ -99,7 +99,7 @@ test('subdivision caching', () => {
   expect(sub2vertices.every(v => sub4vertices.includes(v))).toBe(true);
 });
 
-describe('quad normals', () => {
+describe('quadElements normals', () => {
   test('with planar coordinates', () => {
     const points = [
       new Rad.Point3(0, 0, 0),
@@ -109,7 +109,7 @@ describe('quad normals', () => {
     ];
     const vertices = points.map(p => new Rad.Vertex3(p));
 
-    const elements = subdivision.quad(vertices, 3);
+    const elements = subdivision.quadElements(vertices, 3);
     expect(elements).toHaveLength(9);
     const normal0 = elements[0].normal;
     for (const el of elements) {
@@ -132,7 +132,7 @@ describe('quad normals', () => {
     ];
     const vertices = points.map(p => new Rad.Vertex3(p));
 
-    const elements = subdivision.quad(vertices, 3);
+    const elements = subdivision.quadElements(vertices, 3);
     expect(elements).toHaveLength(9);
     expect(allSimilarNormals(elements)).toBe(false);
   });
@@ -155,4 +155,6 @@ function allSimilarNormals(elements) {
   return retval;
 }
 
-test.todo('quad with different x and y subdivisions');
+test.todo('quadElements with different x and y subdivisions');
+
+test.todo('quadPatches');
