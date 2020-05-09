@@ -66,6 +66,12 @@ function setupEnvironment() {
     console.log('environment has vertices shared between surfaces and it should not!');
   }
 
+  document.getElementById('instance-count').textContent = environment.instances.length;
+  document.getElementById('surface-count').textContent = environment.surfaceCount;
+  document.getElementById('patch-count').textContent = environment.patchCount;
+  document.getElementById('element-count').textContent = environment.elementCount;
+  document.getElementById('vertex-count').textContent = environment.vertexCount;
+
   // translate coordinates so we can see them
   Modeling.coordinates.xyFloorToView(environment);
 
@@ -364,9 +370,6 @@ function keyListener(e) {
     currentViewVertex = !currentViewVertex;
     updateColors();
     e.preventDefault();
-
-    const stats = document.getElementById('stats-hover');
-    stats.style.display = (stats.style.display === 'none' || stats.style.display === '') ? 'block' : 'none';
   }
   if (e.key.toLowerCase() === 'e') {
     exposure += e.shiftKey ? 1 : -1;
@@ -405,12 +408,14 @@ async function runRadiosity() {
   rad.overFlag = overshooting;
 
   rad.open(environment);
+  document.getElementById('running-time').textContent = '–';
 
   const computationStart = Date.now();
 
   let pass = 0;
   while (!rad.calculate()) {
-    pass++;
+    pass += 1;
+    document.getElementById('iteration-count').textContent = pass;
     rad.prepareForDisplay();
     updateColors();
 
@@ -422,13 +427,8 @@ async function runRadiosity() {
   rad.close();
   console.log('done');
 
-  document.getElementById('instance-count').innerHTML = rad.env.instances.length;
-  document.getElementById('surface-count').innerHTML = rad.env.surfaceCount;
-  document.getElementById('patch-count').innerHTML = rad.env.patchCount;
-  document.getElementById('element-count').innerHTML = rad.env.elementCount;
-  document.getElementById('vertex-count').innerHTML = rad.env.vertexCount;
-  document.getElementById('running-time').innerHTML = computationEnd - computationStart;
-  document.getElementById('iteration-count').innerHTML = pass;
+  document.getElementById('running-time').textContent = computationEnd - computationStart;
+  document.getElementById('iteration-count').textContent = pass;
 
   updateColors();
 

@@ -11,8 +11,6 @@
 
   background-color: white;
 
-  display: none;
-
   height: 15px;
   width: 15px;
 }
@@ -24,7 +22,7 @@
 
   height: 210px;
   width: 290px;
-  
+
   display: none;
 
   font-size: larger;
