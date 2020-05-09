@@ -353,9 +353,8 @@ function setupEventListeners() {
 }
 
 function keyListener(e) {
-  if (e.key === 'w') {
-    currentWireframe = !currentWireframe;
-    material.wireframe = currentWireframe;
+  if (e.key === 'Enter') {
+    runRadiosity();
     e.preventDefault();
   }
   if (e.key === 'Tab') {
@@ -366,8 +365,10 @@ function keyListener(e) {
     const stats = document.getElementById('stats-hover');
     stats.style.display = (stats.style.display === 'none' || stats.style.display === '') ? 'block' : 'none';
   }
-  if (e.key === 'Enter') {
-    runRadiosity();
+  if (e.key.toLowerCase() === 'e') {
+    exposure += e.shiftKey ? 1 : -1;
+    console.log(`exposure ${(exposure / 10).toFixed(1)}`);
+    updateColors();
     e.preventDefault();
   }
   if (e.key.toLowerCase() === 'g') {
@@ -376,15 +377,14 @@ function keyListener(e) {
     updateColors();
     e.preventDefault();
   }
-  if (e.key.toLowerCase() === 'e') {
-    exposure += e.shiftKey ? 1 : -1;
-    console.log(`exposure ${(exposure / 10).toFixed(1)}`);
-    updateColors();
-    e.preventDefault();
-  }
   if (e.key === 'o') {
     overshooting = !overshooting;
     console.log('overshooting', overshooting ? 'on' : 'off');
+    e.preventDefault();
+  }
+  if (e.key === 'w') {
+    currentWireframe = !currentWireframe;
+    material.wireframe = currentWireframe;
     e.preventDefault();
   }
   if (e.key >= '1' && e.key <= '9') {
