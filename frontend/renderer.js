@@ -364,6 +364,9 @@ function keyListener(e) {
     currentViewVertex = !currentViewVertex;
     updateColors();
     e.preventDefault();
+
+    const stats = document.getElementById('stats-hover');
+    stats.style.display = (stats.style.display === 'none' || stats.style.display === '') ? 'block' : 'none';
   }
   if (e.key === 'Enter') {
     runRadiosity();

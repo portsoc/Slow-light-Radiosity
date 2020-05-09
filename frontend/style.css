@@ -11,6 +11,8 @@
 
   background-color: white;
 
+  display: none;
+
   height: 15px;
   width: 15px;
 }
