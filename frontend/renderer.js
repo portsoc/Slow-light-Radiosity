@@ -17,6 +17,8 @@ const environmentFunctions = [
 
 // global variables
 
+let currentEnvironment = 0;
+
 let environment;
 let renderer;
 let renderer2;
@@ -44,21 +46,15 @@ window.addEventListener('load', init);
 function init() {
   setupRenderer();
   setupHelper();
-  selectNextEnvironment();
+  setupEnvironment();
   animate();
 
   setupEventListeners();
 }
 
-function selectNextEnvironment() {
+function setupEnvironment() {
   // find the first environment
-  if (!environmentFunctions.firstOneSelected) {
-    environmentFunctions.firstOneSelected = true;
-  } else {
-    // move first environment to the end of the queue
-    environmentFunctions.push(environmentFunctions.shift());
-  }
-  const envFunc = environmentFunctions[0];
+  const envFunc = environmentFunctions[currentEnvironment];
 
   environment = envFunc();
 
@@ -389,6 +385,13 @@ function keyListener(e) {
   if (e.key === 'o') {
     overshooting = !overshooting;
     console.log('overshooting', overshooting ? 'on' : 'off');
+    e.preventDefault();
+  }
+  if (e.key >= '1' && e.key <= '9') {
+    currentEnvironment = Number(e.key) - 1;
+    if (currentEnvironment >= environmentFunctions.length) currentEnvironment = 0;
+    console.log('environment', currentEnvironment);
+    setupEnvironment();
     e.preventDefault();
   }
 }
