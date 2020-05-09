@@ -12,7 +12,7 @@ import * as sub from './subdivision.js';
  *   |/    |/
  *   0-----1 --> x
  */
-export function unitCube(reflectance, emittance, subdivide = [1, 1, 1]) {
+export function unitCube(reflectance, emittance, subdivide = [1, 1, 1], subPatches = false) {
   if (typeof subdivide === 'number') {
     subdivide = [subdivide, subdivide, subdivide]; // subdivision along the X,Y,Z axes
   }
@@ -49,7 +49,19 @@ export function unitCube(reflectance, emittance, subdivide = [1, 1, 1]) {
     [suby, subx], // bottom
   ];
 
-  const patches = faces.map((face, i) => new Rad.Patch3(face, sub.quad(face, subs[i])));
+  const patches = [];
+  for (let i = 0; i < 6; i += 1) {
+    const face = faces[i];
+    const faceSub = subs[i];
+
+    if (subPatches) {
+      // generate multiple patches for the face
+      patches.push(...sub.quadPatches(face, faceSub));
+    } else {
+      // generate a single patch with subdivision in elements
+      patches.push(new Rad.Patch3(face, sub.quadElements(face, faceSub)));
+    }
+  }
 
   const surface = new Rad.Surface3(reflectance, emittance, patches);
 
@@ -69,7 +81,7 @@ export function unitCube(reflectance, emittance, subdivide = [1, 1, 1]) {
  *   |/    |/
  *   0-----1 --> x
  */
-export function unitCubeMultiSurface(subdivide = 1) {
+export function unitCubeMultiSurface(subdivide = 1, subPatches = false) {
   if (typeof subdivide === 'number') {
     subdivide = [subdivide, subdivide, subdivide]; // subdivision along the X,Y,Z axes
   }
@@ -88,23 +100,31 @@ export function unitCubeMultiSurface(subdivide = 1) {
   ];
 
   const surfaces = [
-    surfaceFromPoints([p[0], p[1], p[5], p[4]], [subx, subz]), // front
-    surfaceFromPoints([p[2], p[3], p[7], p[6]], [subx, subz]), // back
-    surfaceFromPoints([p[1], p[2], p[6], p[5]], [suby, subz]), // right
-    surfaceFromPoints([p[0], p[4], p[7], p[3]], [subz, suby]), // left
-    surfaceFromPoints([p[4], p[5], p[6], p[7]], [subx, suby]), // top
-    surfaceFromPoints([p[0], p[3], p[2], p[1]], [suby, subx]), // bottom
+    surfaceFromPoints([p[0], p[1], p[5], p[4]], [subx, subz], subPatches), // front
+    surfaceFromPoints([p[2], p[3], p[7], p[6]], [subx, subz], subPatches), // back
+    surfaceFromPoints([p[1], p[2], p[6], p[5]], [suby, subz], subPatches), // right
+    surfaceFromPoints([p[0], p[4], p[7], p[3]], [subz, suby], subPatches), // left
+    surfaceFromPoints([p[4], p[5], p[6], p[7]], [subx, suby], subPatches), // top
+    surfaceFromPoints([p[0], p[3], p[2], p[1]], [suby, subx], subPatches), // bottom
   ];
 
   return new Rad.Instance(surfaces);
 }
 
-function surfaceFromPoints(points, subdivide) {
+function surfaceFromPoints(points, subdivide, subPatches) {
   // surfaces don't share vertices, need to create new vertices each time
   const vertices = points.map(p => new Rad.Vertex3(p));
 
   // the patch automatically gets its own default element
-  const patch = new Rad.Patch3(vertices, sub.quad(vertices, subdivide));
+  const patches = [];
 
-  return new Rad.Surface3(null, null, [patch]);
+  if (subPatches) {
+    // generate multiple patches for the face
+    patches.push(...sub.quadPatches(vertices, subdivide));
+  } else {
+    // generate a single patch with subdivision in elements
+    patches.push(new Rad.Patch3(vertices, sub.quadElements(vertices, subdivide)));
+  }
+
+  return new Rad.Surface3(null, null, patches);
 }

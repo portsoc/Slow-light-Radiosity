@@ -23,7 +23,7 @@ import * as Rad from '../radiosity/index.js';
  * |    |
  * 0 -- 1
  */
-export function quad(vertices, sizes = [1, 1]) {
+export function quadElements(vertices, sizes = [1, 1]) {
   if (typeof sizes === 'number') sizes = [sizes, sizes];
 
   const [sizex, sizey] = sizes;
@@ -41,6 +41,38 @@ export function quad(vertices, sizes = [1, 1]) {
         grid[x + 1][y + 1],
         grid[x][y + 1],
       ]));
+    }
+  }
+
+  return retval;
+}
+
+/* same as quadElements but returns an array of patches,
+ * each with one element of those above.
+ */
+export function quadPatches(vertices, sizes = [1, 1]) {
+  if (typeof sizes === 'number') sizes = [sizes, sizes];
+
+  const [sizex, sizey] = sizes;
+
+  if (sizex <= 1 && sizey <= 1) {
+    const el = new Rad.Element3(vertices);
+    return [new Rad.Patch3(vertices, [el])];
+  }
+
+  const grid = generateVertexGrid(vertices, sizex, sizey);
+  const retval = [];
+
+  for (let x = 0; x < sizex; x += 1) {
+    for (let y = 0; y < sizey; y += 1) {
+      const vertices = [
+        grid[x][y],
+        grid[x + 1][y],
+        grid[x + 1][y + 1],
+        grid[x][y + 1],
+      ];
+      const el = new Rad.Element3(vertices);
+      retval.push(new Rad.Patch3(vertices, [el]));
     }
   }
 
