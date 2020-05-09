@@ -402,9 +402,9 @@ async function runRadiosity() {
 
   const computationStart = Date.now();
 
+  let pass = 0;
   while (!rad.calculate()) {
-    console.log('pass');
-
+    pass++;
     rad.prepareForDisplay();
     updateColors();
 
@@ -422,6 +422,7 @@ async function runRadiosity() {
   document.getElementById('element-count').innerHTML = rad.env.elementCount;
   document.getElementById('vertex-count').innerHTML = rad.env.vertexCount;
   document.getElementById('running-time').innerHTML = computationEnd - computationStart;
+  document.getElementById('iteration-count').innerHTML = pass;
 
   updateColors();
 
