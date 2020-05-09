@@ -385,6 +385,9 @@ async function runRadiosity() {
   console.log('running radiosity');
   const rad = new Rad.ProgRad();
   rad.open(environment);
+
+  const computationStart = Date.now();
+
   while (!rad.calculate()) {
     console.log('pass');
 
@@ -393,8 +396,18 @@ async function runRadiosity() {
 
     await delayTimeout(100);
   }
+
+  const computationEnd = Date.now();
+
   rad.close();
   console.log('done');
+
+  document.getElementById('instance-count').innerHTML = rad.env.instances.length;
+  document.getElementById('surface-count').innerHTML = rad.env.surfaceCount;
+  document.getElementById('patch-count').innerHTML = rad.env.patchCount;
+  document.getElementById('element-count').innerHTML = rad.env.elementCount;
+  document.getElementById('vertex-count').innerHTML = rad.env.vertexCount;
+  document.getElementById('running-time').innerHTML = computationEnd - computationStart;
 
   updateColors();
 
