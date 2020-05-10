@@ -395,6 +395,11 @@ function keyListener(e) {
     updateColors();
     e.preventDefault();
   }
+  if (e.key.toLowerCase() === 'd') {
+    delays.current = (delays.current + 1) % delays.length;
+    console.log(`delay ${delays[delays.current].name}`);
+    e.preventDefault();
+  }
   if (e.key.toLowerCase() === 'e') {
     exposure += e.shiftKey ? 1 : -1;
     console.log(`exposure ${(exposure / 10).toFixed(1)}`);
@@ -445,7 +450,7 @@ async function runRadiosity() {
       updateColors();
     };
 
-    await delays.default();
+    await delays[delays.current]();
   }
 
   const computationEnd = Date.now();
@@ -463,20 +468,24 @@ async function runRadiosity() {
   window.env = environment;
 }
 
-const delays = {
-  timeout(ms = 1) {
-    return new Promise(resolve => setTimeout(resolve, ms));
+function timeoutPromise(ms = 1) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+const delays = [
+  function timeout1() {
+    return timeoutPromise(1);
   },
 
-  timeout1() {
-    return delays.timeout(1);
+  function timeout100ms() {
+    return timeoutPromise(100);
   },
 
-  timeout100() {
-    return delays.timeout(100);
+  function timeout1s() {
+    return timeoutPromise(1000);
   },
 
-  none() {},
-};
+  // function none() {},
+];
 
-delays.default = delays.timeout1;
+delays.current = 0;
