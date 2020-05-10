@@ -162,7 +162,7 @@ function makeLight() {
   // lightness
   const L = 10;
 
-  const retval = Cube.unitCubeMultiSurface([1, 15, 1]);
+  const retval = Cube.unitCubeMultiSurface([1, 5, 1], true);
 
   // The sides are in order of front (standing on x), back, right, left, top, bottom.
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // front
