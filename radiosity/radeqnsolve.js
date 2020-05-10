@@ -1,5 +1,3 @@
-import Spectra from './spectra.js';
-
 const MIN_VALUE = 1e-10;
 
 export default class RadEqnSolve {
