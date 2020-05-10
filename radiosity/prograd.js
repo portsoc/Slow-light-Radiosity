@@ -19,10 +19,7 @@ export default class ProgRad extends RadEqnSolve {
     this.convergence = 1;
     this.initExitance();
 
-    if (this.ambFlag) {
-      this.calcInterReflect();
-      this.calcAmbient();
-    }
+    this.calcInterReflect();
 
     // Allocate form factor array
     this.ffArray = new Array(this.env.numberElements());
@@ -31,27 +28,33 @@ export default class ProgRad extends RadEqnSolve {
   }
 
   close() {
+    this.prepareForDisplay();
     // Release form factor array
     this.ffArray = null;
   }
 
   prepareForDisplay() {
-    this.env.interpolateVertexExitances();
+    if (this.needsDisplayUpdate) {
+      this.calcAmbient();
+      this.env.ambient = this.ambient;
+      this.env.interpolateVertexExitances();
+      this.needsDisplayUpdate = false;
+    }
   }
 
   calculate() {
     // Check for maximum number of steps
     if (this.stepCount >= this.maxStep) {
-      if (this.ambFlag) this.addAmbient();
       return true;
     }
+
+    this.needsDisplayUpdate = true;
 
     // Update unsent flux statistics
     this.updateUnsentStats();
 
     // Check for convergence
     if (this.convergence < this.stopCriterion) {
-      if (this.ambFlag) this.addAmbient();
       return true;
     }
 
@@ -103,36 +106,11 @@ export default class ProgRad extends RadEqnSolve {
 
     if (this.overFlag) this.max.exitance.sub(this.overshoot);
 
-    if (this.ambFlag) this.calcAmbient();
-
     // Increment step count
     this.stepCount++;
 
     // Convergence not achieved yet
     return false;
-  }
-
-  addAmbient() {
-    for (const instance of this.env.instances) {
-      for (const surface of instance.surfaces) {
-        // Get surface reflectance
-        const reflect = surface.reflectance;
-
-        for (const patch of surface.patches) {
-          for (const element of patch.elements) {
-            // Calculate delta ambient exitance
-            const deltaAmb = new Spectra(
-              this.ambient.r * reflect.r,
-              this.ambient.g * reflect.g,
-              this.ambient.b * reflect.b,
-            );
-
-            // Update element exitance
-            element.exitance.add(deltaAmb);
-          }
-        }
-      }
-    }
   }
 
   calcOverShoot() {
