@@ -13,7 +13,6 @@ export default class RadEqnSolve {
     this.max = null;                 // Maximum unsent flux patch
     this.env = null;                 // Environment
 
-    this.ambFlag = false;            // whether we're showing ambient exitance
     this.ambient = new Spectra();    // Ambient exitance
     this.irf = new Spectra();        // Interreflection factors
     this.totalArea = 0;              // Total patch area
