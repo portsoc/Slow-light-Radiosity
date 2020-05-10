@@ -36,6 +36,7 @@ let geometry;
 
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
+let currentIncludeAmbient = false;
 
 let overshooting = false;
 
@@ -270,8 +271,14 @@ function setupHelper() {
 }
 
 function updateColors() {
+  const deltaAmbient = (currentIncludeAmbient && environment.ambient) ? new Rad.Spectra() : undefined;
   for (const instance of environment.instances) {
     for (const surface of instance.surfaces) {
+      if (deltaAmbient) {
+        deltaAmbient.setTo(environment.ambient);
+        deltaAmbient.multiply(surface.reflectance);
+      }
+
       for (const patch of surface.patches) {
         for (const element of patch.elements) {
           for (const face of element._threeFaces) {
@@ -284,7 +291,8 @@ function updateColors() {
                   face._radVertices[i].exitance,
                   surface.emittance,
                   exposure,
-                  gamma);
+                  gamma,
+                  deltaAmbient);
               } else {
                 // shaded
                 setThreeColorFromRad(
@@ -302,13 +310,14 @@ function updateColors() {
   material.needsUpdate = true;
 }
 
-function setThreeColorFromRad(col, exit, emit, exposure = 10, gamma = 10) {
+const NO_AMBIENT = new Rad.Spectra();
+function setThreeColorFromRad(threeColor, exit, emit, exposure = 10, gamma = 10, ambient = NO_AMBIENT) {
   exposure /= 10;
   gamma = 10 / gamma;
-  col.setRGB(
-    ((exit.r + emit.r) * exposure) ** gamma,
-    ((exit.g + emit.g) * exposure) ** gamma,
-    ((exit.b + emit.b) * exposure) ** gamma,
+  threeColor.setRGB(
+    ((exit.r + emit.r + ambient.r) * exposure) ** gamma,
+    ((exit.g + emit.g + ambient.g) * exposure) ** gamma,
+    ((exit.b + emit.b + ambient.b) * exposure) ** gamma,
   );
 }
 
@@ -344,7 +353,16 @@ function updateControls() {
   controls.update();
 }
 
+// if the radiosity algorithm changed the model in visible ways that
+// need preprocessing before updating the Three.js model, it can
+// register here a function that will do that preprocessing
+let updateForDisplay;
+
 function animate() {
+  if (updateForDisplay) {
+    updateForDisplay();
+    updateForDisplay = null;
+  }
   requestAnimationFrame(animate);
   if (scene) renderer.render(scene, camera);
   if (scene2) {
@@ -368,6 +386,12 @@ function keyListener(e) {
   }
   if (e.key === 'Tab') {
     currentViewVertex = !currentViewVertex;
+    updateColors();
+    e.preventDefault();
+  }
+  if (e.key.toLowerCase() === 'a') {
+    currentIncludeAmbient = !currentIncludeAmbient;
+    console.log('ambient', currentIncludeAmbient ? 'on' : 'off');
     updateColors();
     e.preventDefault();
   }
@@ -416,8 +440,10 @@ async function runRadiosity() {
   while (!rad.calculate()) {
     pass += 1;
     document.getElementById('iteration-count').textContent = pass;
-    rad.prepareForDisplay();
-    updateColors();
+    updateForDisplay = () => {
+      rad.prepareForDisplay();
+      updateColors();
+    };
 
     await delays.default();
   }
@@ -430,6 +456,8 @@ async function runRadiosity() {
   document.getElementById('running-time').textContent = computationEnd - computationStart;
   document.getElementById('iteration-count').textContent = pass;
 
+  updateForDisplay = null;
+  rad.prepareForDisplay();
   updateColors();
 
   window.env = environment;
