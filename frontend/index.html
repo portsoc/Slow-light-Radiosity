@@ -6,22 +6,27 @@
     <title>Radiosity Visualization</title>
 </head>
 <body>
-    <div id="stats-hover"></div>
-    <div id="stats">
-        <div id="stats-title"><u>Rendering statistics</u></div>
-        <div>----------</div>
-        <div>Number of Instances : <span id="instance-count">☕</span></div>
-        <div>Number of Surfaces : <span id="surface-count">☕</span></div>
-        <div>Number of Patches : <span id="patch-count">☕</span></div>
-        <div>Number of Elements : <span id="element-count">☕</span></div>
-        <div>Number of Vertices : <span id="vertex-count">☕</span></div>
-        <div>----------</div>
-        <div>Running time : <span id="running-time">☕</span> ms</div>
-        <div>Iterations : <span id="iteration-count">☕</span></div>
+    <div id="menu">
+        <div class="menu-item" id="stats-color" onclick="stats()">
+            <img src="./img/stats.png">
+            <div class="window" id="stats">
+                <div id="stats-title"><u>Rendering statistics</u></div>
+                <div>----------</div>
+                <div>Number of Instances : <span id="instance-count">☕</span></div>
+                <div>Number of Surfaces : <span id="surface-count">☕</span></div>
+                <div>Number of Patches : <span id="patch-count">☕</span></div>
+                <div>Number of Elements : <span id="element-count">☕</span></div>
+                <div>Number of Vertices : <span id="vertex-count">☕</span></div>
+                <div>----------</div>
+                <div>Running time : <span id="running-time">☕</span> ms</div>
+                <div>Iterations : <span id="iteration-count">☕</span></div>
+            </div>
+        </div>
     </div>
 
     <div id="cube-helper-frame"></div>
 
-    <script type="module" src="renderer.js"></script>
+    <script src="./menu.js"></script>
+    <script type="module" src="./renderer.js"></script>
 </body>
 </html>
