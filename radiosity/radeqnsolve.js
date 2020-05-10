@@ -1,3 +1,5 @@
+import Spectra from './spectra.js';
+
 const MIN_VALUE = 1e-10;
 
 export default class RadEqnSolve {
@@ -10,6 +12,11 @@ export default class RadEqnSolve {
     this.convergence = null;         // Convergence
     this.max = null;                 // Maximum unsent flux patch
     this.env = null;                 // Environment
+
+    this.ambFlag = false;            // whether we're showing ambient exitance
+    this.ambient = new Spectra();    // Ambient exitance
+    this.irf = new Spectra();        // Interreflection factors
+    this.totalArea = 0;              // Total patch area
   }
 
   open() {
@@ -72,6 +79,63 @@ export default class RadEqnSolve {
     } else {
       this.convergence = 0;
     }
+
+    return this;
+  }
+
+  calcInterReflect() {
+    this.irf.reset();
+    this.totalArea = 0;
+    const sum = new Spectra();
+    const tmp = new Spectra();
+
+    for (const instance of this.env.instances) {
+      for (const surface of instance.surfaces) {
+        for (const patch of surface.patches) {
+          // Update sum of patch areas times reflectances
+          tmp.setTo(patch.parentSurface.reflectance);
+          tmp.scale(patch.area);
+          sum.add(tmp);
+
+          // Update sum of patch areas
+          this.totalArea += patch.area;
+        }
+      }
+    }
+
+    // Calculate atea-weighted average reflectance
+    sum.scale(1 / this.totalArea);
+
+    // Calculate interreflectance factors
+    this.irf.r = 1 / (1 - sum.r);
+    this.irf.g = 1 / (1 - sum.g);
+    this.irf.b = 1 / (1 - sum.b);
+
+    return this;
+  }
+
+  calcAmbient() {
+    const sum = new Spectra();
+    const tmp = new Spectra();
+
+    for (const instance of this.env.instances) {
+      for (const surface of instance.surfaces) {
+        for (const patch of surface.patches) {
+          // Update sum of unsent exitances times areas
+          tmp.setTo(patch.exitance);
+          tmp.scale(patch.area);
+          sum.add(tmp);
+        }
+      }
+    }
+
+    // Calculate area-weighted average reflectance
+    sum.scale(1 / this.totalArea);
+
+    // Calculate interreflectance factors
+    this.ambient.r = this.irf.r * sum.r;
+    this.ambient.g = this.irf.g * sum.g;
+    this.ambient.b = this.irf.b * sum.b;
 
     return this;
   }
