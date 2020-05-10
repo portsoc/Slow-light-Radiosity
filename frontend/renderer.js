@@ -161,7 +161,7 @@ function addFace(geometry, element, vertexIndices) {
 
 function setupHelper() {
   // container
-  const frame = document.getElementById('cube-helper-frame');
+  const frame = document.getElementById('axes-helper-frame');
 
   // renderer
   renderer2 = new THREE.WebGLRenderer({ alpha: true });
