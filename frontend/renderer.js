@@ -20,6 +20,40 @@ const environmentFunctions = [
   () => envCubes(5, true), // 5x5 patches
 ];
 
+// environment menu selector
+
+let envPreviousId = 0;
+function selectEnv(env, n) {
+  // unselect previous environment
+  const p = document.getElementById('env-selected');
+  p.textContent = 'Environment ' + envPreviousId;
+  p.removeAttribute('id');
+
+  // select environment
+  env.setAttribute('id', 'env-selected');
+  env.textContent = 'Environment ' + n + ' ◄';
+  envPreviousId = n;
+
+  // update environment
+  currentEnvironment = n;
+  setupEnvironment();
+}
+
+// set up selector
+const envSelector = document.getElementById('env');
+for (let i = 0; i < environmentFunctions.length; i++) {
+  const envDiv = document.createElement('div');
+  envDiv.id = 'env-' + i;
+  envDiv.textContent = 'Environment ' + i;
+  envDiv.onclick = () => selectEnv(envDiv, i);
+  envSelector.appendChild(envDiv);
+}
+
+// select first environment by default
+const d = document.getElementById('env-0');
+d.setAttribute('id', 'env-selected');
+d.textContent += ' ◄';
+
 // global variables
 
 let currentEnvironment = 0;
