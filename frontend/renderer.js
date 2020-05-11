@@ -428,12 +428,17 @@ function keyListener(e) {
     material.wireframe = currentWireframe;
     e.preventDefault();
   }
-  if (e.key >= '1' && e.key <= '9') {
-    currentEnvironment = Number(e.key) - 1;
-    if (currentEnvironment >= environmentFunctions.length) currentEnvironment = 0;
-    console.log('environment', currentEnvironment);
-    setupEnvironment();
-    e.preventDefault();
+  if (e.key >= '1' && e.key <= '9' && !e.metaKey && !e.altKey && !e.ctrlKey) {
+    const newEnv = (Number(e.key) - 1) % environmentFunctions.length;
+
+    if (currentEnvironment !== newEnv) {
+      currentEnvironment = newEnv;
+
+      stopRadiosity();
+      console.log('environment', currentEnvironment);
+      setupEnvironment();
+      e.preventDefault();
+    }
   }
 }
 
