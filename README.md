@@ -11,3 +11,5 @@ An adaptation of the Radiosity algorithm and implementation from Ashdown's ["Rad
 * `lib/` contains third-party libraries
 
 Work in progress.
+
+See the current status at [http://portsoc.github.io/Slow-light-Radiosity/frontend/](http://portsoc.github.io/Slow-light-Radiosity/frontend/)
