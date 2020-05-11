@@ -381,7 +381,13 @@ function setupEventListeners() {
 
 function keyListener(e) {
   if (e.key === 'Enter') {
-    runRadiosity();
+    if (!radiosityRunning) runRadiosity();
+    currentViewVertex = true;
+    updateColors();
+    e.preventDefault();
+  }
+  if (e.key === 'Escape') {
+    stopRadiosity();
     e.preventDefault();
   }
   if (e.key === 'Tab') {
@@ -431,41 +437,54 @@ function keyListener(e) {
   }
 }
 
+let stopRunning = false;
+let radiosityRunning = false;
+
 async function runRadiosity() {
-  console.log('running radiosity');
-  const rad = new Rad.ProgRad();
-  rad.overFlag = overshooting;
+  try {
+    console.log('running radiosity');
+    const rad = new Rad.ProgRad();
+    rad.overFlag = overshooting;
 
-  rad.open(environment);
-  document.getElementById('running-time').textContent = '–';
+    rad.open(environment);
+    document.getElementById('running-time').textContent = '–';
 
-  const computationStart = Date.now();
+    const computationStart = Date.now();
 
-  let pass = 0;
-  while (!rad.calculate()) {
-    pass += 1;
+    let pass = 0;
+    stopRunning = false;
+    radiosityRunning = true;
+
+    while (!rad.calculate()) {
+      pass += 1;
+      document.getElementById('iteration-count').textContent = pass;
+      updateForDisplay = () => {
+        rad.prepareForDisplay();
+        updateColors();
+      };
+
+      await delays[delays.current]();
+      if (stopRunning) break;
+    }
+
+    const computationEnd = Date.now();
+
+    rad.close();
+    console.log('done');
+
+    document.getElementById('running-time').textContent = computationEnd - computationStart;
     document.getElementById('iteration-count').textContent = pass;
-    updateForDisplay = () => {
-      rad.prepareForDisplay();
-      updateColors();
-    };
 
-    await delays[delays.current]();
+    updateForDisplay = null;
+    rad.prepareForDisplay();
+    updateColors();
+  } finally {
+    radiosityRunning = false;
   }
+}
 
-  const computationEnd = Date.now();
-
-  rad.close();
-  console.log('done');
-
-  document.getElementById('running-time').textContent = computationEnd - computationStart;
-  document.getElementById('iteration-count').textContent = pass;
-
-  updateForDisplay = null;
-  rad.prepareForDisplay();
-  updateColors();
-
-  window.env = environment;
+function stopRadiosity() {
+  stopRunning = true;
 }
 
 function timeoutPromise(ms = 1) {
