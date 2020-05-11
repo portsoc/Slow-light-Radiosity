@@ -24,7 +24,7 @@ function controls() {
   }
 }
 
-function env() {
+function envSelector() {
   const e = document.getElementById('env');
   if (e.style.display === 'none' || e.style.display === '') {
     // close other window
