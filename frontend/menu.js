@@ -15,3 +15,12 @@ function controls() {
     c.style.display = 'none';
   }
 }
+
+function env() {
+  const e = document.getElementById('env');
+  if (e.style.display === 'none' || e.style.display === '') {
+    e.style.display = 'block';
+  } else {
+    e.style.display = 'none';
+  }
+}
