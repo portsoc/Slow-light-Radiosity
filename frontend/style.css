@@ -77,6 +77,19 @@ img {
   width: 300px;
 }
 
+/* Cursor */
+.menu-item {
+  cursor: pointer;
+}
+
+.window {
+  cursor: default;
+}
+
+#env > div:nth-child(n+3):nth-last-child(n) {
+  cursor: pointer;
+}
+
 /* ? Axis helper */
 #axes-helper-frame {
   position: absolute;
