@@ -116,10 +116,10 @@ export default class RayCast {
     // Calculate random point co-ordinates
     if (Math.random() <= this.selector) {
       // Locate point in first triangle
-      vector = this.v0.scale(1 - s - t).add(this.v1.scale(s).add(this.v2.scale(t)));
+      vector.setTo(this.v0.scale(1 - s - t).add(this.v1.scale(s).add(this.v2.scale(t))));
     } else {
       // Locate point in second triangle
-      vector = this.v0.scale(1 - s - t).add(this.v2.scale(s).add(this.v3.scale(t)));
+      vector.setTo(this.v0.scale(1 - s - t).add(this.v2.scale(s).add(this.v3.scale(t))));
     }
   }
 
