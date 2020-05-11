@@ -49,9 +49,18 @@ img {
   width: 300px;
 }
 
-#stats > div > div {
-  display: table-cell;
-  white-space: nowrap;
+/* Controls */
+#controls-color {
+  background-color: #16a085;
+}
+
+#controls {
+  margin-left: 50px;
+  padding-left: 5px;
+  padding-top: 5px;
+
+  height: auto;
+  width: 300px;
 }
 
 /* ? Axis helper */
