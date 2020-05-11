@@ -5,6 +5,8 @@ import { CSS2DRenderer, CSS2DObject } from '../lib/CSS2DRenderer.js';
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
 
+import delays from './tools/delays.js';
+
 // list of available environments; the first one is the default
 
 import envRoom1 from '../modeling/test-models/room1.js';
@@ -388,6 +390,7 @@ function keyListener(e) {
   }
   if (e.key === 'Escape') {
     stopRadiosity();
+    delays.cancel();
     e.preventDefault();
   }
   if (e.key === 'Tab') {
@@ -402,8 +405,8 @@ function keyListener(e) {
     e.preventDefault();
   }
   if (e.key.toLowerCase() === 'd') {
-    delays.current = (delays.current + 1) % delays.length;
-    console.log(`delay ${delays[delays.current].name}`);
+    const newDelay = delays.selectNextDelay();
+    console.log(`delay ${newDelay}ms`);
     e.preventDefault();
   }
   if (e.key.toLowerCase() === 'e') {
@@ -468,7 +471,7 @@ async function runRadiosity() {
         updateColors();
       };
 
-      await delays[delays.current]();
+      await delays.delay();
       if (stopRunning) break;
     }
 
@@ -491,25 +494,3 @@ async function runRadiosity() {
 function stopRadiosity() {
   stopRunning = true;
 }
-
-function timeoutPromise(ms = 1) {
-  return new Promise(resolve => setTimeout(resolve, ms));
-}
-
-const delays = [
-  function timeout1() {
-    return timeoutPromise(1);
-  },
-
-  function timeout100ms() {
-    return timeoutPromise(100);
-  },
-
-  function timeout1s() {
-    return timeoutPromise(1000);
-  },
-
-  // function none() {},
-];
-
-delays.current = 0;
