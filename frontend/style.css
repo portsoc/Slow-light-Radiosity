@@ -84,10 +84,12 @@ img {
 
 .window {
   cursor: default;
+  pointer-events: none;
 }
 
 #env > div:nth-child(n+3):nth-last-child(n) {
   cursor: pointer;
+  pointer-events: all;
 }
 
 /* ? Axis helper */
