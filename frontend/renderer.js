@@ -21,132 +21,6 @@ const environmentFunctions = [
   () => envCubes(5, true), // 5x5 patches
 ];
 
-// environment menu selector
-
-let envPreviousId = 0;
-function selectEnv(env, n) {
-  event.stopPropagation();
-
-  // unselect previous environment
-  const p = document.getElementById('env-selected');
-  p.textContent = 'Environment ' + envPreviousId;
-  p.removeAttribute('id');
-
-  // select environment
-  env.setAttribute('id', 'env-selected');
-  env.textContent = 'Environment ' + n + ' ◄';
-  envPreviousId = n;
-
-  // update environment
-  currentEnvironment = n;
-  setupEnvironment();
-}
-
-// set up selector
-const envSelector = document.getElementById('env');
-for (let i = 0; i < environmentFunctions.length; i++) {
-  const envDiv = document.createElement('div');
-  envDiv.textContent = 'Environment ' + i;
-  if (i === 0) {
-    envDiv.setAttribute('id', 'env-selected');
-    envDiv.textContent += ' ◄';
-  }
-  envDiv.addEventListener('click', () => selectEnv(envDiv, i));
-  envSelector.appendChild(envDiv);
-}
-
-// light control menu
-
-// set up slider
-const sg = document.getElementById('gamma-slider');
-const se = document.getElementById('exposure-slider');
-sg.addEventListener('input', () => {
-  event.stopPropagation();
-  gamma = sg.value * 10;
-  updateColors();
-});
-se.addEventListener('input', () => {
-  event.stopPropagation();
-  exposure = se.value * 10;
-  updateColors();
-});
-sg.addEventListener('click', () => event.stopPropagation());
-se.addEventListener('click', () => event.stopPropagation());
-
-// delay selector
-const d1 = document.getElementById('delay-1');
-const d100 = document.getElementById('delay-100');
-const d1000 = document.getElementById('delay-1000');
-d1.addEventListener('click', () => {
-  event.stopPropagation();
-
-  d1.classList.add('selected');
-  d100.classList.remove('selected');
-  d1000.classList.remove('selected');
-
-  delays.current = 0;
-});
-d100.addEventListener('click', () => {
-  event.stopPropagation();
-
-  d1.classList.remove('selected');
-  d100.classList.add('selected');
-  d1000.classList.remove('selected');
-
-  delays.current = 1;
-});
-d1000.addEventListener('click', () => {
-  event.stopPropagation();
-
-  d1.classList.remove('selected');
-  d100.classList.remove('selected');
-  d1000.classList.add('selected');
-
-  delays.current = 2;
-});
-
-// mode menu
-
-const a = document.getElementById('ambient');
-const o = document.getElementById('overshoot');
-const w = document.getElementById('wireframe');
-a.addEventListener('click', () => {
-  event.stopPropagation();
-
-  if (currentIncludeAmbient) {
-    a.classList.add('disabled');
-  } else {
-    a.classList.remove('disabled');
-  }
-  currentIncludeAmbient = !currentIncludeAmbient;
-
-  updateColors();
-});
-o.addEventListener('click', () => {
-  event.stopPropagation();
-
-  if (overshooting) {
-    o.classList.add('disabled');
-  } else {
-    o.classList.remove('disabled');
-  }
-  overshooting = !overshooting;
-
-  updateColors();
-});
-w.addEventListener('click', () => {
-  event.stopPropagation();
-
-  if (currentWireframe) {
-    w.classList.add('disabled');
-  } else {
-    w.classList.remove('disabled');
-  }
-  currentWireframe = !currentWireframe;
-
-  material.wireframe = currentWireframe;
-});
-
 // global variables
 
 let currentEnvironment = 0;
@@ -179,7 +53,7 @@ window.addEventListener('load', init);
 function init() {
   setupRenderer();
   setupHelper();
-  setupMenu();
+  setupOverlay();
   setupEnvironment();
   animate();
 
@@ -625,4 +499,145 @@ async function runRadiosity() {
 
 function stopRadiosity() {
   stopRunning = true;
+}
+
+function setupOverlay() {
+  setupMenu();
+
+  // environment menu selector
+
+  let envPreviousId = 0;
+  function selectEnv(envDiv, n) {
+    if (currentEnvironment === n) return;
+
+    event.stopPropagation();
+
+    // unselect previous environment
+    const p = document.getElementById('env-selected');
+    setEnvName(p, envPreviousId, false);
+    p.removeAttribute('id');
+
+    // select environment
+    setEnvName(envDiv, n, true);
+    envPreviousId = n;
+
+    // update environment
+    currentEnvironment = n;
+    stopRadiosity();
+    setupEnvironment();
+  }
+
+  function setEnvName(envDiv, n, selected) {
+    const envName = environmentFunctions[n].name;
+    if (envName) {
+      envDiv.textContent = `${n + 1}: ${envName}`;
+    } else {
+      envDiv.textContent = `${n + 1}`;
+    }
+    if (selected) {
+      envDiv.textContent += ' ◄';
+      envDiv.setAttribute('id', 'env-selected');
+    }
+  }
+
+  // set up selector
+  const envSelector = document.getElementById('env');
+  for (let i = 0; i < environmentFunctions.length; i++) {
+    const envDiv = document.createElement('div');
+    setEnvName(envDiv, i, i === 0);
+    envDiv.addEventListener('click', () => selectEnv(envDiv, i));
+    envSelector.appendChild(envDiv);
+  }
+
+  // light control menu
+
+  // set up slider
+  const sg = document.getElementById('gamma-slider');
+  const se = document.getElementById('exposure-slider');
+  sg.addEventListener('input', () => {
+    event.stopPropagation();
+    gamma = sg.value * 10;
+    updateColors();
+  });
+  se.addEventListener('input', () => {
+    event.stopPropagation();
+    exposure = se.value * 10;
+    updateColors();
+  });
+  sg.addEventListener('click', () => event.stopPropagation());
+  se.addEventListener('click', () => event.stopPropagation());
+
+  // delay selector
+  const d0 = document.getElementById('delay-0');
+  const d100 = document.getElementById('delay-100');
+  const d1000 = document.getElementById('delay-1000');
+  d0.addEventListener('click', () => {
+    event.stopPropagation();
+
+    d0.classList.add('selected');
+    d100.classList.remove('selected');
+    d1000.classList.remove('selected');
+
+    delays.selectDelay(0);
+  });
+  d100.addEventListener('click', () => {
+    event.stopPropagation();
+
+    d0.classList.remove('selected');
+    d100.classList.add('selected');
+    d1000.classList.remove('selected');
+
+    delays.selectDelay(100);
+  });
+  d1000.addEventListener('click', () => {
+    event.stopPropagation();
+
+    d0.classList.remove('selected');
+    d100.classList.remove('selected');
+    d1000.classList.add('selected');
+
+    delays.selectDelay(1000);
+  });
+
+  // mode menu
+
+  const a = document.getElementById('ambient');
+  const o = document.getElementById('overshoot');
+  const w = document.getElementById('wireframe');
+  a.addEventListener('click', () => {
+    event.stopPropagation();
+
+    if (currentIncludeAmbient) {
+      a.classList.add('disabled');
+    } else {
+      a.classList.remove('disabled');
+    }
+    currentIncludeAmbient = !currentIncludeAmbient;
+
+    updateColors();
+  });
+  o.addEventListener('click', () => {
+    event.stopPropagation();
+
+    if (overshooting) {
+      o.classList.add('disabled');
+    } else {
+      o.classList.remove('disabled');
+    }
+    overshooting = !overshooting;
+
+    updateColors();
+  });
+  w.addEventListener('click', () => {
+    event.stopPropagation();
+
+    if (currentWireframe) {
+      w.classList.add('disabled');
+    } else {
+      w.classList.remove('disabled');
+    }
+    currentWireframe = !currentWireframe;
+
+    material.wireframe = currentWireframe;
+  });
 }
