@@ -86,10 +86,10 @@ window.addEventListener('load', init);
 
 function init() {
   setupRenderer();
-  setupHelper();
+  // setupHelper();
   setupMenu();
   setupEnvironment();
-  animate();
+  // animate();
 
   setupEventListeners();
 }
