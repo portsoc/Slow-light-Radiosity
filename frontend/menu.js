@@ -1,3 +1,10 @@
+export default function setupMenu() {
+  // menu windows
+  document.querySelector('#stats-color').addEventListener('click', stats);
+  document.querySelector('#controls-color').addEventListener('click', controls);
+  document.querySelector('#env-color').addEventListener('click', envSelector);
+}
+
 function stats() {
   const s = document.getElementById('stats');
   if (s.style.display === 'none' || s.style.display === '') {
