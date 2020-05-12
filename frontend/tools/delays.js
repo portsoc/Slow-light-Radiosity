@@ -9,20 +9,48 @@
 
 const commonDelays = [0, 100, 1000];
 
+const FAST_BURSTS_MS = 5;
+
 export class Delays {
   constructor(delays = commonDelays) {
     this._delays = delays;
     this._currentDelayIndex = 0;
     this.currentDelayMS = delays[0];
+    this._startedGoingFast = 0;
   }
 
   delay(ms = this.currentDelayMS) {
     this.cancel();
+
+    this.currentDelayMS = ms;
+    if (this.canBurstNow()) return;
+
     return new Promise(resolve => {
       this._currentTimeoutResolve = resolve;
-      this.currentDelayMS = ms;
       setTimeout(resolve, ms);
     });
+  }
+
+  canBurstNow() {
+    if (this.currentDelayMS !== 0) {
+      // bursts only allowed with delay 0
+      return false;
+    }
+
+    const currentTime = Date.now();
+
+    if (this._startedGoingFast === 0) {
+      // we weren't going fast, so let's
+      this._startedGoingFast = currentTime;
+      return true;
+    } else if ((currentTime - this._startedGoingFast) <= FAST_BURSTS_MS) {
+      // we were going fast but we're still within FAST_BURSTS_MS
+      return true;
+    } else {
+      // we were going fast already and it's been too long
+      this._startedGoingFast = 0;
+      return false;
+    }
   }
 
   selectNextDelay() {
