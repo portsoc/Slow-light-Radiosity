@@ -6,6 +6,7 @@ import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
 
 import delays from './tools/delays.js';
+import setupMenu from './menu.js';
 
 // list of available environments; the first one is the default
 
@@ -50,7 +51,7 @@ for (let i = 0; i < environmentFunctions.length; i++) {
     envDiv.setAttribute('id', 'env-selected');
     envDiv.textContent += ' ◄';
   }
-  envDiv.onclick = () => selectEnv(envDiv, i);
+  envDiv.addEventListener('click', () => selectEnv(envDiv, i));
   envSelector.appendChild(envDiv);
 }
 
@@ -86,6 +87,7 @@ window.addEventListener('load', init);
 function init() {
   setupRenderer();
   setupHelper();
+  setupMenu();
   setupEnvironment();
   animate();
 

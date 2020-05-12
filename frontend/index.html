@@ -7,7 +7,7 @@
 </head>
 <body>
     <div id="menu">
-        <div class="menu-item" id="stats-color" onclick="stats()">
+        <div class="menu-item" id="stats-color">
             <img src="./img/stats.png">
             <div class="window" id="stats">
                 <div><u>Rendering statistics</u></div>
@@ -22,7 +22,7 @@
                 <div>Iterations : <span id="iteration-count">☕</span></div>
             </div>
         </div>
-        <div class="menu-item" id="controls-color" onclick="controls()">
+        <div class="menu-item" id="controls-color">
             <img src="./img/controls.png">
             <div class="window" id="controls">
                 <div><u>Keyboard commands</u></div>
@@ -36,7 +36,7 @@
                 <div>w ⇾ on/off wireframe</div>
             </div>
         </div>
-        <div class="menu-item" id="env-color" onclick="envSelector()">
+        <div class="menu-item" id="env-color">
             <img src="./img/env.png">
             <div class="window" id="env">
                 <div><u>Environments</u></div>
@@ -47,7 +47,6 @@
 
     <div id="axes-helper-frame"></div>
 
-    <script src="./menu.js"></script>
     <script type="module" src="./renderer.js"></script>
 </body>
 </html>
