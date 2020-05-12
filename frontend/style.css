@@ -32,6 +32,13 @@ img {
 /* Windows */
 .window {
   border: solid 2px white;
+
+  margin-left: 50px;
+  padding-left: 5px;
+  padding-top: 5px;
+
+  height: auto;
+  width: 300px;
 }
 
 /* Statistics */
@@ -39,41 +46,14 @@ img {
   background-color: #2980b9;
 }
 
-#stats {
-  margin-left: 50px;
-  padding-left: 5px;
-  padding-top: 5px;
-
-  height: auto;
-  width: 300px;
-}
-
 /* Controls */
 #controls-color {
   background-color: #16a085;
 }
 
-#controls {
-  margin-left: 50px;
-  padding-left: 5px;
-  padding-top: 5px;
-
-  height: auto;
-  width: 300px;
-}
-
 /* Settings */
 #settings-color {
   background-color: #7f8c8d;
-}
-
-#settings {
-  margin-left: 50px;
-  padding-left: 5px;
-  padding-top: 5px;
-
-  height: auto;
-  width: 300px;
 }
 
 #slider-container {
@@ -97,15 +77,6 @@ img {
 /* Environments */
 #env-color {
   background-color: #27ae60;
-}
-
-#env {
-  margin-left: 50px;
-  padding-left: 5px;
-  padding-top: 5px;
-
-  height: auto;
-  width: 300px;
 }
 
 /* Cursor */
