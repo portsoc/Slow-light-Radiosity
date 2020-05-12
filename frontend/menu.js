@@ -4,6 +4,7 @@ export default function setupMenu() {
   document.querySelector('#controls-color').addEventListener('click', controls);
   document.querySelector('#env-color').addEventListener('click', envSelector);
   document.querySelector('#settings-color').addEventListener('click', settings);
+  document.querySelector('#modes-color').addEventListener('click', modes);
 }
 
 function stats() {
@@ -43,6 +44,16 @@ function settings() {
     s.classList.remove('hidden');
   } else {
     s.classList.add('hidden');
+  }
+}
+
+function modes() {
+  const m = document.getElementById('modes');
+  if (m.classList.contains('hidden')) {
+    hideWindows();
+    m.classList.remove('hidden');
+  } else {
+    m.classList.add('hidden');
   }
 }
 
