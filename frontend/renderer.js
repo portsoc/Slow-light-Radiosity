@@ -109,6 +109,7 @@ d1000.addEventListener('click', () => {
 
 const a = document.getElementById('ambient');
 const o = document.getElementById('overshoot');
+const w = document.getElementById('wireframe');
 a.addEventListener('click', () => {
   event.stopPropagation();
 
@@ -132,6 +133,18 @@ o.addEventListener('click', () => {
   overshooting = !overshooting;
 
   updateColors();
+});
+w.addEventListener('click', () => {
+  event.stopPropagation();
+
+  if (currentWireframe) {
+    w.classList.add('striped');
+  } else {
+    w.classList.remove('striped');
+  }
+  currentWireframe = !currentWireframe;
+
+  material.wireframe = currentWireframe;
 });
 
 // global variables

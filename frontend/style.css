@@ -109,7 +109,7 @@ img {
   pointer-events: all;
 }
 
-#ambient, #overshoot {
+#ambient, #overshoot, #wireframe {
   cursor: pointer;
   pointer-events: all;
 }
