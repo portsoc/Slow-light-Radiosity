@@ -80,27 +80,27 @@ const d1000 = document.getElementById('delay-1000');
 d1.addEventListener('click', () => {
   event.stopPropagation();
 
-  d1.classList.add('underline');
-  d100.classList.remove('underline');
-  d1000.classList.remove('underline');
+  d1.classList.add('selected');
+  d100.classList.remove('selected');
+  d1000.classList.remove('selected');
 
   delays.current = 0;
 });
 d100.addEventListener('click', () => {
   event.stopPropagation();
 
-  d1.classList.remove('underline');
-  d100.classList.add('underline');
-  d1000.classList.remove('underline');
+  d1.classList.remove('selected');
+  d100.classList.add('selected');
+  d1000.classList.remove('selected');
 
   delays.current = 1;
 });
 d1000.addEventListener('click', () => {
   event.stopPropagation();
 
-  d1.classList.remove('underline');
-  d100.classList.remove('underline');
-  d1000.classList.add('underline');
+  d1.classList.remove('selected');
+  d100.classList.remove('selected');
+  d1000.classList.add('selected');
 
   delays.current = 2;
 });
@@ -114,9 +114,9 @@ a.addEventListener('click', () => {
   event.stopPropagation();
 
   if (currentIncludeAmbient) {
-    a.classList.add('striped');
+    a.classList.add('disabled');
   } else {
-    a.classList.remove('striped');
+    a.classList.remove('disabled');
   }
   currentIncludeAmbient = !currentIncludeAmbient;
 
@@ -126,9 +126,9 @@ o.addEventListener('click', () => {
   event.stopPropagation();
 
   if (overshooting) {
-    o.classList.add('striped');
+    o.classList.add('disabled');
   } else {
-    o.classList.remove('striped');
+    o.classList.remove('disabled');
   }
   overshooting = !overshooting;
 
@@ -138,9 +138,9 @@ w.addEventListener('click', () => {
   event.stopPropagation();
 
   if (currentWireframe) {
-    w.classList.add('striped');
+    w.classList.add('disabled');
   } else {
-    w.classList.remove('striped');
+    w.classList.remove('disabled');
   }
   currentWireframe = !currentWireframe;
 
