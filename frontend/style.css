@@ -109,6 +109,11 @@ img {
   pointer-events: all;
 }
 
+#ambient, #overshoot {
+  cursor: pointer;
+  pointer-events: all;
+}
+
 /* Hidden */
 .hidden {
   display: none;
@@ -117,6 +122,11 @@ img {
 /* Underline */
 .underline{
   text-decoration: solid underline;
+}
+
+/* Underline */
+.striped{
+  text-decoration: solid line-through;
 }
 
 /* ? Axis helper */
