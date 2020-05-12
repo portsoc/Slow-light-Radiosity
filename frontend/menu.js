@@ -1,10 +1,10 @@
 export default function setupMenu() {
   // menu windows
-  document.querySelector('#stats-color').addEventListener('click', stats);
-  document.querySelector('#controls-color').addEventListener('click', controls);
-  document.querySelector('#env-color').addEventListener('click', envSelector);
-  document.querySelector('#settings-color').addEventListener('click', settings);
-  document.querySelector('#modes-color').addEventListener('click', modes);
+  document.querySelector('#stats-button').addEventListener('click', stats);
+  document.querySelector('#controls-button').addEventListener('click', controls);
+  document.querySelector('#env-button').addEventListener('click', envSelector);
+  document.querySelector('#settings-button').addEventListener('click', settings);
+  document.querySelector('#modes-button').addEventListener('click', modes);
 }
 
 function stats() {

@@ -1,20 +1,29 @@
+:root {
+  --bg: #2d3436;
+  --fg: white;
+}
+
+html, body {
+  background-color: var(--bg);
+  color: var(--fg);
+}
+
 * {
   padding: 0;
   margin: 0;
 }
 
-/* ? Radiosity menu*/
+/* Radiosity menu */
 #menu {
   position: absolute;
   top: 15px;
   left: 15px;
 
-  border: solid 2px white;
+  border: solid 2px var(--fg);
 
   font-size: larger;
   font-family: 'Courier', Arial, monospace;
   font-weight: bold;
-  color: white;
 }
 
 .menu-item {
@@ -31,7 +40,7 @@ img {
 
 /* Windows */
 .window {
-  border: solid 2px white;
+  border: solid 2px var(--fg);
 
   margin-left: 50px;
   padding-left: 5px;
@@ -39,26 +48,29 @@ img {
 
   height: auto;
   width: 300px;
+
+  background-color: var(--bg);
 }
 
-/* Statistics */
-#stats-color {
-  background-color: #2980b9;
+/* menu button colors */
+#menu > :nth-child(1) {
+  background-color: #05668d;
 }
 
-/* Environments */
-#env-color {
-  background-color: #27ae60;
+#menu > :nth-child(2) {
+  background-color: #028090;
 }
 
-/* Controls */
-#controls-color {
-  background-color: #16a085;
+#menu > :nth-child(3) {
+  background-color: #00a896;
 }
 
-/* Settings */
-#settings-color {
-  background-color: #7f8c8d;
+#menu > :nth-child(4) {
+  background-color: #02c39a;
+}
+
+#menu > :nth-child(5) {
+  background-color: #f0f3bd;
 }
 
 #slider-container {
@@ -77,11 +89,6 @@ img {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-}
-
-/* Mode */
-#modes-color {
-  background-color: #f39c12;
 }
 
 /* Cursor */
@@ -129,7 +136,7 @@ img {
   text-decoration: solid line-through;
 }
 
-/* ? Axis helper */
+/* Axes helper */
 #axes-helper-frame {
   position: absolute;
   bottom: 15px;
