@@ -109,7 +109,8 @@ function setupRenderer() {
 
 function setupRendererScene() {
   scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x2d3436);
+  const bgColor = window.getComputedStyle(document.body).getPropertyValue('--bg').trim();
+  scene.background = new THREE.Color(bgColor);
   geometry = new THREE.Geometry();
 
   for (const instance of environment.instances) {
@@ -556,12 +557,12 @@ function setupOverlay() {
   const se = document.getElementById('exposure-slider');
   sg.addEventListener('input', () => {
     event.stopPropagation();
-    gamma = sg.value * 10;
+    gamma = sg.valueAsNumber;
     updateColors();
   });
   se.addEventListener('input', () => {
     event.stopPropagation();
-    exposure = se.value * 10;
+    exposure = se.valueAsNumber;
     updateColors();
   });
   sg.addEventListener('click', () => event.stopPropagation());

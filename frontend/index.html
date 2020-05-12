@@ -1,3 +1,4 @@
+<!doctype html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -7,8 +8,15 @@
 </head>
 <body>
     <div id="menu">
-        <div class="menu-item" id="stats-color">
-            <img src="./img/stats.png">
+        <div class="menu-item" id="env-button">
+            <img src="./img/env.png" alt="icon for environment selector" title="select an environment">
+            <div class="window hidden" id="env">
+                <div><u>Environments</u></div>
+                <div>----------</div>
+            </div>
+        </div>
+        <div class="menu-item" id="stats-button">
+            <img src="./img/stats.png" alt="icon for statistics" title="show statistics">
             <div class="window hidden" id="stats">
                 <div><u>Rendering statistics</u></div>
                 <div>----------</div>
@@ -22,8 +30,8 @@
                 <div>Iterations : <span id="iteration-count">☕</span></div>
             </div>
         </div>
-        <div class="menu-item" id="controls-color">
-            <img src="./img/controls.png">
+        <div class="menu-item" id="controls-button">
+            <img src="./img/controls.png" alt="icon for controls" title="controls">
             <div class="window hidden" id="controls">
                 <div><u>Keyboard commands</u></div>
                 <div>----------</div>
@@ -32,23 +40,16 @@
                 <div>Echap ⇾ stop radiosity</div>
             </div>
         </div>
-        <div class="menu-item" id="env-color">
-            <img src="./img/env.png">
-            <div class="window hidden" id="env">
-                <div><u>Environments</u></div>
-                <div>----------</div>
-            </div>
-        </div>
-        <div class="menu-item" id="settings-color">
-            <img src="./img/settings.png">
+        <div class="menu-item" id="settings-button">
+            <img src="./img/settings.png" alt="icon for settings" title="settings">
             <div class="window hidden" id="settings">
                 <div><u>Settings</u></div>
                 <div>----------</div>
                 <div id="slider-container">
                     <div class="slider-label">Gamma</div>
-                    <input type="range" id="gamma-slider" min="0" max="2" step="0.1">
+                    <input type="range" id="gamma-slider" min="0" max="50" step="1" value="22">
                     <div class="slider-label">Exposure</div>
-                    <input type="range" id="exposure-slider" min="0" max="1" step="0.05">
+                    <input type="range" id="exposure-slider" min="0" max="50" step="1" value="10">
                     <div class="slider-label">Delay</div>
                     <div id="delay">
                         <div id="delay-0" class="selected">0</div>
@@ -58,8 +59,8 @@
                 </div>
             </div>
         </div>
-        <div class="menu-item" id="modes-color">
-            <img src="./img/mode.png">
+        <div class="menu-item" id="modes-button">
+            <img src="./img/mode.png" alt="icon for mode selector" title="select mode">
             <div class="window hidden" id="modes">
                 <div><u>Modes</u></div>
                 <div>----------</div>
