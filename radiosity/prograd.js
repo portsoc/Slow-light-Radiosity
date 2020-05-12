@@ -7,7 +7,6 @@ export default class ProgRad extends RadEqnSolve {
     super();
 
     this.ffd = new HemiCube();        // Form factor determination
-    this.ffArray = null;              // Form factor array
 
     this.overFlag = false;            // Overshoot flag
     this.overshoot = new Spectra();   // Overshooting parameters
@@ -21,16 +20,11 @@ export default class ProgRad extends RadEqnSolve {
 
     this.calcInterReflect();
 
-    // Allocate form factor array
-    this.ffArray = new Array(this.env.numberElements());
-
     return true;
   }
 
   close() {
     this.prepareForDisplay();
-    // Release form factor array
-    this.ffArray = null;
   }
 
   prepareForDisplay() {
@@ -58,10 +52,14 @@ export default class ProgRad extends RadEqnSolve {
       return true;
     }
 
-    // Calculate form factors
-    this.ffd.calculateFormFactors(this.max, this.env, this.ffArray);
+    // Calculate form factors if not done before
+    if (!this.max.ffArray) {
+      this.max.ffArray = new Array(this.env.numberElements());
+      this.ffd.calculateFormFactors(this.max, this.env, this.max.ffArray);
+    }
 
-    if (this.overFlag) this.calcOverShoot();
+    const ffArray = this.max.ffArray;
+    if (this.overFlag) this.calcOverShoot(ffArray);
 
     const shoot = new Spectra();
 
@@ -75,9 +73,9 @@ export default class ProgRad extends RadEqnSolve {
           if (patch !== this.max) {
             for (const element of patch.elements) {
               // Check element visibility
-              if (this.ffArray[element.number] > 0) {
+              if (ffArray[element.number] > 0) {
                 // Compute reciprocal form factor
-                const rff = Math.min(this.ffArray[element.number] * this.max.area / element.area, 1);
+                const rff = Math.min(ffArray[element.number] * this.max.area / element.area, 1);
 
                 // Get shooting patch unsent exitance
                 shoot.setTo(this.max.exitance);
@@ -113,7 +111,7 @@ export default class ProgRad extends RadEqnSolve {
     return false;
   }
 
-  calcOverShoot() {
+  calcOverShoot(ffArray) {
     this.overshoot.reset();
     const unsent = new Spectra();
 
@@ -131,7 +129,7 @@ export default class ProgRad extends RadEqnSolve {
               if (unsent.b < 0) unsent.b = 0;
 
               // Multiply unsent exitance by patch-to-element form factor
-              unsent.scale(this.ffArray[element.number]);
+              unsent.scale(ffArray[element.number]);
 
               // Update overshooting paramters
               this.overshoot.add(unsent);
