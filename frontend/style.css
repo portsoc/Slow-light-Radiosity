@@ -46,6 +46,11 @@ img {
   background-color: #2980b9;
 }
 
+/* Environments */
+#env-color {
+  background-color: #27ae60;
+}
+
 /* Controls */
 #controls-color {
   background-color: #16a085;
@@ -74,9 +79,9 @@ img {
   justify-content: space-evenly;
 }
 
-/* Environments */
-#env-color {
-  background-color: #27ae60;
+/* Mode */
+#modes-color {
+  background-color: #f39c12;
 }
 
 /* Cursor */
