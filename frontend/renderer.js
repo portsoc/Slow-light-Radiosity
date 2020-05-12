@@ -55,6 +55,24 @@ for (let i = 0; i < environmentFunctions.length; i++) {
   envSelector.appendChild(envDiv);
 }
 
+// light control menu
+
+// set up slider
+const sg = document.getElementById('gamma-slider');
+const se = document.getElementById('exposure-slider');
+sg.addEventListener('input', () => {
+  event.stopPropagation();
+  gamma = sg.value * 10;
+  updateColors();
+});
+se.addEventListener('input', () => {
+  event.stopPropagation();
+  exposure = se.value * 10;
+  updateColors();
+});
+sg.addEventListener('click', () => event.stopPropagation());
+se.addEventListener('click', () => event.stopPropagation());
+
 // global variables
 
 let currentEnvironment = 0;
@@ -86,10 +104,10 @@ window.addEventListener('load', init);
 
 function init() {
   setupRenderer();
-  // setupHelper();
+  setupHelper();
   setupMenu();
   setupEnvironment();
-  // animate();
+  animate();
 
   setupEventListeners();
 }
