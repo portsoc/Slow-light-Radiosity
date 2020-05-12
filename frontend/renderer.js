@@ -105,6 +105,35 @@ d1000.addEventListener('click', () => {
   delays.current = 2;
 });
 
+// mode menu
+
+const a = document.getElementById('ambient');
+const o = document.getElementById('overshoot');
+a.addEventListener('click', () => {
+  event.stopPropagation();
+
+  if (currentIncludeAmbient) {
+    a.classList.add('striped');
+  } else {
+    a.classList.remove('striped');
+  }
+  currentIncludeAmbient = !currentIncludeAmbient;
+
+  updateColors();
+});
+o.addEventListener('click', () => {
+  event.stopPropagation();
+
+  if (overshooting) {
+    o.classList.add('striped');
+  } else {
+    o.classList.remove('striped');
+  }
+  overshooting = !overshooting;
+
+  updateColors();
+});
+
 // global variables
 
 let currentEnvironment = 0;
