@@ -128,9 +128,19 @@ img {
   pointer-events: all;
 }
 
+#delay > div {
+  cursor: pointer;
+  pointer-events: all;
+}
+
 /* Hidden */
 .hidden {
   display: none;
+}
+
+/* Underline */
+.underline{
+  text-decoration: solid underline;
 }
 
 /* ? Axis helper */
