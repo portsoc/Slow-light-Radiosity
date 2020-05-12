@@ -111,6 +111,10 @@ function setupEnvironment() {
   document.getElementById('element-count').textContent = environment.elementCount;
   document.getElementById('vertex-count').textContent = environment.vertexCount;
 
+  // reset running time and iteration count
+  document.getElementById('running-time').textContent = '?';
+  document.getElementById('iteration-count').textContent = '?';
+
   // translate coordinates so we can see them
   Modeling.coordinates.xyFloorToView(environment);
 
