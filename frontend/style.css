@@ -62,6 +62,38 @@ img {
   width: 300px;
 }
 
+/* Settings */
+#settings-color {
+  background-color: #7f8c8d;
+}
+
+#settings {
+  margin-left: 50px;
+  padding-left: 5px;
+  padding-top: 5px;
+
+  height: auto;
+  width: 300px;
+}
+
+#slider-container {
+  text-align: center;
+}
+
+#slider-container > input {
+  margin-bottom: 20px;
+}
+
+.slider-label {
+  margin-bottom: 5px;
+}
+
+#delay {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-evenly;
+}
+
 /* Environments */
 #env-color {
   background-color: #27ae60;
@@ -87,6 +119,11 @@ img {
 }
 
 #env > div:nth-child(n+3):nth-last-child(n) {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#slider-container > input {
   cursor: pointer;
   pointer-events: all;
 }
