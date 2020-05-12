@@ -73,6 +73,38 @@ se.addEventListener('input', () => {
 sg.addEventListener('click', () => event.stopPropagation());
 se.addEventListener('click', () => event.stopPropagation());
 
+// delay selector
+const d1 = document.getElementById('delay-1');
+const d100 = document.getElementById('delay-100');
+const d1000 = document.getElementById('delay-1000');
+d1.addEventListener('click', () => {
+  event.stopPropagation();
+
+  d1.classList.add('underline');
+  d100.classList.remove('underline');
+  d1000.classList.remove('underline');
+
+  delays.current = 0;
+});
+d100.addEventListener('click', () => {
+  event.stopPropagation();
+
+  d1.classList.remove('underline');
+  d100.classList.add('underline');
+  d1000.classList.remove('underline');
+
+  delays.current = 1;
+});
+d1000.addEventListener('click', () => {
+  event.stopPropagation();
+
+  d1.classList.remove('underline');
+  d100.classList.remove('underline');
+  d1000.classList.add('underline');
+
+  delays.current = 2;
+});
+
 // global variables
 
 let currentEnvironment = 0;
