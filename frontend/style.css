@@ -32,7 +32,6 @@ img {
 /* Windows */
 .window {
   border: solid 2px white;
-  display: none;
 }
 
 /* Statistics */
@@ -90,6 +89,11 @@ img {
 #env > div:nth-child(n+3):nth-last-child(n) {
   cursor: pointer;
   pointer-events: all;
+}
+
+/* Hidden */
+.hidden {
+  display: none;
 }
 
 /* ? Axis helper */

@@ -7,39 +7,39 @@ export default function setupMenu() {
 
 function stats() {
   const s = document.getElementById('stats');
-  if (s.style.display === 'none' || s.style.display === '') {
+  if (s.classList.contains('hidden')) {
     // close other window
-    document.getElementById('controls').style.display = 'none';
-    document.getElementById('env').style.display = 'none';
+    document.getElementById('controls').classList.add('hidden');
+    document.getElementById('env').classList.add('hidden');
 
-    s.style.display = 'block';
+    s.classList.remove('hidden');
   } else {
-    s.style.display = 'none';
+    s.classList.add('hidden');
   }
 }
 
 function controls() {
   const c = document.getElementById('controls');
-  if (c.style.display === 'none' || c.style.display === '') {
+  if (c.classList.contains('hidden')) {
     // close other window
-    document.getElementById('stats').style.display = 'none';
-    document.getElementById('env').style.display = 'none';
+    document.getElementById('stats').classList.add('hidden');
+    document.getElementById('env').classList.add('hidden');
 
-    c.style.display = 'block';
+    c.classList.remove('hidden');
   } else {
-    c.style.display = 'none';
+    c.classList.add('hidden');
   }
 }
 
 function envSelector() {
   const e = document.getElementById('env');
-  if (e.style.display === 'none' || e.style.display === '') {
+  if (e.classList.contains('hidden')) {
     // close other window
-    document.getElementById('stats').style.display = 'none';
-    document.getElementById('controls').style.display = 'none';
+    document.getElementById('stats').classList.add('hidden');
+    document.getElementById('controls').classList.add('hidden');
 
-    e.style.display = 'block';
+    e.classList.remove('hidden');
   } else {
-    e.style.display = 'none';
+    e.classList.add('hidden');
   }
 }
