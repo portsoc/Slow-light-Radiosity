@@ -38,6 +38,25 @@ export class Delays {
     return newDelay;
   }
 
+  selectDelay(ms) {
+    let newDelayIndex = this._delays.indexOf(ms);
+    if (newDelayIndex < 0) {
+      newDelayIndex = 0;
+      console.warn(`trying to set delay of ${ms}ms but only ${this._delays} are allowed`);
+    }
+
+    const newDelay = this._delays[newDelayIndex];
+
+    // cancel the previous delay if it's longer than the new one
+    if (newDelay < this.currentDelayMS) {
+      this.cancel();
+    }
+
+    this._currentDelayIndex = newDelayIndex;
+    this.currentDelayMS = newDelay;
+    return newDelay;
+  }
+
   cancel() {
     if (this._currentTimeoutResolve) {
       this._currentTimeoutResolve();
