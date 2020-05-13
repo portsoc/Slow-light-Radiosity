@@ -92,6 +92,20 @@ export default class Environment {
     return this._elementsIterator();
   }
 
+  * _patchesIterator() {
+    for (const i of this.instances) {
+      for (const s of i.surfaces) {
+        for (const p of s.patches) {
+          yield p;
+        }
+      }
+    }
+  }
+
+  get patches() {
+    return this._patchesIterator();
+  }
+
   checkNoVerticesAreShared() {
     for (const i of this.instances) {
       for (const s of i.surfaces) {
