@@ -12,13 +12,17 @@ import setupMenu from './menu.js';
 
 import envRoom1 from '../modeling/test-models/room1.js';
 import envRoom613 from '../modeling/test-models/room613.js';
-import { createTwoCubesInRoom as envCubes } from '../modeling/test-models/two-cubes.js';
+import {
+  createTwoCubesInRoom as envCubes,
+  createCubeAndLampInRoom as envLamp,
+} from '../modeling/test-models/two-cubes.js';
 
 const environmentFunctions = [
   envRoom1,
   envRoom613,
   () => envCubes(5), // 5x5 elements, single patch
   () => envCubes(5, true), // 5x5 patches
+  () => envLamp(5, true),
 ];
 
 // global variables
