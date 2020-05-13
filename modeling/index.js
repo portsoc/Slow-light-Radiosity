@@ -9,6 +9,9 @@ export { subdivision };
 import * as cube from './cube.js';
 export { cube };
 
+import * as cylinder from './cylinder.js';
+export { cylinder };
+
 import * as singleFace from './singleface.js';
 export { singleFace };
 
