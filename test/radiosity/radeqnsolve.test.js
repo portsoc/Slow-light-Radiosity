@@ -14,8 +14,8 @@ test('constructor', () => {
   expect(r.totalFlux).toBe(0);
   expect(r.totalUnsent).toBe(0);
   expect(r.stepCount).toBe(0);
-  expect(r.maxStep).toBe(1000);
-  expect(r.stopCriterion).toBe(0.0001);
+  expect(r.maxStep).toEqual(expect.any(Number));
+  expect(r.stopCriterion).toEqual(expect.any(Number));
   expect(r.convergence).toBeNull();
   expect(r.max).toBeNull();
   expect(r.env).toBeNull();
