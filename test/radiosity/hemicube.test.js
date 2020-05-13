@@ -36,3 +36,10 @@ test('book section 5.18.1', () => {
   expect(results[2]).toBeCloseTo(0.24, 2); // second patch against the other
   expect(results[3]).toBe(0); // second patch against its own element
 });
+
+test('constructor() default param', () => {
+  const hemi = new HemiCube();
+  expect(hemi.scanner.resolution).toEqual(expect.any(Number));
+  expect(hemi.scanner.resolution).toBeGreaterThan(1);
+  expect(hemi.scanner.resolution % 2).toBe(0);
+});

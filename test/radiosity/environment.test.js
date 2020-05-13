@@ -5,6 +5,7 @@ import Point3 from '../../radiosity/point3.js';
 import Patch3 from '../../radiosity/patch3.js';
 import Element3 from '../../radiosity/element3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
+import Spectra from '../../radiosity/spectra.js';
 
 test('constructor', () => {
   const s1 = new Surface3(null, null, []);
@@ -100,30 +101,51 @@ describe('checkNoVerticesAreShared', () => {
 describe('with a non-trivial environment', () => {
   let environment;
 
-  beforeEach(() => {
-    const points = [
+  let points;
+  let v1;
+  let p1a;
+  let p1b;
+  let s1;
+  let i1;
+  let points2;
+  let v2a;
+  let v2b;
+  let v2c;
+  let p2a;
+  let p2b;
+  let p2c;
+  let s2a;
+  let s2bc;
+  let i2;
+
+  beforeAll(() => {
+    points = [
       new Point3(-1, -1, 2),
       new Point3(1, 0, 2),
       new Point3(1, 1, 2),
       new Point3(0, 1, 2),
     ];
-    const v1 = points.map(p => new Vertex3(p));
-    const p1a = new Patch3(v1);
-    const p1b = new Patch3(v1);
-    const s1 = new Surface3(null, null, [p1a, p1b]);
-    const i1 = new Instance([s1]);
+    v1 = points.map(p => new Vertex3(p));
+    p1a = new Patch3(v1);
+    p1b = new Patch3(v1);
+    s1 = new Surface3(null, null, [p1a, p1b]);
+    i1 = new Instance([s1]);
 
-    const points2 = [
+    points2 = [
       new Point3(0, 0, 4),
       new Point3(1, -4, 5),
       new Point3(1, 1, 4),
     ];
-    const p2a = new Patch3(points2.map(p => new Vertex3(p)));
-    const p2b = new Patch3(points2.map(p => new Vertex3(p)));
-    const p2c = new Patch3(points2.map(p => new Vertex3(p)));
-    const s2a = new Surface3(null, null, [p2a]);
-    const s2bc = new Surface3(null, null, [p2b, p2c]);
-    const i2 = new Instance([s2a, s2bc]);
+    v2a = points2.map(p => new Vertex3(p));
+    v2b = points2.map(p => new Vertex3(p));
+    v2c = points2.map(p => new Vertex3(p));
+    p2a = new Patch3(v2a);
+    p2b = new Patch3(v2b);
+    p2c = new Patch3(v2c);
+    s2a = new Surface3(null, null, [p2a]);
+    s2bc = new Surface3(null, null, [p2b, p2c]);
+    i2 = new Instance([s2a, s2bc]);
+
     environment = new Environment([i1, i2]);
   });
 
@@ -148,6 +170,71 @@ describe('with a non-trivial environment', () => {
       [new Point3(-1, -4, 2), new Point3(1, 1, 5)],
     );
   });
+
+  test('get vertices', () => {
+    expect(Array.from(environment.vertices)).toStrictEqual([...v1, ...v2a, ...v2b, ...v2c]);
+    // run twice to make sure we don't just have a one-use iterator
+    expect(Array.from(environment.vertices)).toStrictEqual([...v1, ...v2a, ...v2b, ...v2c]);
+  });
+
+  test('get elements', () => {
+    expect(Array.from(environment.elements)).toStrictEqual(
+      [p1a, p1b, p2a, p2b, p2c].flatMap(patch => patch.elements),
+    );
+    // run twice to make sure we don't just have a one-use iterator
+    expect(Array.from(environment.elements)).toStrictEqual(
+      [p1a, p1b, p2a, p2b, p2c].flatMap(patch => patch.elements),
+    );
+  });
+
+  test('get patches', () => {
+    expect(Array.from(environment.patches)).toStrictEqual([p1a, p1b, p2a, p2b, p2c]);
+    // run twice to make sure we don't just have a one-use iterator
+    expect(Array.from(environment.patches)).toStrictEqual([p1a, p1b, p2a, p2b, p2c]);
+  });
 });
 
-test.todo('interpolateVertexExitances()');
+test('interpolateVertexExitances()', () => {
+  /*
+   *  1__
+   *  |\ \_
+   *  | \ B\_
+   *  |A 2----3
+   *  | / C_/
+   *  |/ _/
+   *  0_/
+   */
+  const points = [
+    new Point3(0, 0, 0),
+    new Point3(0, 2, 0),
+    new Point3(1, 1, 0),
+    new Point3(2, 1, 0),
+  ];
+  const v = points.map(p => new Vertex3(p));
+  const elA = new Element3([v[0], v[2], v[1]]);
+  const elB = new Element3([v[1], v[2], v[3]]);
+  const elC = new Element3([v[0], v[3], v[2]]);
+  const p = new Patch3([v[0], v[3], v[1]], [elA, elB, elC]);
+  const s = new Surface3(null, null, [p]);
+  const i = new Instance([s]);
+  const e = new Environment([i]);
+
+  elA.exitance.setTo(new Spectra(1, 2, 3));
+  elB.exitance.setTo(new Spectra(2, 3, 4));
+  elC.exitance.setTo(new Spectra(6, 4, 8));
+
+  expect(v.map(vertex => vertex.exitance)).toStrictEqual([
+    new Spectra(0, 0, 0),
+    new Spectra(0, 0, 0),
+    new Spectra(0, 0, 0),
+    new Spectra(0, 0, 0),
+  ]);
+
+  e.interpolateVertexExitances();
+  expect(v.map(vertex => vertex.exitance)).toStrictEqual([
+    new Spectra(3.5, 3, 5.5),
+    new Spectra(1.5, 2.5, 3.5),
+    new Spectra(3, 3, 5),
+    new Spectra(4, 3.5, 6),
+  ]);
+});

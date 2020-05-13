@@ -43,3 +43,13 @@ test('scale()', () => {
   const s1 = new Spectra(12, 0, 5);
   expect(s1.scale(5)).toStrictEqual(new Spectra(60, 0, 25));
 });
+
+test('multiply()', () => {
+  const s1 = new Spectra(12, 3, 5);
+  const s2 = new Spectra(1, 2, 3);
+
+  const s = s1.multiply(s2);
+  expect(s).toBe(s1);
+  expect(s).toStrictEqual(new Spectra(12, 6, 15));
+  expect(s2).toStrictEqual(new Spectra(1, 2, 3));
+});
