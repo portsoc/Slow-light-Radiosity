@@ -440,6 +440,7 @@ function keyListener(e) {
   }
   if (e.key === 'w') {
     currentWireframe = !currentWireframe;
+    material.wireframe = currentWireframe;
     e.preventDefault();
   }
   if (e.key >= '1' && e.key <= '9' && !e.metaKey && !e.altKey && !e.ctrlKey) {
