@@ -14,9 +14,7 @@ export default class SlowRad extends RadEqnSolve {
     this.stepCount = 0;
     this.convergence = 1;
     this.initExitance();
-
     this.calcInterReflect();
-
     return true;
   }
 
@@ -53,7 +51,6 @@ export default class SlowRad extends RadEqnSolve {
 
     for (const currentPatch of this.env.patches) {
       if (!currentPatch.ffArray) {
-        console.log({currentPatch});
         currentPatch.ffArray = new Array(this.env.numberElements());
         this.ffd.calculateFormFactors(currentPatch, this.env, currentPatch.ffArray);
       }

@@ -463,12 +463,7 @@ let isSlowRadiosity = false;
 async function runRadiosity() {
   try {
     console.log('running radiosity');
-    let rad;
-    if (isSlowRadiosity) {
-      rad = new Rad.SlowRad();
-    } else {
-      rad = new Rad.ProgRad();
-    }
+    const rad = isSlowRadiosity ? new Rad.SlowRad() : new Rad.ProgRad();
     rad.overFlag = overshooting;
 
     rad.open(environment);

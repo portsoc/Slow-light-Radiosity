@@ -17,9 +17,7 @@ export default class ProgRad extends RadEqnSolve {
     this.stepCount = 0;
     this.convergence = 1;
     this.initExitance();
-
     this.calcInterReflect();
-
     return true;
   }
 
