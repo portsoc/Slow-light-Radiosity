@@ -51,29 +51,30 @@ export default class SlowRad extends RadEqnSolve {
 
     const shoot = new Spectra();
 
-    for (const instance of this.env.instances) {
-      for (const surface of instance.surfaces) {
-        // Get surface reflectance
-        const reflect = surface.reflectance;
+    for (const currentPatch of this.env.patches) {
+      if (!currentPatch.ffArray) {
+        console.log({currentPatch});
+        currentPatch.ffArray = new Array(this.env.numberElements());
+        this.ffd.calculateFormFactors(currentPatch, this.env, currentPatch.ffArray);
+      }
+      const ffArray = currentPatch.ffArray;
 
-        for (const patch of surface.patches) {
-          if (!patch.ffArray) {
-            // Calculate patch form factors
-            patch.ffArray = new Array(patch.elements.length);
-            this.ffd.calculateFormFactors(patch, this.env, patch.ffArray);
-          }
+      for (const instance of this.env.instances) {
+        for (const surface of instance.surfaces) {
+          // Get surface reflectance
+          const reflect = surface.reflectance;
 
-          // ignore self patch
-          if (patch !== this.max) {
-            for (const element of patch.elements) {
-              for (const ff of patch.ffArray) {
+          for (const patch of surface.patches) {
+            // ignore self patch
+            if (patch !== currentPatch) {
+              for (const element of patch.elements) {
                 // Check element visibility
-                if (ff > 0) {
+                if (ffArray[element.number] > 0) {
                   // Compute reciprocal form factor
-                  const rff = Math.min(ff * patch.area / element.area, 1);
+                  const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
 
                   // Get shooting patch unsent exitance
-                  shoot.setTo(patch.exitance);
+                  shoot.setTo(currentPatch.exitance);
 
                   // Calculate delta exitance
                   shoot.scale(rff);
@@ -91,10 +92,10 @@ export default class SlowRad extends RadEqnSolve {
           }
         }
       }
-    }
 
-    // Reset unsent exitance to zero
-    this.max.exitance.reset();
+      // Reset unsent exitance to zero
+      currentPatch.exitance.reset();
+    }
 
     // Increment step count
     this.stepCount++;
