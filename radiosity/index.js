@@ -16,6 +16,7 @@ export { default as RadEqnSolve } from './radeqnsolve.js';
 export { default as RayCast } from './raycast.js';
 export { default as RayRad } from './rayrad.js';
 export { default as Spectra } from './spectra.js';
+export { default as SlowRad } from './slowrad.js';
 export { default as Surface3 } from './surface3.js';
 export { default as Vector3 } from './vector3.js';
 export { default as Vector4 } from './vector4.js';

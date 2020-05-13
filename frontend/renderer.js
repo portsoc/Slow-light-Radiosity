@@ -433,9 +433,13 @@ function keyListener(e) {
     console.log('overshooting', overshooting ? 'on' : 'off');
     e.preventDefault();
   }
+  if (e.key === 's') {
+    isSlowRadiosity = !isSlowRadiosity;
+    console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
+    e.preventDefault();
+  }
   if (e.key === 'w') {
     currentWireframe = !currentWireframe;
-    material.wireframe = currentWireframe;
     e.preventDefault();
   }
   if (e.key >= '1' && e.key <= '9' && !e.metaKey && !e.altKey && !e.ctrlKey) {
@@ -454,11 +458,17 @@ function keyListener(e) {
 
 let stopRunning = false;
 let radiosityRunning = false;
+let isSlowRadiosity = false;
 
 async function runRadiosity() {
   try {
     console.log('running radiosity');
-    const rad = new Rad.ProgRad();
+    let rad;
+    if (isSlowRadiosity) {
+      rad = new Rad.SlowRad();
+    } else {
+      rad = new Rad.ProgRad();
+    }
     rad.overFlag = overshooting;
 
     rad.open(environment);
