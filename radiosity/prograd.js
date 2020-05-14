@@ -61,36 +61,34 @@ export default class ProgRad extends RadEqnSolve {
 
     const shoot = new Spectra();
 
-    for (const instance of this.env.instances) {
-      for (const surface of instance.surfaces) {
-        // Get surface reflectance
-        const reflect = surface.reflectance;
+    for (const surface of this.env.surfaces) {
+      // Get surface reflectance
+      const reflect = surface.reflectance;
 
-        for (const patch of surface.patches) {
-          // ignore self patch
-          if (patch !== this.max) {
-            for (const element of patch.elements) {
-              // Check element visibility
-              if (ffArray[element.number] > 0) {
-                // Compute reciprocal form factor
-                const rff = Math.min(ffArray[element.number] * this.max.area / element.area, 1);
+      for (const patch of surface.patches) {
+        // ignore self patch
+        if (patch !== this.max) {
+          for (const element of patch.elements) {
+            // Check element visibility
+            if (ffArray[element.number] > 0) {
+              // Compute reciprocal form factor
+              const rff = Math.min(ffArray[element.number] * this.max.area / element.area, 1);
 
-                // Get shooting patch unsent exitance
-                shoot.setTo(this.max.exitance);
+              // Get shooting patch unsent exitance
+              shoot.setTo(this.max.exitance);
 
-                if (this.overFlag) shoot.add(this.overshoot);
+              if (this.overFlag) shoot.add(this.overshoot);
 
-                // Calculate delta exitance
-                shoot.scale(rff);
-                shoot.multiply(reflect);
+              // Calculate delta exitance
+              shoot.scale(rff);
+              shoot.multiply(reflect);
 
-                // Update element exitance
-                element.exitance.add(shoot);
+              // Update element exitance
+              element.exitance.add(shoot);
 
-                // Update patch unsent exitance
-                shoot.scale(element.area / patch.area);
-                patch.exitance.add(shoot);
-              }
+              // Update patch unsent exitance
+              shoot.scale(element.area / patch.area);
+              patch.exitance.add(shoot);
             }
           }
         }
@@ -113,26 +111,22 @@ export default class ProgRad extends RadEqnSolve {
     this.overshoot.reset();
     const unsent = new Spectra();
 
-    for (const instance of this.env.instances) {
-      for (const surface of instance.surfaces) {
-        for (const patch of surface.patches) {
-          // ignore self patch
-          if (patch !== this.max) {
-            for (const element of patch.elements) {
-              // Get unsent exitance
-              unsent.setTo(patch.exitance);
-              // Ensure unsent exitance is positive in each color band
-              if (unsent.r < 0) unsent.r = 0;
-              if (unsent.g < 0) unsent.g = 0;
-              if (unsent.b < 0) unsent.b = 0;
+    for (const patch of this.env.patches) {
+      // ignore self patch
+      if (patch !== this.max) {
+        for (const element of patch.elements) {
+          // Get unsent exitance
+          unsent.setTo(patch.exitance);
+          // Ensure unsent exitance is positive in each color band
+          if (unsent.r < 0) unsent.r = 0;
+          if (unsent.g < 0) unsent.g = 0;
+          if (unsent.b < 0) unsent.b = 0;
 
-              // Multiply unsent exitance by patch-to-element form factor
-              unsent.scale(ffArray[element.number]);
+          // Multiply unsent exitance by patch-to-element form factor
+          unsent.scale(ffArray[element.number]);
 
-              // Update overshooting paramters
-              this.overshoot.add(unsent);
-            }
-          }
+          // Update overshooting paramters
+          this.overshoot.add(unsent);
         }
       }
     }
