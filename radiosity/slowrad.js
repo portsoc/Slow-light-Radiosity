@@ -56,34 +56,32 @@ export default class SlowRad extends RadEqnSolve {
       }
       const ffArray = currentPatch.ffArray;
 
-      for (const instance of this.env.instances) {
-        for (const surface of instance.surfaces) {
-          // Get surface reflectance
-          const reflect = surface.reflectance;
+      for (const surface of this.env.surfaces) {
+        // Get surface reflectance
+        const reflect = surface.reflectance;
 
-          for (const patch of surface.patches) {
-            // ignore self patch
-            if (patch !== currentPatch) {
-              for (const element of patch.elements) {
-                // Check element visibility
-                if (ffArray[element.number] > 0) {
-                  // Compute reciprocal form factor
-                  const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
+        for (const patch of surface.patches) {
+          // ignore self patch
+          if (patch !== currentPatch) {
+            for (const element of patch.elements) {
+              // Check element visibility
+              if (ffArray[element.number] > 0) {
+                // Compute reciprocal form factor
+                const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
 
-                  // Get shooting patch unsent exitance
-                  shoot.setTo(currentPatch.exitance);
+                // Get shooting patch unsent exitance
+                shoot.setTo(currentPatch.exitance);
 
-                  // Calculate delta exitance
-                  shoot.scale(rff);
-                  shoot.multiply(reflect);
+                // Calculate delta exitance
+                shoot.scale(rff);
+                shoot.multiply(reflect);
 
-                  // Update element exitance
-                  element.exitance.add(shoot);
+                // Update element exitance
+                element.exitance.add(shoot);
 
-                  // Update patch unsent exitance
-                  shoot.scale(element.area / patch.area);
-                  patch.exitance.add(shoot);
-                }
+                // Update patch unsent exitance
+                shoot.scale(element.area / patch.area);
+                patch.exitance.add(shoot);
               }
             }
           }

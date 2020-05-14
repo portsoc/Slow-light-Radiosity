@@ -285,40 +285,40 @@ function setupHelper() {
 
 function updateColors() {
   const deltaAmbient = (currentIncludeAmbient && environment.ambient) ? new Rad.Spectra() : undefined;
-  for (const instance of environment.instances) {
-    for (const surface of instance.surfaces) {
-      if (deltaAmbient) {
-        deltaAmbient.setTo(environment.ambient);
-        deltaAmbient.multiply(surface.reflectance);
-      }
 
-      for (const patch of surface.patches) {
-        for (const element of patch.elements) {
-          for (const face of element._threeFaces) {
-            for (let i = 0; i < 3; i += 1) {
-              if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
+  for (const surface of environment.surfaces) {
+    if (deltaAmbient) {
+      deltaAmbient.setTo(environment.ambient);
+      deltaAmbient.multiply(surface.reflectance);
+    }
 
-              if (currentViewVertex) {
-                setThreeColorFromRad(
-                  face.vertexColors[i],
-                  face._radVertices[i].exitance,
-                  surface.emittance,
-                  exposure,
-                  gamma,
-                  deltaAmbient);
-              } else {
-                // shaded
-                setThreeColorFromRad(
-                  face.vertexColors[i],
-                  surface.reflectance,
-                  surface.emittance);
-              }
+    for (const patch of surface.patches) {
+      for (const element of patch.elements) {
+        for (const face of element._threeFaces) {
+          for (let i = 0; i < 3; i += 1) {
+            if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
+
+            if (currentViewVertex) {
+              setThreeColorFromRad(
+                face.vertexColors[i],
+                face._radVertices[i].exitance,
+                surface.emittance,
+                exposure,
+                gamma,
+                deltaAmbient);
+            } else {
+              // shaded
+              setThreeColorFromRad(
+                face.vertexColors[i],
+                surface.reflectance,
+                surface.emittance);
             }
           }
         }
       }
     }
   }
+
   geometry.colorsNeedUpdate = true;
   material.needsUpdate = true;
 }
