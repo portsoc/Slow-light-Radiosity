@@ -21,4 +21,8 @@ export default class Point3 {
     this.z += v.z;
     return this;
   }
+
+  dist(p) {
+    return Math.sqrt((p.x - this.x) ** 2 + (p.y - this.y) ** 2 + (p.z - this.z) ** 2);
+  }
 }
