@@ -18,3 +18,10 @@ test('addVector()', () => {
 
   expect(() => p.addVector(p)).toThrow(TypeError);
 });
+
+test('dist()', () => {
+  const p = new Point3(-4, 2, -7);
+  const p2 = new Point3(1, 2, 3);
+
+  expect(p.dist(p2)).toBe(Math.sqrt(125));
+});
