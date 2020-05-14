@@ -1,5 +1,6 @@
 import Vector3 from './vector3.js';
 import Spectra from './spectra.js';
+import Point3 from './point3.js';
 
 export default class Element3 {
   constructor(vertices) {
@@ -43,6 +44,18 @@ export default class Element3 {
       this._normal = va.cross(vb).normalize();
     }
     return this._normal;
+  }
+
+  get center() {
+    if (this._center == null) {
+      const cv = new Vector3(0, 0, 0);
+      for (const vert of this.vertices) {
+        cv.add(new Vector3(vert.pos));
+      }
+      cv.scale(1 / this.vertices.length);
+      this._center = new Point3(cv.x, cv.y, cv.z);
+    }
+    return this._center;
   }
 
   // exitance should not be reassigned
