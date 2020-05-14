@@ -1,6 +1,4 @@
 import Element3 from './element3.js';
-import Point3 from './point3.js';
-import Vector3 from './vector3.js';
 
 export default class Patch3 extends Element3 {
   // if no element is provided, we create one that coincides with this patch
@@ -24,17 +22,5 @@ export default class Patch3 extends Element3 {
 
   get unsentFlux() {
     return (this.exitance.r + this.exitance.g + this.exitance.b) * this.area;
-  }
-
-  get center() {
-    if (this._center == null) {
-      const cv = new Vector3(0, 0, 0);
-      for (const vert of this.vertices) {
-        cv.add(new Vector3(vert.pos));
-      }
-      cv.scale(1 / this.vertices.length);
-      this._center = new Point3(cv.x, cv.y, cv.z);
-    }
-    return this._center;
   }
 }
