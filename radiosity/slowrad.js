@@ -98,4 +98,25 @@ export default class SlowRad extends RadEqnSolve {
     // Convergence not achieved yet
     return false;
   }
+
+  calcPatchElementDistances() {
+    for (const currentPatch of this.env.patches) {
+      if (!currentPatch.distArray) {
+        currentPatch.distArray = new Array(this.env.numberElements - currentPatch.elements.length);
+      }
+
+      const distArray = currentPatch.distArray;
+      const patchCenter = currentPatch.center;
+
+      for (const patch of this.env.patches) {
+        // ignore self patch
+        if (patch !== currentPatch) {
+          for (const element of patch.elements) {
+            // calculate patch-element distances
+            distArray[element.number] = patchCenter.dist(element.center);
+          }
+        }
+      }
+    }
+  }
 }
