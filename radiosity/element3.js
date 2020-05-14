@@ -8,6 +8,7 @@ export default class Element3 {
     this._area = null;                // Element area (computed once in getter)
     this._normal = null;              // Normal vector (computed once in getter)
     this._exitance = new Spectra();   // Spectral exitance
+    this._center = null;              // Vertex centroid (Point3, computed once in getter)
 
     if (!Array.isArray(vertices) || ![3, 4].includes(vertices.length)) {
       throw new TypeError('Element must have 3 or 4 vertices');

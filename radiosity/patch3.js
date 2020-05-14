@@ -12,7 +12,6 @@ export default class Patch3 extends Element3 {
 
     this.elements = elements;   // Elements that make up this patch
     this.parentSurface = null;  // Parent surface
-    this._center = null;        // Vertex centroid (Point3, computed once in getter)
 
     // set parent patch of elements
     for (const el of elements) {
