@@ -1,11 +1,8 @@
-# Changelog
-All notable changes to this project will be documented in this file.
-
-## [1.0.0] - 2020-05-12
+# [v1.0.0](https://github.com/portsoc/Slow-light-Radiosity/tree/dc98e9c993b31a8770110cbf9f76dce760a893f7) (2020-12-05)
 ### Added
 - Radiosity render
 - Two cube room
-- Bench room (ref. figure 6.13 of the book)
+- Bench room 613 (ref. figure 6.13 of the book)
 - Axes helpers
 - Menu overlay
 
@@ -13,9 +10,7 @@ All notable changes to this project will be documented in this file.
 
 ### Removed
 
-## [0.0.0] - 2020-05-11
+# [v0.0.1](https://github.com/portsoc/Slow-light-Radiosity/tree/3c45019b3d72ad44d9a37de7ac8d6370a712889d)  (2020-11-05)
 ### Added
-
-### Changed
-
-### Removed
+- Implement all book classes
+- Bench room modelisation
