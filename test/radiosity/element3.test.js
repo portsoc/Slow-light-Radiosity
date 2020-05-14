@@ -3,6 +3,7 @@ import Point3 from '../../radiosity/point3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
 import Vector3 from '../../radiosity/vector3.js';
 import Spectra from '../../radiosity/spectra.js';
+import Patch3 from '../../radiosity/patch3.js';
 
 // ^ y
 // |
@@ -108,4 +109,23 @@ test('normal()', () => {
     expect(n3.y).toBeCloseTo(-0.4082482905, 5);
     expect(n3.z).toBeCloseTo(0.8164965809, 5);
   }
+});
+
+test('center()', () => {
+  // Points
+  const p1 = new Point3(0, 0, 0);
+  const p7 = new Point3(0, -2, 0);
+  const p9 = new Point3(2, -2, 0);
+  const p6 = new Point3(2, 0, 0);
+  // Patch
+  const p = new Patch3(
+    [
+      new Vertex3(p1),
+      new Vertex3(p7),
+      new Vertex3(p9),
+      new Vertex3(p6),
+    ],
+    null);
+  expect(p.center).toStrictEqual(new Point3(1, -1, 0));
+  expect(p.center).toStrictEqual(new Point3(1, -1, 0)); // to cover the case center is cached
 });
