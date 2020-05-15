@@ -15,6 +15,7 @@ export default class SlowRad extends RadEqnSolve {
     this.convergence = 1;
     this.initExitance();
     this.calcInterReflect();
+    this.calcPatchElementDistances();
     return true;
   }
 
