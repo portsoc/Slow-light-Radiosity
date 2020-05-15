@@ -56,12 +56,6 @@ test('calcPatchElementDistances()', () => {
   const rad = new SlowRad();
   rad.open(env);
 
-  for (const patch of rad.env.patches) {
-    expect(patch.distArray).toBeUndefined();
-  }
-
-  rad.calcPatchElementDistances();
-
   expect(rad.env.instances[0].surfaces[0].patches[0].distArray).toStrictEqual([3, 5]);
   expect(rad.env.instances[0].surfaces[0].patches[1].distArray).toStrictEqual([3, 4]);
   expect(rad.env.instances[0].surfaces[1].patches[0].distArray).toStrictEqual([5, 4]);
