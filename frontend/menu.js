@@ -1,64 +1,19 @@
-export default function setupMenu() {
-  // menu windows
-  document.querySelector('#stats-button').addEventListener('click', stats);
-  document.querySelector('#controls-button').addEventListener('click', controls);
-  document.querySelector('#env-button').addEventListener('click', envSelector);
-  document.querySelector('#settings-button').addEventListener('click', settings);
-  document.querySelector('#modes-button').addEventListener('click', modes);
-}
-
-function stats() {
-  const s = document.getElementById('stats');
-  if (s.classList.contains('hidden')) {
-    hideWindows();
-    s.classList.remove('hidden');
-  } else {
-    s.classList.add('hidden');
+export default function setupMenu(menuEl = document.querySelector('#menu')) {
+  for (const item of menuEl.children) {
+    item.addEventListener('click', () => openItem(item, menuEl));
   }
 }
 
-function controls() {
-  const c = document.getElementById('controls');
-  if (c.classList.contains('hidden')) {
-    hideWindows();
-    c.classList.remove('hidden');
-  } else {
-    c.classList.add('hidden');
-  }
-}
+function openItem(item, menuEl) {
+  const wasOpen = item.classList.contains('selected');
 
-function envSelector() {
-  const e = document.getElementById('env');
-  if (e.classList.contains('hidden')) {
-    hideWindows();
-    e.classList.remove('hidden');
-  } else {
-    e.classList.add('hidden');
+  // close all items
+  for (const el of menuEl.children) {
+    el.classList.remove('selected');
   }
-}
 
-function settings() {
-  const s = document.getElementById('settings');
-  if (s.classList.contains('hidden')) {
-    hideWindows();
-    s.classList.remove('hidden');
-  } else {
-    s.classList.add('hidden');
-  }
-}
-
-function modes() {
-  const m = document.getElementById('modes');
-  if (m.classList.contains('hidden')) {
-    hideWindows();
-    m.classList.remove('hidden');
-  } else {
-    m.classList.add('hidden');
-  }
-}
-
-function hideWindows() {
-  for (const e of document.getElementsByClassName('window')) {
-    e.classList.add('hidden');
+  // open (or close) the given item
+  if (!wasOpen) {
+    item.classList.add('selected');
   }
 }
