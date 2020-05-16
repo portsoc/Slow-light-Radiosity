@@ -18,11 +18,26 @@ import {
 } from '../modeling/test-models/two-cubes.js';
 
 const environmentFunctions = [
-  envRoom1,
-  envRoom613,
-  () => envCubes(5), // 5x5 elements, single patch
-  () => envCubes(5, true), // 5x5 patches
-  () => envLamp(5, true),
+  {
+    f: envRoom1,
+    name: 'Simple room',
+  },
+  {
+    f: envRoom613,
+    name: 'Figure 6.13 room (from the book)',
+  },
+  {
+    f: () => envCubes(5), // 5x5 elements, single patch
+    name: 'Two cubes',
+  },
+  {
+    f: () => envCubes(5, true), // 5x5 patches
+    name: 'Two cubes subdivided into patches',
+  },
+  {
+    f: () => envLamp(5, true),
+    name: 'A cube and a lamp',
+  },
 ];
 
 // global variables
@@ -66,11 +81,11 @@ function init() {
 
 function setupEnvironment() {
   // find the first environment
-  const envFunc = environmentFunctions[currentEnvironment];
+  const env = environmentFunctions[currentEnvironment];
 
-  environment = envFunc();
+  environment = env.f();
 
-  console.log('selecting environment', envFunc.name);
+  console.log('selecting environment', env.name);
   if (!environment.checkNoVerticesAreShared()) {
     console.log('environment has vertices shared between surfaces and it should not!');
   }
