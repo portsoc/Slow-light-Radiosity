@@ -62,8 +62,7 @@ html, body {
   border: solid 2px var(--fg);
   background-color: var(--bga);
 
-  padding-left: 5px;
-  padding-top: 5px;
+  padding: 0.5em;
 
   min-width: 20em;
 }
