@@ -1,11 +1,13 @@
 :root {
   --bg: #2d3436;
+  --bga: #2d3436e0;
   --fg: white;
 }
 
 html, body {
   background-color: var(--bg);
   color: var(--fg);
+  overflow: hidden;
 }
 
 * {
@@ -16,62 +18,70 @@ html, body {
 /* Radiosity menu */
 #menu {
   position: absolute;
-  top: 15px;
-  left: 15px;
+  top: 1em;
+  left: 1em;
 
   border: solid 2px var(--fg);
 
-  font-size: larger;
-  font-family: 'Courier', Arial, monospace;
-  font-weight: bold;
+  font-family: 'Consolas', monospace;
+}
+
+#menu * {
+  font-size: 1em;
+}
+
+#menu h2 {
+  text-decoration: underline;
+  margin-bottom: .5em;
 }
 
 .menu-item {
   position: relative;
-  height: 40px;
-  width: 40px;
+  cursor: pointer;
+  border: 2px solid transparent;
+}
+
+.menu-item:hover,
+.menu-item.selected {
+  border-color: var(--bg);
 }
 
 /* Images */
-img {
-  margin-top: 7px;
-  margin-left: 7px;
+.menu-item img {
+  margin: 0.5em;
+  display: block;
 }
 
 /* Windows */
 .window {
-  border: solid 2px var(--fg);
+  position: absolute;
+  left: 150%; /* for compatibility if calc doesn't work */
+  left: calc(100% + 1em + 4px); /* 1em from the right of the menu, incl. borders */
+  top: -2px; /* to align with the border */
 
-  margin-left: 50px;
+  border: solid 2px var(--fg);
+  background-color: var(--bga);
+
   padding-left: 5px;
   padding-top: 5px;
 
-  height: auto;
-  width: 300px;
+  min-width: 20em;
+}
 
-  background-color: var(--bg);
+.menu-item:first-child .window {
+  top: -4px; /* to align with both borders */
+}
+
+.menu-item:not(.selected) .window {
+  display: none;
 }
 
 /* menu button colors */
-#menu > :nth-child(1) {
-  background-color: #05668d;
-}
-
-#menu > :nth-child(2) {
-  background-color: #028090;
-}
-
-#menu > :nth-child(3) {
-  background-color: #00a896;
-}
-
-#menu > :nth-child(4) {
-  background-color: #02c39a;
-}
-
-#menu > :nth-child(5) {
-  background-color: #f0f3bd;
-}
+#menu > :nth-child(1) { background-color: #75c9c8; }
+#menu > :nth-child(2) { background-color: #9CB6DD; }
+#menu > :nth-child(3) { background-color: #c0b9dd; }
+#menu > :nth-child(4) { background-color: #ded9e2; }
+#menu > :nth-child(5) { background-color: #f7f4ea; }
 
 #slider-container {
   text-align: center;
@@ -89,11 +99,6 @@ img {
   display: flex;
   flex-direction: row;
   justify-content: space-evenly;
-}
-
-/* Cursor */
-.menu-item {
-  cursor: pointer;
 }
 
 .window {
@@ -119,11 +124,6 @@ img {
 #ambient, #overshoot, #wireframe {
   cursor: pointer;
   pointer-events: all;
-}
-
-/* Hidden */
-.hidden {
-  display: none;
 }
 
 /* Underline */
