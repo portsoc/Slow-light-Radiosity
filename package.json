@@ -31,12 +31,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Eccsx/Slow-light-Radiosity.git"
+    "url": "git+https://github.com/portsoc/Slow-light-Radiosity.git"
   },
   "author": "",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/Eccsx/Slow-light-Radiosity/issues"
+    "url": "https://github.com/portsoc/Slow-light-Radiosity/issues"
   },
-  "homepage": "https://github.com/Eccsx/Slow-light-Radiosity#readme"
+  "homepage": "https://github.com/portsoc/Slow-light-Radiosity#readme"
 }
