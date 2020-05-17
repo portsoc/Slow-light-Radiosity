@@ -2,6 +2,8 @@ import RadEqnSolve from './radeqnsolve.js';
 import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
 
+const SPEED_OF_LIGHT = 3e8;
+
 export default class SlowRad extends RadEqnSolve {
   constructor() {
     super();
@@ -14,6 +16,7 @@ export default class SlowRad extends RadEqnSolve {
     this.env.numberElements();
     this.stepCount = 0;
     this.convergence = 1;
+    this.now = 0;
     this.initExitance();
     this.calcInterReflect();
     this.calcPatchElementDistances();
@@ -81,6 +84,14 @@ export default class SlowRad extends RadEqnSolve {
                 // Update element exitance
                 element.exitance.add(shoot);
 
+                // Store element exitance
+                const distance = patch.distArray[element.number];
+                const timeDist = Math.round(distance / SPEED_OF_LIGHT);
+
+                if (this.now + timeDist < 300) {
+                  element.futureExitances[this.now + timeDist] = shoot;
+                }
+
                 // Update patch unsent exitance
                 shoot.scale(element.area / patch.area);
                 patch.exitance.add(shoot);
@@ -96,6 +107,9 @@ export default class SlowRad extends RadEqnSolve {
 
     // Increment step count
     this.stepCount++;
+
+    // Increase now
+    this.now++;
 
     // Convergence not achieved yet
     return false;
