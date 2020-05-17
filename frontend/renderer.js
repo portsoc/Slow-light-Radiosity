@@ -63,7 +63,7 @@ let currentIncludeAmbient = false;
 let overshooting = false;
 
 let gamma = 22; // scaled by 10, so really 2.2
-let exposure = 10; // scaled by 10, so really 1.0
+let exposure = 0; // positive or negative; exposure factor is 1.1^exposure
 
 // init on load
 
@@ -324,7 +324,7 @@ function updateColors() {
             if (currentViewVertex) {
               surfaceColor.setTo(face._radVertices[i].exitance);
               if (deltaAmbient) surfaceColor.add(deltaAmbient);
-              surfaceColor.scale(exposure / 10);
+              surfaceColor.scale(1.1 ** exposure);
               surfaceColor.exp(10 / gamma);
             }
             face.vertexColors[i].setRGB(surfaceColor.r, surfaceColor.g, surfaceColor.b);
