@@ -33,6 +33,8 @@ function lamp1(subdivision) {
   const retval = Cylinder.lampshade(6 * subdivision, 0.7, 0.4, 1, subdivision);
   retval.surfaces[1].emittance.add(new Rad.Spectra(L, L, L));
   retval.surfaces[0].emittance.add(new Rad.Spectra(L / 2, L / 2, L / 2));
+  retval.surfaces[0].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8));
+  retval.surfaces[1].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8));
   return retval;
 }
 
