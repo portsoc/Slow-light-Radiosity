@@ -14,6 +14,7 @@ export default class ProgRad extends RadEqnSolve {
 
   open(env) {
     this.env = env;
+    this.env.numberElements();
     this.stepCount = 0;
     this.convergence = 1;
     this.initExitance();
