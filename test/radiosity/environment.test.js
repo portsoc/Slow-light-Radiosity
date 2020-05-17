@@ -192,6 +192,25 @@ describe('with a non-trivial environment', () => {
     // run twice to make sure we don't just have a one-use iterator
     expect(Array.from(environment.patches)).toStrictEqual([p1a, p1b, p2a, p2b, p2c]);
   });
+
+  test('get surfaces', () => {
+    expect(Array.from(environment.surfaces)).toStrictEqual([s1, s2a, s2bc]);
+    // run twice to make sure we don't just have a one-use iterator
+    expect(Array.from(environment.surfaces)).toStrictEqual([s1, s2a, s2bc]);
+  });
+
+  test('numberElements()', () => {
+    let elementNumbers = Array.from(environment.elements).map(el => el.number);
+    expect(elementNumbers).toStrictEqual([undefined, undefined, undefined, undefined, undefined]);
+
+    expect(environment.numberElements()).toBe(5);
+
+    elementNumbers = Array.from(environment.elements).map(el => el.number);
+    expect(elementNumbers).toStrictEqual([0, 1, 2, 3, 4]);
+
+    // cover the branch where elements are already numbered
+    expect(environment.numberElements()).toBe(5);
+  });
 });
 
 test('interpolateVertexExitances()', () => {
