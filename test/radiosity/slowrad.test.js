@@ -3,68 +3,61 @@ import Point3 from '../../radiosity/point3.js';
 import Patch3 from '../../radiosity/patch3.js';
 import Vertex3 from '../../radiosity/vertex3.js';
 import Surface3 from '../../radiosity/surface3.js';
-import Spectra from '../../radiosity/spectra.js';
 import Environment from '../../radiosity/environment.js';
 import Instance from '../../radiosity/instance.js';
 
 test('calcPatchElementDistances()', () => {
-  // ? Setup the environment
+  // set up the environment
 
-  // Points
-  const points = [
-    // center (0, 0, 0)
+  // vertices for patch0, center (0, 0, 0)
+  const vertices0 = [
     new Point3(-1, 1, 0),
     new Point3(-1, -1, 0),
     new Point3(1, -1, 0),
     new Point3(1, 1, 0),
+  ].map(p => new Vertex3(p));
 
-    // center (0, 3, 0)
+  // patch1, center (0, 3, 0)
+  const vertices1 = [
     new Point3(-1, 4, 0),
     new Point3(-1, 2, 0),
     new Point3(1, 2, 0),
     new Point3(1, 4, 0),
+  ].map(p => new Vertex3(p));
 
-    // center (0, 3, 4)
+  // patch2, center (0, 3, 4)
+  const vertices2 = [
     new Point3(-1, 4, 4),
     new Point3(-1, 2, 4),
     new Point3(1, 2, 4),
     new Point3(1, 4, 4),
-  ];
+  ].map(p => new Vertex3(p));
 
-  // Vertices
-  const vertices = points.map(p => new Vertex3(p));
+  // patch3, center (3, 3, 4)
+  const vertices3 = [
+    new Point3(2, 4, 4),
+    new Point3(2, 2, 4),
+    new Point3(4, 2, 4),
+    new Point3(4, 4, 4),
+  ].map(p => new Vertex3(p));
 
-  // Patches
-  const patches = [
-    new Patch3(select(vertices, 0, 1, 2, 3)),
-    new Patch3(select(vertices, 4, 5, 6, 7)),
-    new Patch3(select(vertices, 8, 9, 10, 11)),
-  ];
+  const patch0 = new Patch3(vertices0);
+  const patch1 = new Patch3(vertices1);
+  const patch2 = new Patch3(vertices2);
+  const patch3 = new Patch3(vertices3);
 
-  // Surfaces
-  const colour = new Spectra();
   const surfaces = [
-    new Surface3(colour, colour, select(patches, 0, 1)),
-    new Surface3(colour, colour, select(patches, 2)),
+    new Surface3(null, null, [patch0, patch1]),
+    new Surface3(null, null, [patch2, patch3]),
   ];
 
-  // Environment
   const env = new Environment([new Instance(surfaces)]);
-
-  // ? Test
 
   const rad = new SlowRad();
   rad.open(env);
 
-  expect(rad.env.instances[0].surfaces[0].patches[0].distArray).toStrictEqual([3, 5]);
-  expect(rad.env.instances[0].surfaces[0].patches[1].distArray).toStrictEqual([3, 4]);
-  expect(rad.env.instances[0].surfaces[1].patches[0].distArray).toStrictEqual([5, 4]);
+  expect(patch0.distArray).toStrictEqual([null, 3, 5, Math.sqrt(34)]);
+  expect(patch1.distArray).toStrictEqual([3, null, 4, 5]);
+  expect(patch2.distArray).toStrictEqual([5, 4, null, 3]);
+  expect(patch3.distArray).toStrictEqual([Math.sqrt(34), 5, 3, null]);
 });
-
-function select(arr, ...indices) {
-  const retval = [];
-  for (const i of indices) {
-    retval.push(arr[i]);
-  }
-  return retval;
-}

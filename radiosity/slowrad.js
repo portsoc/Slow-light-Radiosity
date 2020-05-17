@@ -103,19 +103,18 @@ export default class SlowRad extends RadEqnSolve {
 
   calcPatchElementDistances() {
     for (const currentPatch of this.env.patches) {
-      if (!currentPatch.distArray) {
-        currentPatch.distArray = [];
+      if (currentPatch.distArray) {
+        continue; // this patch already has distArray
       }
 
-      const distArray = currentPatch.distArray;
-      const patchCenter = currentPatch.center;
+      const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
 
       for (const patch of this.env.patches) {
         // ignore self patch
         if (patch !== currentPatch) {
           for (const element of patch.elements) {
-            // calculate patch-element distances
-            distArray.push(patchCenter.dist(element.center));
+            // calculate patch-element distance
+            distArray[element.number] = currentPatch.center.dist(element.center);
           }
         }
       }
