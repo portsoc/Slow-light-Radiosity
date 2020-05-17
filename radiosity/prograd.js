@@ -52,7 +52,7 @@ export default class ProgRad extends RadEqnSolve {
 
     // Calculate form factors if not done before
     if (!this.max.ffArray) {
-      this.max.ffArray = new Array(this.env.numberElements());
+      this.max.ffArray = new Array(this.env.elementCount);
       this.ffd.calculateFormFactors(this.max, this.env, this.max.ffArray);
     }
 
