@@ -52,7 +52,7 @@ export default class SlowRad extends RadEqnSolve {
 
     for (const currentPatch of this.env.patches) {
       if (!currentPatch.ffArray) {
-        currentPatch.ffArray = new Array(this.env.numberElements());
+        currentPatch.ffArray = new Array(this.env.elementCount);
         this.ffd.calculateFormFactors(currentPatch, this.env, currentPatch.ffArray);
       }
       const ffArray = currentPatch.ffArray;
