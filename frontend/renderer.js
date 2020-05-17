@@ -6,6 +6,7 @@ import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
 
 import delays from './tools/delays.js';
+import * as kbd from './tools/keyboard-shortcuts.js';
 import setupMenu from './menu.js';
 
 // list of available environments; the first one is the default
@@ -74,9 +75,8 @@ function init() {
   setupHelper();
   setupOverlay();
   setupEnvironment();
+  setupKeyboard();
   animate();
-
-  setupEventListeners();
 }
 
 function setupEnvironment() {
@@ -392,77 +392,154 @@ function animate() {
   }
 }
 
-function setupEventListeners() {
-  document.addEventListener('keydown', keyListener);
-}
+function setupKeyboard() {
+  kbd.registerKeyboardShortcut('Enter',
+    () => {
+      if (!radiosityRunning) runRadiosity();
+      currentViewVertex = true;
+      updateColors();
+    },
+    {
+      category: 'Radiosity',
+      description: 'Start radiosity computation',
+    },
+  );
 
-function keyListener(e) {
-  if (e.key === 'Enter') {
-    if (!radiosityRunning) runRadiosity();
-    currentViewVertex = true;
-    updateColors();
-    e.preventDefault();
-  }
-  if (e.key === 'Escape') {
-    stopRadiosity();
-    delays.cancel();
-    e.preventDefault();
-  }
-  if (e.key === 'Tab') {
-    currentViewVertex = !currentViewVertex;
-    updateColors();
-    e.preventDefault();
-  }
-  if (e.key.toLowerCase() === 'a') {
-    currentIncludeAmbient = !currentIncludeAmbient;
-    console.log('ambient', currentIncludeAmbient ? 'on' : 'off');
-    updateColors();
-    e.preventDefault();
-  }
-  if (e.key.toLowerCase() === 'd') {
-    const newDelay = delays.selectNextDelay();
-    console.log(`delay ${newDelay}ms`);
-    e.preventDefault();
-  }
-  if (e.key.toLowerCase() === 'e') {
-    exposure += e.shiftKey ? 1 : -1;
-    console.log(`exposure ${(exposure / 10).toFixed(1)}`);
-    updateColors();
-    e.preventDefault();
-  }
-  if (e.key.toLowerCase() === 'g') {
-    gamma += e.shiftKey ? 1 : -1;
-    console.log(`gamma ${(gamma / 10).toFixed(1)}`);
-    updateColors();
-    e.preventDefault();
-  }
-  if (e.key === 'o') {
-    overshooting = !overshooting;
-    console.log('overshooting', overshooting ? 'on' : 'off');
-    e.preventDefault();
-  }
-  if (e.key === 's') {
-    isSlowRadiosity = !isSlowRadiosity;
-    console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
-    e.preventDefault();
-  }
-  if (e.key === 'w') {
-    currentWireframe = !currentWireframe;
-    material.wireframe = currentWireframe;
-    e.preventDefault();
-  }
-  if (e.key >= '1' && e.key <= '9' && !e.metaKey && !e.altKey && !e.ctrlKey) {
-    const newEnv = (Number(e.key) - 1) % environmentFunctions.length;
-
-    if (currentEnvironment !== newEnv) {
-      currentEnvironment = newEnv;
-
+  kbd.registerKeyboardShortcut('Escape',
+    () => {
       stopRadiosity();
-      console.log('environment', currentEnvironment);
-      setupEnvironment();
-      e.preventDefault();
-    }
-  }
+      delays.cancel();
+    },
+    {
+      category: 'Radiosity',
+      description: 'Stop radiosity computation',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('Tab',
+    () => {
+      currentViewVertex = !currentViewVertex;
+      updateColors();
+    },
+    {
+      category: 'View',
+      description: 'Toggle view: simple surface colors, radiosity output',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('o',
+    () => {
+      overshooting = !overshooting;
+      console.log('overshooting', overshooting ? 'on' : 'off');
+    },
+    {
+      category: 'Radiosity',
+      description: 'Toggle overshooting (faster progressive radiosity)',
+    },
+  );
+  kbd.registerKeyboardShortcut('s',
+    () => {
+      isSlowRadiosity = !isSlowRadiosity;
+      console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
+    },
+    {
+      category: 'Radiosity',
+      description: 'Select radiosity algorithm',
+    },
+  );
+  kbd.registerKeyboardShortcut('w',
+    () => {
+      currentWireframe = !currentWireframe;
+      material.wireframe = currentWireframe;
+    },
+    {
+      category: 'View',
+      description: 'Toggle wireframe view',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('a',
+    () => {
+      currentIncludeAmbient = !currentIncludeAmbient;
+      console.log('ambient', currentIncludeAmbient ? 'on' : 'off');
+      updateColors();
+    },
+    {
+      category: 'View',
+      description: 'Show ambient (remaining) light in radiosity output',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('d',
+    () => {
+      const newDelay = delays.selectNextDelay();
+      console.log(`delay ${newDelay}ms`);
+    },
+    {
+      category: 'Radiosity',
+      description: 'Select step delay (todo list values)',
+    },
+  );
+
+  kbd.registerKeyboardShortcut(['e', 'E'],
+    (e) => {
+      if (e.ctrlKey) {
+        exposure = 0;
+      } else {
+        exposure += e.shiftKey ? -1 : 1;
+      }
+      console.log(`exposure ${exposure > 0 ? '+' : ''}${(exposure / 10).toFixed(1)}`);
+      updateColors();
+    },
+    {
+      category: 'View',
+      description: ['e/E', 'increase/decrease exposure (ctrl to reset)'],
+    },
+  );
+
+  kbd.registerKeyboardShortcut(['g', 'G'],
+    (e) => {
+      if (e.ctrlKey) {
+        gamma = 22;
+      } else {
+        gamma += e.shiftKey ? -1 : 1;
+        if (gamma < 0) gamma = 0;
+      }
+      console.log(`gamma ${(gamma / 10).toFixed(1)}`);
+      updateColors();
+    },
+    {
+      category: 'View',
+      description: ['g/G', 'increase/decrease gamma (ctrl to reset to 2.2)'],
+    },
+  );
+
+  kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    (e) => {
+      if (e.metaKey || e.altKey || e.ctrlKey) {
+        return false;
+      }
+
+      const newEnv = Number(e.key) - 1;
+      if (newEnv >= environmentFunctions.length) {
+        return false;
+      }
+
+      if (currentEnvironment !== newEnv) {
+        currentEnvironment = newEnv;
+
+        stopRadiosity();
+        console.log('environment', currentEnvironment);
+        setupEnvironment();
+      }
+    },
+    {
+      category: 'Environment',
+      description: ['1-9', 'Select environment'],
+    },
+  );
+
+  kbd.listKeyboardShortcuts(document.querySelector('#controls'));
 }
 
 let stopRunning = false;
