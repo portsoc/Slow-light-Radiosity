@@ -15,14 +15,14 @@ export class Delays {
   constructor(delays = commonDelays) {
     this._delays = delays;
     this._currentDelayIndex = 0;
-    this.currentDelayMS = delays[0];
+    this._currentDelayMS = delays[0];
     this._startedGoingFast = 0;
   }
 
-  delay(ms = this.currentDelayMS) {
+  delay(ms = this._currentDelayMS) {
     this.cancel();
 
-    this.currentDelayMS = ms;
+    this._currentDelayMS = ms;
     if (this.canBurstNow()) return;
 
     return new Promise(resolve => {
@@ -32,7 +32,7 @@ export class Delays {
   }
 
   canBurstNow() {
-    if (this.currentDelayMS !== 0) {
+    if (this._currentDelayMS !== 0) {
       // bursts only allowed with delay 0
       return false;
     }
@@ -58,11 +58,11 @@ export class Delays {
     const newDelay = this._delays[this._currentDelayIndex];
 
     // cancel the previous delay if it's longer than the new one
-    if (newDelay < this.currentDelayMS) {
+    if (newDelay < this._currentDelayMS) {
       this.cancel();
     }
 
-    this.currentDelayMS = newDelay;
+    this._currentDelayMS = newDelay;
     return newDelay;
   }
 
@@ -76,12 +76,12 @@ export class Delays {
     const newDelay = this._delays[newDelayIndex];
 
     // cancel the previous delay if it's longer than the new one
-    if (newDelay < this.currentDelayMS) {
+    if (newDelay < this._currentDelayMS) {
       this.cancel();
     }
 
     this._currentDelayIndex = newDelayIndex;
-    this.currentDelayMS = newDelay;
+    this._currentDelayMS = newDelay;
     return newDelay;
   }
 
