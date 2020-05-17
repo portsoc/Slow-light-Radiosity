@@ -49,15 +49,9 @@ export default class Environment {
     if (this.elementsNumbered != null) return this.elementsNumbered;
 
     let elementNumber = 0;
-    for (const i of this.instances) {
-      for (const s of i.surfaces) {
-        for (const p of s.patches) {
-          for (const e of p.elements) {
-            e.number = elementNumber;
-            elementNumber += 1;
-          }
-        }
-      }
+    for (const e of this.elements) {
+      e.number = elementNumber;
+      elementNumber += 1;
     }
 
     this.elementsNumbered = elementNumber;
