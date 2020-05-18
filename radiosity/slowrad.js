@@ -37,6 +37,25 @@ export default class SlowRad {
     this.prepareForDisplay();
   }
 
+  initExitance() {
+    for (const surface of this.env.surfaces) {
+      // Get surface emittance
+      const emit = surface.emittance;
+
+      for (const patch of surface.patches) {
+        // Initialize patch future exitances
+        patch._futureExitences = new Array(this.maxTime).fill(emit);
+
+        for (const element of patch.elements) {
+          // Initialize element future exitances
+          element._futureExitences = new Array(this.maxTime).fill(new Spectra());
+        }
+      }
+    }
+
+    return this;
+  }
+
   calcAmbient() {
     const sum = new Spectra();
     const tmp = new Spectra();
