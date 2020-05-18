@@ -1,21 +1,24 @@
-import RadEqnSolve from './radeqnsolve.js';
 import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
 
 const SPEED_OF_LIGHT = 3e8;
 
-export default class SlowRad extends RadEqnSolve {
+export default class SlowRad {
   constructor() {
-    super();
+    this.now = 0;                   // Step count
+    this.maxTime = 300;             // Maximum number of steps
+    this.env = null;                // Environment
 
-    this.ffd = new HemiCube();        // Form factor determination
+    this.ambient = new Spectra();   // Ambient exitance
+    this.irf = new Spectra();       // Interreflection factors
+    this.totalArea = 0;             // Total patch area
+
+    this.ffd = new HemiCube();      // Form factor determination
   }
 
   open(env) {
     this.env = env;
     this.env.numberElements();
-    this.stepCount = 0;
-    this.convergence = 1;
     this.now = 0;
     this.initExitance();
     this.calcInterReflect();
@@ -25,6 +28,28 @@ export default class SlowRad extends RadEqnSolve {
 
   close() {
     this.prepareForDisplay();
+  }
+
+  calcAmbient() {
+    const sum = new Spectra();
+    const tmp = new Spectra();
+
+    for (const patch of this.env.patches) {
+      // Update sum of unsent exitances times areas
+      tmp.setTo(patch.exitance);
+      tmp.scale(patch.area);
+      sum.add(tmp);
+    }
+
+    // Calculate area-weighted average reflectance
+    sum.scale(1 / this.totalArea);
+
+    // Calculate interreflectance factors
+    this.ambient.r = this.irf.r * sum.r;
+    this.ambient.g = this.irf.g * sum.g;
+    this.ambient.b = this.irf.b * sum.b;
+
+    return this;
   }
 
   prepareForDisplay() {
@@ -38,19 +63,11 @@ export default class SlowRad extends RadEqnSolve {
 
   calculate() {
     // Check for maximum number of steps
-    if (this.stepCount >= this.maxStep) {
+    if (this.now >= this.maxTime) {
       return true;
     }
 
     this.needsDisplayUpdate = true;
-
-    // Update unsent flux statistics
-    this.updateUnsentStats();
-
-    // Check for convergence
-    if (this.convergence < this.stopCriterion) {
-      return true;
-    }
 
     const shoot = new Spectra();
 
@@ -106,7 +123,7 @@ export default class SlowRad extends RadEqnSolve {
     }
 
     // Increment step count
-    this.stepCount++;
+    this.now++;
 
     // Increase now
     this.now++;
