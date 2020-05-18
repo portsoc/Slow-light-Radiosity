@@ -1,13 +1,6 @@
 // for each category create <h2>name</h2>
 // for each shortcut in that category, create item: <span>key</span><span>description</span>
 export function listKeyboardShortcuts(el) {
-  // clear out old content
-  el.textContent = '';
-
-  const headingEl = document.createElement('h2');
-  headingEl.textContent = 'Keyboard commands';
-  el.append(headingEl);
-
   for (const cat of categories) {
     const handlers = shortcutsByCategory.get(cat) || [];
     handlers.sort(descKeyCompare);
