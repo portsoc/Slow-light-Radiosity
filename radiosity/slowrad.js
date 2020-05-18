@@ -1,8 +1,6 @@
 import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
 
-const SPEED_OF_LIGHT = 3e8;
-
 export default class SlowRad {
   constructor() {
     this.now = 0;                   // Step count
@@ -16,8 +14,17 @@ export default class SlowRad {
     this.ffd = new HemiCube();      // Form factor determination
   }
 
-  open(env) {
+  open(env, SPEED_OF_LIGHT) {
     this.env = env;
+
+    if (SPEED_OF_LIGHT === undefined) {
+      const bounds = this.env.boundingBox;
+      const diagonal = bounds[0].dist(bounds[1]);
+      this.SPEED_OF_LIGHT = diagonal * 2 / this.maxTime;
+    } else {
+      this.SPEED_OF_LIGHT = SPEED_OF_LIGHT;
+    }
+
     this.env.numberElements();
     this.now = 0;
     this.initExitance();
@@ -103,7 +110,7 @@ export default class SlowRad {
 
                 // Store element exitance
                 const distance = patch.distArray[element.number];
-                const timeDist = Math.round(distance / SPEED_OF_LIGHT);
+                const timeDist = Math.round(distance / this.SPEED_OF_LIGHT);
 
                 if (this.now + timeDist < 300) {
                   element.futureExitances[this.now + timeDist] = shoot;
