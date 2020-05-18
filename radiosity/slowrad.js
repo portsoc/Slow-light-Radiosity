@@ -89,7 +89,7 @@ export default class SlowRad {
 
   calculate() {
     // Check for maximum number of steps
-    if (this.now >= this.maxTime) {
+    if (this.now === this.maxTime) {
       return true;
     }
 
