@@ -2,9 +2,9 @@ import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
 
 export default class SlowRad {
-  constructor() {
+  constructor(maxTime = 300) {
     this.now = 0;                   // Step count
-    this.maxTime = 300;             // Maximum number of steps
+    this.maxTime = maxTime;             // Maximum number of steps
     this.env = null;                // Environment
 
     this.ambient = new Spectra();   // Ambient exitance
