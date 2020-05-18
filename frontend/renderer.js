@@ -493,7 +493,7 @@ function setupKeyboard() {
     },
     {
       category: 'View',
-      description: ['e/E', 'increase/decrease exposure (ctrl to reset)'],
+      description: ['e/E', 'Increase/decrease exposure (ctrl to reset)'],
     },
   );
 
@@ -510,7 +510,7 @@ function setupKeyboard() {
     },
     {
       category: 'View',
-      description: ['g/G', 'increase/decrease gamma (ctrl to reset to 2.2)'],
+      description: ['g/G', 'Increase/decrease gamma (ctrl to reset to 2.2)'],
     },
   );
 
