@@ -127,16 +127,28 @@ export default class Environment {
   }
 
   // interpolate vertex reflected exitances from their surrounding elements
-  interpolateVertexExitances() {
-    for (const instance of this.instances) {
-      for (const vertex of instance.vertices) {
-        vertex.exitance.reset();
+  interpolateVertexExitances(now) {
+    if (now === undefined) {
+      for (const instance of this.instances) {
+        for (const vertex of instance.vertices) {
+          vertex.exitance.reset();
 
-        // average surrounding element exitances
-        for (const element of vertex.elements) {
-          vertex.exitance.add(element.exitance);
+          for (const element of vertex.elements) {
+            vertex.exitance.add(element.exitance);
+          }
+          vertex.exitance.scale(1 / vertex.elements.length);
         }
-        vertex.exitance.scale(1 / vertex.elements.length);
+      }
+    } else {
+      for (const instance of this.instances) {
+        for (const vertex of instance.vertices) {
+          vertex.futureExitances[now].reset();
+
+          for (const element of vertex.elements) {
+            vertex.futureExitances[now].add(element.exitance);
+          }
+          vertex.futureExitances[now].scale(1 / vertex.elements.length);
+        }
       }
     }
   }
