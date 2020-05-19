@@ -77,9 +77,9 @@ export default class SlowRad {
     sum.scale(1 / this.totalArea);
 
     // Calculate interreflectance factors
-    this.ambient.r = this.irf.r * sum.r;
-    this.ambient.g = this.irf.g * sum.g;
-    this.ambient.b = this.irf.b * sum.b;
+    this.ambient[this.now].r = this.irf.r * sum.r;
+    this.ambient[this.now].g = this.irf.g * sum.g;
+    this.ambient[this.now].b = this.irf.b * sum.b;
 
     return this;
   }
