@@ -142,6 +142,9 @@ export default class Environment {
     } else {
       for (const instance of this.instances) {
         for (const vertex of instance.vertices) {
+          // check OOB
+          if (vertex.futureExitances[now] === undefined) return;
+
           vertex.futureExitances[now].reset();
 
           for (const element of vertex.elements) {
