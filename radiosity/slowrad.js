@@ -148,14 +148,28 @@ export default class SlowRad {
       currentPatch.exitance.reset();
     }
 
-    // Increment step count
-    this.now++;
-
     // Increase now
     this.now++;
 
     // Convergence not achieved yet
     return false;
+  }
+
+  calcInterReflect() {
+    this.irf.reset();
+    this.totalArea = 0;
+    const sum = new Spectra();
+    const tmp = new Spectra();
+
+    for (const patch of this.env.patches) {
+      // Update sum of patch areas times reflectances
+      tmp.setTo(patch.parentSurface.reflectance);
+      tmp.scale(patch.area);
+      sum.add(tmp);
+
+      // Update sum of patch areas
+      this.totalArea += patch.area;
+    }
   }
 
   calcPatchElementDistances() {
