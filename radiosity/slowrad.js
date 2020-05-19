@@ -85,11 +85,17 @@ export default class SlowRad {
   }
 
   prepareForDisplay() {
-    if (this.needsDisplayUpdate) {
-      this.calcAmbient();
-      this.env.ambient = this.ambient;
-      this.env.interpolateVertexExitances(this.now);
-      this.needsDisplayUpdate = false;
+    if (this.now < this.maxTime) {
+      if (this.needsDisplayUpdate) {
+        this.calcAmbient();
+        this.env.ambient = this.ambient;
+        this.env.interpolateVertexExitances(this.now);
+        this.needsDisplayUpdate = false;
+
+        for (const vertex of this.env.vertices) {
+          vertex.exitance.add(vertex.futureExitances[this.now]);
+        }
+      }
     }
   }
 
