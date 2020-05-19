@@ -130,20 +130,16 @@ export default class SlowRad {
                 shoot.scale(rff);
                 shoot.multiply(reflect);
 
-                // Update element exitance
-                element.exitance.add(shoot);
-
                 // Store element exitance
                 const distance = patch.distArray[element.number];
                 const timeDist = Math.round(distance / this.SPEED_OF_LIGHT);
 
                 if (this.now + timeDist < 300) {
                   element.futureExitances[this.now + timeDist].add(shoot);
-                }
 
-                // Update patch unsent exitance
-                shoot.scale(element.area / patch.area);
-                patch.exitance.add(shoot);
+                  shoot.scale(element.area / patch.area);
+                  patch.futureExitances[this.now + timeDist].add(shoot);
+                }
               }
             }
           }
