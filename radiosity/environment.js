@@ -140,6 +140,15 @@ export default class Environment {
       }
     }
   }
+
+  initializeFutureExitances(length) {
+    for (const element of this.elements) {
+      element.futureExitances = new Array(length);
+    }
+    for (const vertex of this.vertices) {
+      vertex.futureExitances = new Array(length);
+    }
+  }
 }
 
 function sum(array) {
