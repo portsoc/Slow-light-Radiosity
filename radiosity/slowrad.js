@@ -27,6 +27,7 @@ export default class SlowRad {
 
     this.env.numberElements();
     this.now = 0;
+    this.env.initializeFutureExitances(this.maxTime);
     this.initExitance();
     this.calcInterReflect();
     this.calcPatchElementDistances();
