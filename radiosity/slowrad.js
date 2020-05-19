@@ -44,11 +44,11 @@ export default class SlowRad {
 
       for (const patch of surface.patches) {
         // Initialize patch future exitances
-        patch._futureExitences = new Array(this.maxTime).fill(emit);
+        patch._futureExitances = new Array(this.maxTime).fill(emit);
 
         for (const element of patch.elements) {
           // Initialize element future exitances
-          element._futureExitences = new Array(this.maxTime).fill(new Spectra());
+          element._futureExitances = new Array(this.maxTime).fill(new Spectra());
         }
       }
     }
@@ -132,7 +132,7 @@ export default class SlowRad {
                 const timeDist = Math.round(distance / this.SPEED_OF_LIGHT);
 
                 if (this.now + timeDist < 300) {
-                  element.futureExitances[this.now + timeDist] = shoot;
+                  element._futureExitances[this.now + timeDist].add(shoot);
                 }
 
                 // Update patch unsent exitance
