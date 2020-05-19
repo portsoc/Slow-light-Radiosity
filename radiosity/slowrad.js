@@ -3,15 +3,15 @@ import Spectra from './spectra.js';
 
 export default class SlowRad {
   constructor(maxTime = 300) {
-    this.now = 0;                   // Step count
-    this.maxTime = maxTime;         // Maximum number of steps
-    this.env = null;                // Environment
+    this.now = 0;                                            // Step count
+    this.maxTime = maxTime;                                  // Maximum number of steps
+    this.env = null;                                         // Environment
 
-    this.ambient = new Spectra();   // Ambient exitance
-    this.irf = new Spectra();       // Interreflection factors
-    this.totalArea = 0;             // Total patch area
+    this.ambient = new Array(maxTime).fill(new Spectra());   // Ambient future exitances
+    this.irf = new Spectra();                                // Interreflection factors
+    this.totalArea = 0;                                      // Total patch area
 
-    this.ffd = new HemiCube();      // Form factor determination
+    this.ffd = new HemiCube();                               // Form factor determination
   }
 
   open(env, SPEED_OF_LIGHT) {
@@ -88,7 +88,7 @@ export default class SlowRad {
     if (this.needsDisplayUpdate) {
       this.calcAmbient();
       this.env.ambient = this.ambient;
-      this.env.interpolateVertexExitances();
+      this.env.interpolateVertexExitances(this.now);
       this.needsDisplayUpdate = false;
     }
   }
