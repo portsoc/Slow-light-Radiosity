@@ -4,7 +4,7 @@ import Spectra from './spectra.js';
 export default class SlowRad {
   constructor(maxTime = 300) {
     this.now = 0;                   // Step count
-    this.maxTime = maxTime;             // Maximum number of steps
+    this.maxTime = maxTime;         // Maximum number of steps
     this.env = null;                // Environment
 
     this.ambient = new Spectra();   // Ambient exitance
@@ -45,11 +45,16 @@ export default class SlowRad {
 
       for (const patch of surface.patches) {
         // Initialize patch future exitances
-        patch.futureExitances.fill(emit);
+        patch.futureExitances = new Array(this.maxTime).fill(emit);
 
         for (const element of patch.elements) {
           // Initialize element future exitances
           element.futureExitances.fill(new Spectra());
+
+          for (const vertex of element.vertices) {
+            // Initialize vettex future exitances
+            vertex.futureExitances.fill(new Spectra());
+          }
         }
       }
     }
