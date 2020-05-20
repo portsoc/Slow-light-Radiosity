@@ -94,3 +94,9 @@ export class Delays {
 }
 
 export default new Delays();
+
+export function animationFrameDelay() {
+  return new Promise(resolve => {
+    requestAnimationFrame(resolve);
+  });
+}

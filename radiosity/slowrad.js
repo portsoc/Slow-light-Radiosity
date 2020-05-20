@@ -45,16 +45,18 @@ export default class SlowRad {
   prepareForDisplay() {
     if (this.now < this.maxTime) {
       if (this.needsDisplayUpdate) {
-        this.calcAmbient();
-        this.env.ambient = this.ambient[this.now];
-        console.log(this.env.ambient);
-        this.env.interpolateVertexExitances(this.now);
         this.needsDisplayUpdate = false;
-
-        for (const vertex of this.env.vertices) {
-          vertex.exitance.setTo(vertex.futureExitances[this.now]);
-        }
+        this.show(this.now);
       }
+    }
+  }
+
+  show(time) {
+    this.env.ambient = this.ambient[time];
+    this.env.interpolateVertexExitances(time);
+
+    for (const vertex of this.env.vertices) {
+      vertex.exitance.setTo(vertex.futureExitances[time]);
     }
   }
 
@@ -118,6 +120,8 @@ export default class SlowRad {
       // Reset unsent exitance to zero
       currentPatch.futureExitances[this.now].reset();
     }
+
+    this.calcAmbient();
 
     this.now++;
 

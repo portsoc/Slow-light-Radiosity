@@ -5,7 +5,7 @@ import { CSS2DRenderer, CSS2DObject } from '../lib/CSS2DRenderer.js';
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
 
-import delays from './tools/delays.js';
+import delays, { animationFrameDelay } from './tools/delays.js';
 import setupMenu from './menu.js';
 
 // list of available environments; the first one is the default
@@ -40,6 +40,7 @@ let scene2;
 let controls;
 let material;
 let geometry;
+let radiosityEngine;
 
 let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
 let currentWireframe = false;
@@ -372,11 +373,11 @@ function updateControls() {
 let updateForDisplay;
 
 function animate() {
+  requestAnimationFrame(animate);
   if (updateForDisplay) {
     updateForDisplay();
     updateForDisplay = null;
   }
-  requestAnimationFrame(animate);
   if (scene) renderer.render(scene, camera);
   if (scene2) {
     renderer2.render(scene2, camera2);
@@ -397,6 +398,11 @@ function keyListener(e) {
     if (!radiosityRunning) runRadiosity();
     currentViewVertex = true;
     updateColors();
+    e.preventDefault();
+  }
+  if (e.key === 'r' && !e.metaKey && !e.altKey && !e.ctrlKey) {
+    if (!radiosityRunning) runReplay();
+    currentViewVertex = true;
     e.preventDefault();
   }
   if (e.key === 'Escape') {
@@ -469,6 +475,7 @@ async function runRadiosity() {
   try {
     console.log('running radiosity');
     const rad = isSlowRadiosity ? new Rad.SlowRad() : new Rad.ProgRad();
+    radiosityEngine = rad;
     rad.overFlag = overshooting;
 
     rad.open(environment);
@@ -503,6 +510,28 @@ async function runRadiosity() {
     updateForDisplay = null;
     rad.prepareForDisplay();
     updateColors();
+  } finally {
+    radiosityRunning = false;
+  }
+}
+
+async function runReplay() {
+  try {
+    if (!radiosityEngine || !radiosityEngine.show) return; // no replay possible
+
+    for (let now = 0; now < radiosityEngine.maxTime; now += 1) {
+      document.getElementById('iteration-count').textContent = now;
+
+      updateForDisplay = () => {
+        radiosityEngine.show(now);
+        updateColors();
+      };
+
+      await animationFrameDelay();
+      if (stopRunning) break;
+    }
+
+    updateForDisplay = null;
   } finally {
     radiosityRunning = false;
   }
