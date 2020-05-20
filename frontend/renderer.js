@@ -518,6 +518,8 @@ async function runRadiosity() {
 async function runReplay() {
   try {
     if (!radiosityEngine || !radiosityEngine.show) return; // no replay possible
+    radiosityRunning = true;
+    stopRunning = false;
 
     for (let now = 0; now < radiosityEngine.maxTime; now += 1) {
       document.getElementById('iteration-count').textContent = now;
