@@ -131,23 +131,24 @@ export default class SlowRad {
             for (const element of patch.elements) {
               // Check element visibility
               if (ffArray[element.number] > 0) {
-                // Compute reciprocal form factor
-                const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
-
-                // Get shooting patch unsent exitance
-                shoot.setTo(currentPatch.futureExitances[this.now]);
-
-                // Calculate delta exitance
-                shoot.scale(rff);
-                shoot.multiply(reflect);
-
-                // Store element exitance
+                // compute the time distances between the shooting patch and receiving element
                 const distance = currentPatch.distArray[element.number];
                 const timeDist = Math.round(distance / this.speedOfLight);
-
                 const receivingTime = this.now + timeDist;
 
+                // only propagate the light if we aren't out of future
                 if (receivingTime < this.maxTime) {
+                  // Compute reciprocal form factor
+                  const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
+
+                  // Get shooting patch unsent exitance
+                  shoot.setTo(currentPatch.futureExitances[this.now]);
+
+                  // Calculate delta exitance
+                  shoot.scale(rff);
+                  shoot.multiply(reflect);
+
+                  // Store element exitance
                   element.futureExitances[receivingTime].add(shoot);
 
                   shoot.scale(element.area / patch.area);
