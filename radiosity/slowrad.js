@@ -42,51 +42,6 @@ export default class SlowRad {
     this.prepareForDisplay();
   }
 
-  initExitance() {
-    for (const surface of this.env.surfaces) {
-      // Get surface emittance
-      const emit = surface.emittance;
-
-      for (const patch of surface.patches) {
-        // Initialize patch future exitances
-        // set the lights to stay on
-        patch.futureExitances.forEach(s => s.setTo(emit));
-
-        // Initialize element and vertex future exitances
-        for (const element of patch.elements) {
-          element.futureExitances.forEach(s => s.reset());
-          for (const vertex of element.vertices) {
-            vertex.futureExitances.forEach(s => s.reset());
-          }
-        }
-      }
-    }
-
-    return this;
-  }
-
-  calcAmbient() {
-    const sum = new Spectra();
-    const tmp = new Spectra();
-
-    for (const patch of this.env.patches) {
-      // Update sum of unsent exitances times areas
-      tmp.setTo(patch.futureExitances[this.now]);
-      tmp.scale(patch.area);
-      sum.add(tmp);
-    }
-
-    // Calculate area-weighted average reflectance
-    sum.scale(1 / this.totalArea);
-
-    // Calculate interreflectance factors
-    this.ambient[this.now].r = this.irf.r * sum.r;
-    this.ambient[this.now].g = this.irf.g * sum.g;
-    this.ambient[this.now].b = this.irf.b * sum.b;
-
-    return this;
-  }
-
   prepareForDisplay() {
     if (this.now < this.maxTime) {
       if (this.needsDisplayUpdate) {
@@ -170,6 +125,49 @@ export default class SlowRad {
     return false;
   }
 
+  calcPatchElementDistances() {
+    for (const currentPatch of this.env.patches) {
+      if (currentPatch.distArray) {
+        continue; // this patch already has distArray
+      }
+
+      const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
+
+      for (const patch of this.env.patches) {
+        // ignore self patch
+        if (patch !== currentPatch) {
+          for (const element of patch.elements) {
+            // calculate patch-element distance
+            distArray[element.number] = currentPatch.center.dist(element.center);
+          }
+        }
+      }
+    }
+  }
+
+  initExitance() {
+    for (const surface of this.env.surfaces) {
+      // Get surface emittance
+      const emit = surface.emittance;
+
+      for (const patch of surface.patches) {
+        // Initialize patch future exitances
+        // set the lights to stay on
+        patch.futureExitances.forEach(s => s.setTo(emit));
+
+        // Initialize element and vertex future exitances
+        for (const element of patch.elements) {
+          element.futureExitances.forEach(s => s.reset());
+          for (const vertex of element.vertices) {
+            vertex.futureExitances.forEach(s => s.reset());
+          }
+        }
+      }
+    }
+
+    return this;
+  }
+
   calcInterReflect() {
     this.irf.reset();
     this.totalArea = 0;
@@ -197,24 +195,25 @@ export default class SlowRad {
     return this;
   }
 
+  calcAmbient() {
+    const sum = new Spectra();
+    const tmp = new Spectra();
 
-  calcPatchElementDistances() {
-    for (const currentPatch of this.env.patches) {
-      if (currentPatch.distArray) {
-        continue; // this patch already has distArray
-      }
-
-      const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
-
-      for (const patch of this.env.patches) {
-        // ignore self patch
-        if (patch !== currentPatch) {
-          for (const element of patch.elements) {
-            // calculate patch-element distance
-            distArray[element.number] = currentPatch.center.dist(element.center);
-          }
-        }
-      }
+    for (const patch of this.env.patches) {
+      // Update sum of unsent exitances times areas
+      tmp.setTo(patch.futureExitances[this.now]);
+      tmp.scale(patch.area);
+      sum.add(tmp);
     }
+
+    // Calculate area-weighted average reflectance
+    sum.scale(1 / this.totalArea);
+
+    // Calculate interreflectance factors
+    this.ambient[this.now].r = this.irf.r * sum.r;
+    this.ambient[this.now].g = this.irf.g * sum.g;
+    this.ambient[this.now].b = this.irf.b * sum.b;
+
+    return this;
   }
 }
