@@ -1,4 +1,5 @@
 import Point3 from './point3.js';
+import Spectra from './spectra.js';
 
 export default class Environment {
   constructor(instances) {
@@ -129,40 +130,48 @@ export default class Environment {
   // interpolate vertex reflected exitances from their surrounding elements
   interpolateVertexExitances(now) {
     if (now === undefined) {
-      for (const instance of this.instances) {
-        for (const vertex of instance.vertices) {
-          vertex.exitance.reset();
+      // everything has one .exitance
+      for (const vertex of this.vertices) {
+        vertex.exitance.reset();
 
-          for (const element of vertex.elements) {
-            vertex.exitance.add(element.exitance);
-          }
-          vertex.exitance.scale(1 / vertex.elements.length);
+        for (const element of vertex.elements) {
+          vertex.exitance.add(element.exitance);
         }
+        vertex.exitance.scale(1 / vertex.elements.length);
       }
     } else {
-      for (const instance of this.instances) {
-        for (const vertex of instance.vertices) {
-          // check OOB
-          if (vertex.futureExitances[now] === undefined) return;
+      // we deal with .futureExitances
+      for (const vertex of this.vertices) {
+        // don't interpolate past the size of futureExitances
+        if (now >= vertex.futureExitances.length) return;
 
-          vertex.futureExitances[now].reset();
+        vertex.futureExitances[now].reset();
 
-          for (const element of vertex.elements) {
-            vertex.futureExitances[now].add(element.exitance);
-          }
-          vertex.futureExitances[now].scale(1 / vertex.elements.length);
+        for (const element of vertex.elements) {
+          vertex.futureExitances[now].add(element.futureExitances[now]);
         }
+        vertex.futureExitances[now].scale(1 / vertex.elements.length);
       }
     }
   }
 
   initializeFutureExitances(length) {
+    for (const patch of this.patches) {
+      initializeObjectFutureExitances(patch, length);
+    }
     for (const element of this.elements) {
-      element.futureExitances = new Array(length);
+      initializeObjectFutureExitances(element, length);
     }
     for (const vertex of this.vertices) {
-      vertex.futureExitances = new Array(length);
+      initializeObjectFutureExitances(vertex, length);
     }
+  }
+}
+
+function initializeObjectFutureExitances(obj, length) {
+  obj.futureExitances = new Array(length);
+  for (let i = 0; i < length; i += 1) {
+    obj.futureExitances[i] = new Spectra();
   }
 }
 

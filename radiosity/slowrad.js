@@ -3,26 +3,30 @@ import Spectra from './spectra.js';
 
 export default class SlowRad {
   constructor(maxTime = 300) {
-    this.now = 0;                                            // Step count
-    this.maxTime = maxTime;                                  // Maximum number of steps
-    this.env = null;                                         // Environment
+    this.now = 0;                              // Step count
+    this.maxTime = maxTime;                    // Maximum number of steps
+    this.env = null;                           // Environment
 
-    this.ambient = new Array(maxTime).fill(new Spectra());   // Ambient future exitances
-    this.irf = new Spectra();                                // Interreflection factors
-    this.totalArea = 0;                                      // Total patch area
+    this.ambient = new Array(maxTime);         // Ambient future exitances
+    for (let i = 0; i < maxTime; i += 1) {
+      this.ambient[i] = new Spectra();
+    }
 
-    this.ffd = new HemiCube();                               // Form factor determination
+    this.irf = new Spectra();                  // Interreflection factors
+    this.totalArea = 0;                        // Total patch area
+
+    this.ffd = new HemiCube();                 // Form factor determination
   }
 
-  open(env, SPEED_OF_LIGHT) {
+  open(env, speedOfLight) {
     this.env = env;
 
-    if (SPEED_OF_LIGHT === undefined) {
+    if (speedOfLight == null) {
       const bounds = this.env.boundingBox;
       const diagonal = bounds[0].dist(bounds[1]);
-      this.SPEED_OF_LIGHT = diagonal * 2 / this.maxTime;
+      this.speedOfLight = diagonal * 2 / this.maxTime;
     } else {
-      this.SPEED_OF_LIGHT = SPEED_OF_LIGHT;
+      this.speedOfLight = speedOfLight;
     }
 
     this.env.numberElements();
@@ -45,15 +49,14 @@ export default class SlowRad {
 
       for (const patch of surface.patches) {
         // Initialize patch future exitances
-        patch.futureExitances = new Array(this.maxTime).fill(emit);
+        // set the lights to stay on
+        patch.futureExitances.forEach(s => s.setTo(emit));
 
+        // Initialize element and vertex future exitances
         for (const element of patch.elements) {
-          // Initialize element future exitances
-          element.futureExitances.fill(new Spectra());
-
+          element.futureExitances.forEach(s => s.reset());
           for (const vertex of element.vertices) {
-            // Initialize vettex future exitances
-            vertex.futureExitances.fill(new Spectra());
+            vertex.futureExitances.forEach(s => s.reset());
           }
         }
       }
@@ -68,7 +71,7 @@ export default class SlowRad {
 
     for (const patch of this.env.patches) {
       // Update sum of unsent exitances times areas
-      tmp.setTo(patch.exitance);
+      tmp.setTo(patch.futureExitances[this.now]);
       tmp.scale(patch.area);
       sum.add(tmp);
     }
@@ -88,12 +91,13 @@ export default class SlowRad {
     if (this.now < this.maxTime) {
       if (this.needsDisplayUpdate) {
         this.calcAmbient();
-        this.env.ambient = this.ambient;
+        this.env.ambient = this.ambient[this.now];
+        console.log(this.env.ambient);
         this.env.interpolateVertexExitances(this.now);
         this.needsDisplayUpdate = false;
 
         for (const vertex of this.env.vertices) {
-          vertex.exitance.add(vertex.futureExitances[this.now]);
+          vertex.exitance.setTo(vertex.futureExitances[this.now]);
         }
       }
     }
@@ -101,7 +105,7 @@ export default class SlowRad {
 
   calculate() {
     // Check for maximum number of steps
-    if (this.now === this.maxTime) {
+    if (this.now >= this.maxTime) {
       return true;
     }
 
@@ -110,6 +114,7 @@ export default class SlowRad {
     const shoot = new Spectra();
 
     for (const currentPatch of this.env.patches) {
+      // calculate form factors
       if (!currentPatch.ffArray) {
         currentPatch.ffArray = new Array(this.env.elementCount);
         this.ffd.calculateFormFactors(currentPatch, this.env, currentPatch.ffArray);
@@ -130,21 +135,23 @@ export default class SlowRad {
                 const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
 
                 // Get shooting patch unsent exitance
-                shoot.setTo(currentPatch.exitance);
+                shoot.setTo(currentPatch.futureExitances[this.now]);
 
                 // Calculate delta exitance
                 shoot.scale(rff);
                 shoot.multiply(reflect);
 
                 // Store element exitance
-                const distance = patch.distArray[element.number];
-                const timeDist = Math.round(distance / this.SPEED_OF_LIGHT);
+                const distance = currentPatch.distArray[element.number];
+                const timeDist = Math.round(distance / this.speedOfLight);
 
-                if (this.now + timeDist < 300) {
-                  element.futureExitances[this.now + timeDist].add(shoot);
+                const receivingTime = this.now + timeDist;
+
+                if (receivingTime < this.maxTime) {
+                  element.futureExitances[receivingTime].add(shoot);
 
                   shoot.scale(element.area / patch.area);
-                  patch.futureExitances[this.now + timeDist].add(shoot);
+                  patch.futureExitances[receivingTime].add(shoot);
                 }
               }
             }
@@ -153,10 +160,9 @@ export default class SlowRad {
       }
 
       // Reset unsent exitance to zero
-      currentPatch.exitance.reset();
+      currentPatch.futureExitances[this.now].reset();
     }
 
-    // Increase now
     this.now++;
 
     // Convergence not achieved yet
@@ -178,7 +184,18 @@ export default class SlowRad {
       // Update sum of patch areas
       this.totalArea += patch.area;
     }
+
+    // Calculate atea-weighted average reflectance
+    sum.scale(1 / this.totalArea);
+
+    // Calculate interreflectance factors
+    this.irf.r = 1 / (1 - sum.r);
+    this.irf.g = 1 / (1 - sum.g);
+    this.irf.b = 1 / (1 - sum.b);
+
+    return this;
   }
+
 
   calcPatchElementDistances() {
     for (const currentPatch of this.env.patches) {
