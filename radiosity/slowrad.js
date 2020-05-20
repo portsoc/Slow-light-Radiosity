@@ -157,7 +157,13 @@ export default class SlowRad {
       for (const patch of surface.patches) {
         // Initialize patch future exitances
         // set the lights to stay on
-        patch.futureExitances.forEach(s => s.setTo(emit));
+        patch.futureExitances.forEach((s, i) => {
+          if (i < 10) {
+            s.setTo(emit);
+          } else {
+            s.reset();
+          }
+        });
 
         // Initialize element and vertex future exitances
         for (const element of patch.elements) {
