@@ -116,7 +116,7 @@ img {
   pointer-events: all;
 }
 
-#ambient, #overshoot, #wireframe {
+#slowrad, #ambient, #overshoot, #wireframe {
   cursor: pointer;
   pointer-events: all;
 }

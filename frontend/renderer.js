@@ -672,9 +672,20 @@ function setupOverlay() {
 
   // mode menu
 
+  const s = document.getElementById('slowrad');
   const a = document.getElementById('ambient');
   const o = document.getElementById('overshoot');
   const w = document.getElementById('wireframe');
+  s.addEventListener('click', () => {
+    event.stopPropagation();
+
+    if (isSlowRadiosity) {
+      s.classList.add('disabled');
+    } else {
+      s.classList.remove('disabled');
+    }
+    isSlowRadiosity = !isSlowRadiosity;
+  });
   a.addEventListener('click', () => {
     event.stopPropagation();
 
