@@ -405,6 +405,11 @@ function keyListener(e) {
     currentViewVertex = true;
     e.preventDefault();
   }
+  if (e.key === 'b') {
+    if (!radiosityRunning) runReplayBackward();
+    currentViewVertex = true;
+    e.preventDefault();
+  }
   if (e.key === 'Escape') {
     stopRadiosity();
     delays.cancel();
@@ -522,6 +527,30 @@ async function runReplay() {
     stopRunning = false;
 
     for (let now = 0; now < radiosityEngine.maxTime; now += 1) {
+      document.getElementById('iteration-count').textContent = now;
+
+      updateForDisplay = () => {
+        radiosityEngine.show(now);
+        updateColors();
+      };
+
+      await animationFrameDelay();
+      if (stopRunning) break;
+    }
+
+    updateForDisplay = null;
+  } finally {
+    radiosityRunning = false;
+  }
+}
+
+async function runReplayBackward() {
+  try {
+    if (!radiosityEngine || !radiosityEngine.show) return; // no replay possible
+    radiosityRunning = true;
+    stopRunning = false;
+
+    for (let now = radiosityEngine.maxTime - 1; now >= 0; now--) {
       document.getElementById('iteration-count').textContent = now;
 
       updateForDisplay = () => {
