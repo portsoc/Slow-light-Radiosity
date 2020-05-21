@@ -76,6 +76,21 @@
 
     <div id="axes-helper-frame"></div>
 
-    <script type="module" src="./renderer.js"></script>
+    <div id="animation-player-bar">
+        <div id="animation-bar">
+            <img id="action-backward" src="./img/play-backward.png">
+            <img id="action-backward-frame" src="./img/previous-frame.png">
+            <progress id="bar"></progress>
+            <img id="action-forward-frame" src="./img/next-frame.png">
+            <img id="action-forward" src="./img/play-forward.png">
+        </div>
+        <div id="animation-actions">
+            <img id="action-play" src="./img/play.png">
+            <img id="action-pause" class="hidden" src="./img/pause.png">
+            <img id="action-loop" src="./img/loop.png">
+        </div>
+    </div>
+
+    <!-- <script type="module" src="./renderer.js"></script> -->
 </body>
 </html>

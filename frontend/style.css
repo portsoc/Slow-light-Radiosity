@@ -33,9 +33,14 @@ html, body {
 }
 
 /* Images */
-img {
+#menu img {
   margin-top: 7px;
   margin-left: 7px;
+}
+
+#animation-player-bar img {
+  width: 20px;
+  height: 20px;
 }
 
 /* Windows */
@@ -144,4 +149,39 @@ img {
 
   height: 135px;
   width: 135px;
+}
+
+/* Animation player bar */
+#animation-player-bar {
+  position: absolute;
+  top: 15px;
+  left: 50%;
+  margin-left: -175px;
+
+  width: 350px;
+
+  display: flex;
+  flex-direction: column;
+}
+
+#animation-actions {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+
+  margin: auto;
+  margin-top: 5px;
+
+  width: 100px;
+}
+
+#animation-bar {
+  display: flex;
+  flex-direction: row;
+  justify-content: space-around;
+}
+
+#animation-bar bar{
+  width: 300px;
+  height: 20px;
 }
