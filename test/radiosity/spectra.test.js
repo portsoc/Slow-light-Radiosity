@@ -44,6 +44,11 @@ test('scale()', () => {
   expect(s1.scale(5)).toStrictEqual(new Spectra(60, 0, 25));
 });
 
+test('exp()', () => {
+  const s1 = new Spectra(12, 0.5, 3);
+  expect(s1.exp(2)).toStrictEqual(new Spectra(144, 0.25, 9));
+});
+
 test('multiply()', () => {
   const s1 = new Spectra(12, 3, 5);
   const s2 = new Spectra(1, 2, 3);

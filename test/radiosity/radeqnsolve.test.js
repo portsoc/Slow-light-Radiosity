@@ -119,7 +119,7 @@ test('initExitance()', () => {
       for (const patch of surface.patches) {
         expect(patch.exitance).toStrictEqual(patch.parentSurface.emittance);
         for (const element of patch.elements) {
-          expect(element.exitance).toStrictEqual(new Spectra(0, 0, 0));
+          expect(element.exitance).toStrictEqual(patch.parentSurface.emittance);
           for (const vertex of patch.vertices) {
             expect(vertex.exitance).toStrictEqual(new Spectra(0, 0, 0));
           }
