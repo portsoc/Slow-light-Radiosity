@@ -515,6 +515,11 @@ async function runRadiosity() {
     updateForDisplay = null;
     rad.prepareForDisplay();
     updateColors();
+
+    if (rad instanceof Rad.SlowRad) {
+      // display animation player bar
+      document.getElementById('animation-player-bar').classList.remove('hidden');
+    }
   } finally {
     radiosityRunning = false;
   }
@@ -687,7 +692,6 @@ function setupOverlay() {
       animBar.classList.add('hidden');
     } else {
       s.classList.remove('disabled');
-      animBar.classList.remove('hidden');
     }
     isSlowRadiosity = !isSlowRadiosity;
   });
