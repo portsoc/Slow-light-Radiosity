@@ -18,7 +18,7 @@
     "@babel/preset-env": "^7.9.5",
     "babel-jest": "^25.2.6",
     "babel-preset-env": "^1.7.0",
-    "jest": "^25.2.7"
+    "jest": "^26.0.1"
   },
   "scripts": {
     "test": "npm run lint && jest",

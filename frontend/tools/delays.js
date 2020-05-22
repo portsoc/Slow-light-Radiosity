@@ -9,7 +9,7 @@
 
 const commonDelays = [0, 100, 1000];
 
-const FAST_BURSTS_MS = 5;
+export const FAST_BURSTS_MS = 5;
 
 export class Delays {
   constructor(delays = commonDelays) {

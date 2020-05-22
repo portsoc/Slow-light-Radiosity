@@ -1,4 +1,4 @@
-import delays, { Delays } from '../../frontend/tools/delays.js';
+import delays, { Delays, FAST_BURSTS_MS } from '../../frontend/tools/delays.js';
 
 test('default delays', () => {
   expect(delays).toBeDefined();
@@ -6,72 +6,70 @@ test('default delays', () => {
 });
 
 test('10 and 100ms', async () => {
-  const del = new Delays([10, 100]);
+  const del = new Delays([1, 2]);
   const spy = jest.spyOn(window, 'setTimeout');
 
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 10);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
 
   del.selectNextDelay();
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 100);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 2);
 
   del.selectNextDelay();
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 10);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
 
   spy.mockRestore();
 });
 
 test('selectDelay()', async () => {
-  const del = new Delays([10, 20]);
+  const del = new Delays([1, 2]);
   const spy = jest.spyOn(window, 'setTimeout');
 
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 10);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
 
-  del.selectDelay(20);
+  del.selectDelay(2);
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 20);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 2);
 
-  del.selectDelay(20);
+  del.selectDelay(2);
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 20);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 2);
 
   const spyWarn = jest.spyOn(console, 'warn');
   spyWarn.mockImplementation(() => {});
   // selecting non-existent delay selects the first one
-  del.selectDelay(30);
+  del.selectDelay(3);
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 10);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
   expect(spyWarn).toHaveBeenCalled();
   spyWarn.mockRestore();
 
   // check that selecting still works
-  del.selectDelay(20);
+  del.selectDelay(2);
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 20);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 2);
 
-  del.selectDelay(10);
+  del.selectDelay(1);
   await del.delay();
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 10);
+  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
 
   spy.mockRestore();
 });
 
 describe('bursting', () => {
   let del;
-  let spySetTimeout;
   let spyCanBurstNow;
 
   beforeEach(() => {
+    jest.useFakeTimers('modern');
     del = new Delays([0]);
-    spySetTimeout = jest.spyOn(window, 'setTimeout');
     spyCanBurstNow = jest.spyOn(del, 'canBurstNow');
   });
 
   afterEach(() => {
-    spySetTimeout.mockRestore();
     spyCanBurstNow.mockRestore();
   });
 
@@ -83,33 +81,23 @@ describe('bursting', () => {
     }
   });
 
-  test('10*1ms runs', async () => {
-    // spinning 10*1ms without wait should take about 10ms (sanity check)
-    const time0 = Date.now();
-    for (let i = 0; i < 10; i += 1) {
-      spin(1);
-    }
-
-    const time1 = Date.now();
-    expect(time1 - time0).toBeGreaterThanOrEqual(10);
-
-    // spinning 6*1ms but with delays should include at least one
+  test('6*1ms runs', async () => {
+    // spinning 6*1ms with delays should include at least one
     // first two spins will allow bursting
     await del.delay();
-    expect(spyCanBurstNow).toHaveReturnedWith(true);
-    expect(spyCanBurstNow).not.toHaveReturnedWith(false);
-    for (let i = 0; i < 2; i += 1) {
+    expect(spyCanBurstNow).toHaveLastReturnedWith(true);
+    for (let i = 0; i < FAST_BURSTS_MS; i += 1) {
       spin(1);
       await del.delay();
-      expect(spyCanBurstNow).not.toHaveReturnedWith(false);
+      expect(spyCanBurstNow).toHaveLastReturnedWith(true);
     }
 
-    // next four 1ms spins must at some point finish the burst
-    for (let i = 0; i < 4; i += 1) {
-      spin(1);
-      await del.delay();
-    }
-    expect(spyCanBurstNow).toHaveReturnedWith(false);
+    // next 1ms spin should finish the burst
+    spin(1);
+
+    await awaitDelay(del);
+
+    expect(spyCanBurstNow).toHaveLastReturnedWith(false);
   });
 
   test('burst always after 10ms spin', async () => {
@@ -117,7 +105,7 @@ describe('bursting', () => {
     expect(spyCanBurstNow).toHaveLastReturnedWith(true);
 
     spin(10);
-    await del.delay(); // should not burst
+    await awaitDelay(del); // should not burst, we need to fake the timers
     expect(spyCanBurstNow).toHaveLastReturnedWith(false);
 
     spin(10);
@@ -127,6 +115,11 @@ describe('bursting', () => {
 });
 
 function spin(ms) {
-  const time = Date.now();
-  while (Date.now() - time < ms) {}
+  jest.advanceTimersByTime(ms);
+}
+
+function awaitDelay(del) {
+  const delayPromise = del.delay();
+  jest.runAllTimers(); // simulate timeouts during await
+  return delayPromise;
 }
