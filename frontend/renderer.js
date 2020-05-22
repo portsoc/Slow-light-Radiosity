@@ -605,6 +605,9 @@ function setupOverlay() {
     currentEnvironment = n;
     stopRadiosity();
     setupEnvironment();
+
+    // hide animation player
+    document.getElementById('animation-player-bar').classList.add('hidden');
   }
 
   function setEnvName(envDiv, n, selected) {
