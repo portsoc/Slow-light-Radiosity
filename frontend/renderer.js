@@ -539,6 +539,8 @@ async function runReplay() {
         updateColors();
       };
 
+      document.getElementById('bar').value = now;
+
       await animationFrameDelay();
       if (stopRunning) break;
     }
@@ -562,6 +564,8 @@ async function runReplayBackward() {
         radiosityEngine.show(now);
         updateColors();
       };
+
+      document.getElementById('bar').value = now;
 
       await animationFrameDelay();
       if (stopRunning) break;
@@ -731,13 +735,25 @@ function setupOverlay() {
 
     material.wireframe = currentWireframe;
   });
+
+  // animation player
+
+  const back = document.getElementById('action-backward');
+  const forw = document.getElementById('action-forward');
+
+  back.addEventListener('click', () => {
+    runReplayBackward();
+  });
+  forw.addEventListener('click', () => {
+    runReplay();
+  });
 }
 
 function initializeAnimationPlayer() {
   const bar = document.getElementById('bar');
 
   // set up values
-  bar.max = bar.value = document.getElementById('iteration-count').textContent;
+  bar.max = bar.value = document.getElementById('iteration-count').textContent - 1;
 
   document.getElementById('animation-player-bar').classList.remove('hidden');
 }

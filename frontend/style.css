@@ -96,36 +96,6 @@ html, body {
   justify-content: space-evenly;
 }
 
-/* Cursor */
-.menu-item {
-  cursor: pointer;
-}
-
-.window {
-  cursor: default;
-  pointer-events: none;
-}
-
-#env > div:nth-child(n+3):nth-last-child(n) {
-  cursor: pointer;
-  pointer-events: all;
-}
-
-#slider-container > input {
-  cursor: pointer;
-  pointer-events: all;
-}
-
-#delay > div {
-  cursor: pointer;
-  pointer-events: all;
-}
-
-#slowrad, #ambient, #overshoot, #wireframe {
-  cursor: pointer;
-  pointer-events: all;
-}
-
 /* Axes helper */
 #axes-helper-frame {
   position: absolute;
@@ -181,4 +151,40 @@ html, body {
 /* Underline */
 .disabled{
   text-decoration: solid line-through;
+}
+
+/* Cursor */
+.menu-item {
+  cursor: pointer;
+}
+
+.window {
+  cursor: default;
+  pointer-events: none;
+}
+
+#env > div:nth-child(n+3):nth-last-child(n) {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#slider-container > input {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#delay > div {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#slowrad, #ambient, #overshoot, #wireframe {
+  cursor: pointer;
+  pointer-events: all;
+}
+
+#action-backward, #action-backward-frame, #action-forward-frame,
+#action-forward, #action-play, #action-pause, #action-loop {
+  cursor: pointer;
+  pointer-events: all;
 }
