@@ -169,6 +169,8 @@ function makeLight() {
   retval.surfaces[1].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // back
   retval.surfaces[2].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // right
   retval.surfaces[3].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // left
+  retval.surfaces[4].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // top
+  retval.surfaces[5].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // bottom
   retval.surfaces[4].emittance.add(new Rad.Spectra(L * 0.5, L * 0.5, L * 0.5)); // top
   retval.surfaces[5].emittance.add(new Rad.Spectra(L, L, L)); // bottom
 

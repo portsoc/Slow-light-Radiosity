@@ -48,6 +48,7 @@ function cube2(subdivision, subPatches, L = 10) {
 
   retval.surfaces[0].reflectance.add(new Rad.Spectra(0.7, 0.2, 0.2));
   retval.surfaces[1].reflectance.add(new Rad.Spectra(0.7, 0.7, 0.2));
+  retval.surfaces[2].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8));
   retval.surfaces[2].emittance.add(new Rad.Spectra(L, L, L));
   retval.surfaces[3].reflectance.add(new Rad.Spectra(0.2, 0.7, 0.7));
   retval.surfaces[4].reflectance.add(new Rad.Spectra(0.2, 0.2, 0.7));
