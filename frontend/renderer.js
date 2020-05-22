@@ -476,6 +476,8 @@ let stopRunning = false;
 let radiosityRunning = false;
 let isSlowRadiosity = false;
 
+let animationNow = null;
+
 async function runRadiosity() {
   try {
     console.log('running radiosity');
@@ -545,6 +547,8 @@ async function runReplay() {
       if (stopRunning) break;
     }
 
+    animationNow = radiosityEngine.maxTime;
+
     updateForDisplay = null;
   } finally {
     radiosityRunning = false;
@@ -571,10 +575,38 @@ async function runReplayBackward() {
       if (stopRunning) break;
     }
 
+    animationNow = 0;
+
     updateForDisplay = null;
   } finally {
     radiosityRunning = false;
   }
+}
+
+function previousFrame() {
+  animationNow--;
+
+  document.getElementById('iteration-count').textContent = animationNow;
+
+  updateForDisplay = () => {
+    radiosityEngine.show(animationNow);
+    updateColors();
+  };
+
+  document.getElementById('bar').value = animationNow;
+}
+
+function nextFrame() {
+  animationNow++;
+
+  document.getElementById('iteration-count').textContent = animationNow;
+
+  updateForDisplay = () => {
+    radiosityEngine.show(animationNow);
+    updateColors();
+  };
+
+  document.getElementById('bar').value = animationNow;
 }
 
 function stopRadiosity() {
@@ -743,6 +775,8 @@ function setupOverlay() {
 
   const back = document.getElementById('action-backward');
   const forw = document.getElementById('action-forward');
+  const backFrame = document.getElementById('action-backward-frame');
+  const forwFrame = document.getElementById('action-forward-frame');
 
   back.addEventListener('click', () => {
     runReplayBackward();
@@ -750,13 +784,19 @@ function setupOverlay() {
   forw.addEventListener('click', () => {
     runReplay();
   });
+  backFrame.addEventListener('click', () => {
+    previousFrame();
+  });
+  forwFrame.addEventListener('click', () => {
+    nextFrame();
+  });
 }
 
 function initializeAnimationPlayer() {
   const bar = document.getElementById('bar');
 
   // set up values
-  bar.max = bar.value = document.getElementById('iteration-count').textContent - 1;
+  bar.max = bar.value = animationNow = document.getElementById('iteration-count').textContent - 1;
 
   document.getElementById('animation-player-bar').classList.remove('hidden');
 }
