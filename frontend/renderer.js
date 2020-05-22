@@ -676,13 +676,18 @@ function setupOverlay() {
   const a = document.getElementById('ambient');
   const o = document.getElementById('overshoot');
   const w = document.getElementById('wireframe');
+
+  const animBar = document.getElementById('animation-player-bar');
+
   s.addEventListener('click', () => {
     event.stopPropagation();
 
     if (isSlowRadiosity) {
       s.classList.add('disabled');
+      animBar.classList.add('hidden');
     } else {
       s.classList.remove('disabled');
+      animBar.classList.remove('hidden');
     }
     isSlowRadiosity = !isSlowRadiosity;
   });

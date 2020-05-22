@@ -126,21 +126,6 @@ html, body {
   pointer-events: all;
 }
 
-/* Hidden */
-.hidden {
-  display: none;
-}
-
-/* Underline */
-.selected{
-  text-decoration: solid underline;
-}
-
-/* Underline */
-.disabled{
-  text-decoration: solid line-through;
-}
-
 /* Axes helper */
 #axes-helper-frame {
   position: absolute;
@@ -159,9 +144,6 @@ html, body {
   margin-left: -175px;
 
   width: 350px;
-
-  display: flex;
-  flex-direction: column;
 }
 
 #animation-actions {
@@ -184,4 +166,19 @@ html, body {
 #animation-bar bar{
   width: 300px;
   height: 20px;
+}
+
+/* Hidden */
+.hidden {
+  display: none;
+}
+
+/* Underline */
+.selected{
+  text-decoration: solid underline;
+}
+
+/* Underline */
+.disabled{
+  text-decoration: solid line-through;
 }
