@@ -55,4 +55,11 @@ export default class Spectra {
     this.b *= x;
     return this;
   }
+
+  exp(x) {
+    this.r **= x;
+    this.g **= x;
+    this.b **= x;
+    return this;
+  }
 }

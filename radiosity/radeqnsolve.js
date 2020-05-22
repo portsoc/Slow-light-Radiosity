@@ -36,7 +36,7 @@ export default class RadEqnSolve {
 
         // Initialize element and vertex exitance
         for (const element of patch.elements) {
-          element.exitance.reset();
+          element.exitance.setTo(emit);
           for (const vertex of patch.vertices) {
             vertex.exitance.reset();
           }

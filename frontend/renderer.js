@@ -158,6 +158,10 @@ function addFace(geometry, element, vertexIndices) {
   );
   geometry.faces.push(face);
 
+  for (let i = 0; i < 3; i += 1) {
+    face.vertexColors[i] = new THREE.Color();
+  }
+
   // add a backlink so we can get to the three.js faces from the element
   if (!element._threeFaces) element._threeFaces = [];
   element._threeFaces.push(face);
@@ -285,6 +289,7 @@ function setupHelper() {
 
 function updateColors() {
   const deltaAmbient = (currentIncludeAmbient && environment.ambient) ? new Rad.Spectra() : undefined;
+  const surfaceColor = new Rad.Spectra();
 
   for (const surface of environment.surfaces) {
     if (deltaAmbient) {
@@ -292,27 +297,22 @@ function updateColors() {
       deltaAmbient.multiply(surface.reflectance);
     }
 
+    if (!currentViewVertex) {
+      surfaceColor.setTo(surface.emittance);
+      surfaceColor.add(surface.reflectance);
+    }
+
     for (const patch of surface.patches) {
       for (const element of patch.elements) {
         for (const face of element._threeFaces) {
           for (let i = 0; i < 3; i += 1) {
-            if (!face.vertexColors[i]) face.vertexColors[i] = new THREE.Color();
-
             if (currentViewVertex) {
-              setThreeColorFromRad(
-                face.vertexColors[i],
-                face._radVertices[i].exitance,
-                surface.emittance,
-                exposure,
-                gamma,
-                deltaAmbient);
-            } else {
-              // shaded
-              setThreeColorFromRad(
-                face.vertexColors[i],
-                surface.reflectance,
-                surface.emittance);
+              surfaceColor.setTo(face._radVertices[i].exitance);
+              if (deltaAmbient) surfaceColor.add(deltaAmbient);
+              surfaceColor.scale(exposure / 10);
+              surfaceColor.exp(10 / gamma);
             }
+            face.vertexColors[i].setRGB(surfaceColor.r, surfaceColor.g, surfaceColor.b);
           }
         }
       }
@@ -321,17 +321,6 @@ function updateColors() {
 
   geometry.colorsNeedUpdate = true;
   material.needsUpdate = true;
-}
-
-const NO_AMBIENT = new Rad.Spectra();
-function setThreeColorFromRad(threeColor, exit, emit, exposure = 10, gamma = 10, ambient = NO_AMBIENT) {
-  exposure /= 10;
-  gamma = 10 / gamma;
-  threeColor.setRGB(
-    ((exit.r + emit.r + ambient.r) * exposure) ** gamma,
-    ((exit.g + emit.g + ambient.g) * exposure) ** gamma,
-    ((exit.b + emit.b + ambient.b) * exposure) ** gamma,
-  );
 }
 
 function updateControls() {

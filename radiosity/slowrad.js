@@ -157,7 +157,7 @@ export default class SlowRad {
 
         // Initialize element and vertex future exitances
         for (const element of patch.elements) {
-          element.futureExitances.forEach(s => s.reset());
+          element.futureExitances.forEach(s => s.setTo(emit));
           for (const vertex of element.vertices) {
             vertex.futureExitances.forEach(s => s.reset());
           }
