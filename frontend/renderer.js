@@ -518,7 +518,7 @@ async function runRadiosity() {
 
     if (rad instanceof Rad.SlowRad) {
       // display animation player bar
-      document.getElementById('animation-player-bar').classList.remove('hidden');
+      initializeAnimationPlayer();
     }
   } finally {
     radiosityRunning = false;
@@ -731,4 +731,13 @@ function setupOverlay() {
 
     material.wireframe = currentWireframe;
   });
+}
+
+function initializeAnimationPlayer() {
+  const bar = document.getElementById('bar');
+
+  // set up values
+  bar.max = bar.value = document.getElementById('iteration-count').textContent;
+
+  document.getElementById('animation-player-bar').classList.remove('hidden');
 }
