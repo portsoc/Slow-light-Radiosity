@@ -86,6 +86,9 @@ export class Range extends EventTarget {
   }
 
   setTo(value) {
+    if (value > this.max) value = this.max;
+    if (value < this.min) value = this.min;
+
     if (this.inputEl) {
       this.inputEl.value = value;
       this.containerEl.classList.toggle('default', value === this.default);
