@@ -103,6 +103,7 @@ export class Toggle extends EventTarget {
 
     this.name = name;
     this.value = initial;
+    this.explanations = [];
   }
 
   setupHtml(el) {
@@ -122,6 +123,19 @@ export class Toggle extends EventTarget {
     inputEl.checked = this.value;
 
     inputEl.addEventListener('input', this.onInput.bind(this));
+
+    for (const exp of this.explanations) {
+      const expEl = document.createElement('div');
+      expEl.classList.add('explanation');
+      containerEl.append(expEl);
+      expEl.textContent = exp;
+    }
+  }
+
+  addExplanation(text) {
+    if (this.containerEl) throw new TypeError('explanation must be added before setupHtml');
+
+    this.explanations.push(text);
   }
 
   setupKeyHandler(key, category) {

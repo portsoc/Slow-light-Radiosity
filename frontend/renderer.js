@@ -60,9 +60,9 @@ let geometry;
 
 const currentViewOutput = new components.Toggle('view radiosity output', false); // the current view is either vertex (radiosity) or shaded
 const currentViewWireframe = new components.Toggle('wireframe view', false);
-let currentIncludeAmbient = false;
+const currentIncludeAmbient = new components.Toggle('show ambient light', false);
 
-let overshooting = false;
+const overshooting = new components.Toggle('overshooting', false);
 
 // gamma scaled by 10 for integer arithmetic, so default really 2.2
 const gamma = new components.Range('gamma', 1, 100, 22);
@@ -309,7 +309,7 @@ function setupHelper() {
 }
 
 function updateColors() {
-  const deltaAmbient = (currentIncludeAmbient && environment.ambient) ? new Rad.Spectra() : undefined;
+  const deltaAmbient = (currentIncludeAmbient.value && environment.ambient) ? new Rad.Spectra() : undefined;
   const surfaceColor = new Rad.Spectra();
 
   for (const surface of environment.surfaces) {
@@ -421,16 +421,6 @@ function setupKeyboard() {
     },
   );
 
-  kbd.registerKeyboardShortcut('o',
-    () => {
-      overshooting = !overshooting;
-      console.log('overshooting', overshooting ? 'on' : 'off');
-    },
-    {
-      category: 'Radiosity',
-      description: 'Toggle overshooting (faster progressive radiosity)',
-    },
-  );
   kbd.registerKeyboardShortcut('s',
     () => {
       isSlowRadiosity = !isSlowRadiosity;
@@ -439,18 +429,6 @@ function setupKeyboard() {
     {
       category: 'Radiosity',
       description: 'Select radiosity algorithm',
-    },
-  );
-
-  kbd.registerKeyboardShortcut('a',
-    () => {
-      currentIncludeAmbient = !currentIncludeAmbient;
-      console.log('ambient', currentIncludeAmbient ? 'on' : 'off');
-      updateColors();
-    },
-    {
-      category: 'View',
-      description: 'Show ambient (remaining) light in radiosity output',
     },
   );
 
@@ -490,7 +468,7 @@ async function runRadiosity() {
   try {
     console.log('running radiosity');
     const rad = isSlowRadiosity ? new Rad.SlowRad() : new Rad.ProgRad();
-    rad.overFlag = overshooting;
+    rad.overFlag = overshooting.value;
 
     rad.open(environment);
     document.getElementById('running-time').textContent = '–';
@@ -596,6 +574,7 @@ function setupUI() {
     delayer.cancelIfLongerThan(delay.value);
   });
 
+  // view controls
   currentViewOutput.setupHtml(document.querySelector('#output-view'));
   currentViewOutput.setupKeyHandler('Tab', 'View');
   currentViewOutput.addEventListener('update', updateColors);
@@ -606,30 +585,14 @@ function setupUI() {
     material.wireframe = currentViewWireframe.value;
   });
 
-  // mode menu
+  currentIncludeAmbient.setupHtml(document.querySelector('#ambient'));
+  currentIncludeAmbient.setupKeyHandler('a', 'View');
+  currentIncludeAmbient.addEventListener('update', updateColors);
 
-  const a = document.getElementById('ambient');
-  const o = document.getElementById('overshoot');
-  a.addEventListener('click', () => {
-    if (currentIncludeAmbient) {
-      a.classList.add('disabled');
-    } else {
-      a.classList.remove('disabled');
-    }
-    currentIncludeAmbient = !currentIncludeAmbient;
-
-    updateColors();
-  });
-  o.addEventListener('click', () => {
-    if (overshooting) {
-      o.classList.add('disabled');
-    } else {
-      o.classList.remove('disabled');
-    }
-    overshooting = !overshooting;
-
-    updateColors();
-  });
+  // radiosity parameters
+  overshooting.addExplanation('Overshooting usually makes progressive radiosity faster.');
+  overshooting.setupHtml(document.querySelector('#overshoot'));
+  overshooting.setupKeyHandler('o', 'Radiosity');
 
   setupKeyboard();
 }
