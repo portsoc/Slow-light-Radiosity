@@ -58,8 +58,8 @@ let controls;
 let material;
 let geometry;
 
-let currentViewVertex = false; // the current view is either vertex (radiosity) or shaded
-let currentWireframe = false;
+const currentViewOutput = new components.Toggle('view radiosity output', false); // the current view is either vertex (radiosity) or shaded
+const currentViewWireframe = new components.Toggle('wireframe view', false);
 let currentIncludeAmbient = false;
 
 let overshooting = false;
@@ -80,8 +80,7 @@ window.addEventListener('load', init);
 function init() {
   setupRenderer();
   setupHelper();
-  setupOverlay();
-  setupKeyboard();
+  setupUI();
   setupEnvironment();
   animate();
 }
@@ -129,7 +128,7 @@ function setupRenderer() {
 
   material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
-    wireframe: currentWireframe,
+    wireframe: currentViewWireframe.value,
   });
 }
 
@@ -319,7 +318,7 @@ function updateColors() {
       deltaAmbient.multiply(surface.reflectance);
     }
 
-    if (!currentViewVertex) {
+    if (!currentViewOutput.value) {
       surfaceColor.setTo(surface.emittance);
       surfaceColor.add(surface.reflectance);
     }
@@ -328,7 +327,7 @@ function updateColors() {
       for (const element of patch.elements) {
         for (const face of element._threeFaces) {
           for (let i = 0; i < 3; i += 1) {
-            if (currentViewVertex) {
+            if (currentViewOutput.value) {
               surfaceColor.setTo(face._radVertices[i].exitance);
               if (deltaAmbient) surfaceColor.add(deltaAmbient);
               surfaceColor.scale(1.1 ** exposure.value);
@@ -403,8 +402,7 @@ function setupKeyboard() {
   kbd.registerKeyboardShortcut('Enter',
     () => {
       if (!radiosityRunning) runRadiosity();
-      currentViewVertex = true;
-      updateColors();
+      currentViewOutput.setTo(true);
     },
     {
       category: 'Radiosity',
@@ -420,17 +418,6 @@ function setupKeyboard() {
     {
       category: 'Radiosity',
       description: 'Stop radiosity computation',
-    },
-  );
-
-  kbd.registerKeyboardShortcut('Tab',
-    () => {
-      currentViewVertex = !currentViewVertex;
-      updateColors();
-    },
-    {
-      category: 'View',
-      description: 'Toggle view: simple surface colors, radiosity output',
     },
   );
 
@@ -452,16 +439,6 @@ function setupKeyboard() {
     {
       category: 'Radiosity',
       description: 'Select radiosity algorithm',
-    },
-  );
-  kbd.registerKeyboardShortcut('w',
-    () => {
-      currentWireframe = !currentWireframe;
-      material.wireframe = currentWireframe;
-    },
-    {
-      category: 'View',
-      description: 'Toggle wireframe view',
     },
   );
 
@@ -556,7 +533,7 @@ function stopRadiosity() {
   stopRunning = true;
 }
 
-function setupOverlay() {
+function setupUI() {
   menu.setup();
 
   // environment menu selector
@@ -619,11 +596,20 @@ function setupOverlay() {
     delayer.cancelIfLongerThan(delay.value);
   });
 
+  currentViewOutput.setupHtml(document.querySelector('#output-view'));
+  currentViewOutput.setupKeyHandler('Tab', 'View');
+  currentViewOutput.addEventListener('update', updateColors);
+
+  currentViewWireframe.setupHtml(document.querySelector('#wireframe'));
+  currentViewWireframe.setupKeyHandler('w', 'View');
+  currentViewWireframe.addEventListener('update', () => {
+    material.wireframe = currentViewWireframe.value;
+  });
+
   // mode menu
 
   const a = document.getElementById('ambient');
   const o = document.getElementById('overshoot');
-  const w = document.getElementById('wireframe');
   a.addEventListener('click', () => {
     if (currentIncludeAmbient) {
       a.classList.add('disabled');
@@ -644,16 +630,8 @@ function setupOverlay() {
 
     updateColors();
   });
-  w.addEventListener('click', () => {
-    if (currentWireframe) {
-      w.classList.add('disabled');
-    } else {
-      w.classList.remove('disabled');
-    }
-    currentWireframe = !currentWireframe;
 
-    material.wireframe = currentWireframe;
-  });
+  setupKeyboard();
 }
 
 function displayGamma(gamma) {

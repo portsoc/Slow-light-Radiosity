@@ -57,6 +57,9 @@ export class Range extends EventTarget {
     kbd.registerKeyboardShortcut(
       keys,
       (e) => {
+        if (e.metaKey || e.altKey) {
+          return false;
+        }
         if (e.ctrlKey) {
           this.setTo(this.default);
         } else {
@@ -90,6 +93,63 @@ export class Range extends EventTarget {
     }
     this.value = value;
     this.display();
+    this.dispatchEvent(new CustomEvent('update'));
+  }
+}
+
+export class Toggle extends EventTarget {
+  constructor(name, initial) {
+    super();
+
+    this.name = name;
+    this.value = initial;
+  }
+
+  setupHtml(el) {
+    const containerEl = document.createElement('label');
+    this.containerEl = containerEl;
+    el.append(containerEl);
+
+    const nameEl = document.createElement('div');
+    nameEl.classList.add('label');
+    containerEl.append(nameEl);
+    nameEl.textContent = this.name;
+
+    const inputEl = document.createElement('input');
+    this.inputEl = inputEl;
+    containerEl.append(inputEl);
+    inputEl.type = 'checkbox';
+    inputEl.checked = this.value;
+
+    inputEl.addEventListener('input', this.onInput.bind(this));
+  }
+
+  setupKeyHandler(key, category) {
+    kbd.registerKeyboardShortcut(
+      key,
+      (e) => {
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+          return false;
+        }
+
+        this.setTo(!this.value);
+      },
+      {
+        category,
+        description: `Toggle ${this.name}`,
+      },
+    );
+  }
+
+  onInput(e) {
+    this.setTo(e.target.checked);
+  }
+
+  setTo(value) {
+    if (this.inputEl) {
+      this.inputEl.checked = value;
+    }
+    this.value = value;
     this.dispatchEvent(new CustomEvent('update'));
   }
 }
