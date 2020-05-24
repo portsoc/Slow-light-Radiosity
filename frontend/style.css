@@ -115,7 +115,7 @@ html, body {
 
 .slider-container .value {
   display: inline-block;
-  min-width: 5ch;
+  min-width: 6ch;
   text-align: right;
   margin-left: 1ch;
   margin-right: 1ch;
