@@ -132,6 +132,29 @@ html, body {
   cursor: default;
 }
 
+.toggle-container {
+  display: block;
+  margin-top: 0.5em;
+  margin-bottom: 0.5em;
+}
+
+.toggle-container:last-child {
+  margin-bottom: 0;
+}
+
+.toggle-container label .label {
+  display: inline-block;
+  margin-right: 1em;
+  text-transform: capitalize;
+  min-width: 10ch;
+}
+
+.explanation {
+  padding-left: 1em;
+  font-style: italic;
+}
+
+
 #delay {
   display: flex;
   flex-direction: row;
