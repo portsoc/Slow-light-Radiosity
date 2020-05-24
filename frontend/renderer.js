@@ -8,7 +8,7 @@ import * as Modeling from '../modeling/index.js';
 import delayer from './tools/delays.js';
 import * as kbd from './tools/keyboard-shortcuts.js';
 import * as components from './tools/basic-components.js';
-import * as menu from './menu.js';
+import * as menu from './tools/menu.js';
 
 // list of available environments; the first one is the default
 
