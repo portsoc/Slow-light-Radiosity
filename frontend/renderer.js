@@ -7,6 +7,7 @@ import * as Modeling from '../modeling/index.js';
 
 import delays from './tools/delays.js';
 import * as kbd from './tools/keyboard-shortcuts.js';
+import * as components from './tools/basic-components.js';
 import * as menu from './menu.js';
 
 // list of available environments; the first one is the default
@@ -63,8 +64,11 @@ let currentIncludeAmbient = false;
 
 let overshooting = false;
 
-let gamma = 22; // scaled by 10, so really 2.2
-let exposure = 0; // positive or negative; exposure factor is 1.1^exposure
+// gamma scaled by 10 for integer arithmetic, so default really 2.2
+const gamma = new components.Range('gamma', 1, 100, 22);
+
+// exposure positive or negative, also scaled by 10; actual exposure factor is 1.1^exposure
+const exposure = new components.Range('exposure', -50, 50, 0);
 
 // init on load
 
@@ -74,8 +78,8 @@ function init() {
   setupRenderer();
   setupHelper();
   setupOverlay();
-  setupEnvironment();
   setupKeyboard();
+  setupEnvironment();
   animate();
 }
 
@@ -324,8 +328,8 @@ function updateColors() {
             if (currentViewVertex) {
               surfaceColor.setTo(face._radVertices[i].exitance);
               if (deltaAmbient) surfaceColor.add(deltaAmbient);
-              surfaceColor.scale(1.1 ** exposure);
-              surfaceColor.exp(10 / gamma);
+              surfaceColor.scale(1.1 ** exposure.value);
+              surfaceColor.exp(10 / gamma.value);
             }
             face.vertexColors[i].setRGB(surfaceColor.r, surfaceColor.g, surfaceColor.b);
           }
@@ -481,39 +485,6 @@ function setupKeyboard() {
     },
   );
 
-  kbd.registerKeyboardShortcut(['e', 'E'],
-    (e) => {
-      if (e.ctrlKey) {
-        exposure = 0;
-      } else {
-        exposure += e.shiftKey ? -1 : 1;
-      }
-      console.log(`exposure ${exposure > 0 ? '+' : ''}${(exposure / 10).toFixed(1)}`);
-      updateColors();
-    },
-    {
-      category: 'View',
-      description: ['e/E', 'Increase/decrease exposure (ctrl to reset)'],
-    },
-  );
-
-  kbd.registerKeyboardShortcut(['g', 'G'],
-    (e) => {
-      if (e.ctrlKey) {
-        gamma = 22;
-      } else {
-        gamma += e.shiftKey ? -1 : 1;
-        if (gamma < 0) gamma = 0;
-      }
-      console.log(`gamma ${(gamma / 10).toFixed(1)}`);
-      updateColors();
-    },
-    {
-      category: 'View',
-      description: ['g/G', 'Increase/decrease gamma (ctrl to reset to 2.2)'],
-    },
-  );
-
   kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     (e) => {
       if (e.metaKey || e.altKey || e.ctrlKey) {
@@ -640,18 +611,14 @@ function setupOverlay() {
   }
 
   // light control menu
+  gamma.setupHtml(document.querySelector('#gamma-slider'), displayGamma);
+  exposure.setupHtml(document.querySelector('#exposure-slider'), displayExposure);
 
-  // set up slider
-  const sg = document.getElementById('gamma-slider');
-  const se = document.getElementById('exposure-slider');
-  sg.addEventListener('input', () => {
-    gamma = sg.valueAsNumber;
-    updateColors();
-  });
-  se.addEventListener('input', () => {
-    exposure = se.valueAsNumber;
-    updateColors();
-  });
+  gamma.setupKeyHandler('g', 'View');
+  exposure.setupKeyHandler('e', 'View');
+
+  gamma.addEventListener('update', updateColors);
+  exposure.addEventListener('update', updateColors);
 
   // delay selector
   const d0 = document.getElementById('delay-0');
@@ -714,4 +681,12 @@ function setupOverlay() {
 
     material.wireframe = currentWireframe;
   });
+}
+
+function displayGamma(gamma) {
+  return (gamma / 10).toFixed(1);
+}
+
+function displayExposure(exposure) {
+  return (exposure > 0 ? '+' : '') + (exposure / 10).toFixed(1);
 }
