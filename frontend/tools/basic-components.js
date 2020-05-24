@@ -1,12 +1,7 @@
 import * as kbd from './keyboard-shortcuts.js';
 
 export class Range extends EventTarget {
-  constructor(
-    name,
-    min,
-    max,
-    dflt,
-  ) {
+  constructor(name, min, max, dflt) {
     super();
 
     this.name = name;
