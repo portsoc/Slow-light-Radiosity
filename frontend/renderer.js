@@ -7,7 +7,7 @@ import * as Modeling from '../modeling/index.js';
 
 import delays from './tools/delays.js';
 import * as kbd from './tools/keyboard-shortcuts.js';
-import setupMenu from './menu.js';
+import * as menu from './menu.js';
 
 // list of available environments; the first one is the default
 
@@ -594,15 +594,13 @@ function stopRadiosity() {
 }
 
 function setupOverlay() {
-  setupMenu();
+  menu.setup();
 
   // environment menu selector
 
   let envPreviousId = 0;
   function selectEnv(envDiv, n) {
     if (currentEnvironment === n) return;
-
-    event.stopPropagation();
 
     // unselect previous environment
     const p = document.getElementById('env-selected');
@@ -647,25 +645,19 @@ function setupOverlay() {
   const sg = document.getElementById('gamma-slider');
   const se = document.getElementById('exposure-slider');
   sg.addEventListener('input', () => {
-    event.stopPropagation();
     gamma = sg.valueAsNumber;
     updateColors();
   });
   se.addEventListener('input', () => {
-    event.stopPropagation();
     exposure = se.valueAsNumber;
     updateColors();
   });
-  sg.addEventListener('click', () => event.stopPropagation());
-  se.addEventListener('click', () => event.stopPropagation());
 
   // delay selector
   const d0 = document.getElementById('delay-0');
   const d100 = document.getElementById('delay-100');
   const d1000 = document.getElementById('delay-1000');
   d0.addEventListener('click', () => {
-    event.stopPropagation();
-
     d0.classList.add('selected');
     d100.classList.remove('selected');
     d1000.classList.remove('selected');
@@ -673,8 +665,6 @@ function setupOverlay() {
     delays.selectDelay(0);
   });
   d100.addEventListener('click', () => {
-    event.stopPropagation();
-
     d0.classList.remove('selected');
     d100.classList.add('selected');
     d1000.classList.remove('selected');
@@ -682,8 +672,6 @@ function setupOverlay() {
     delays.selectDelay(100);
   });
   d1000.addEventListener('click', () => {
-    event.stopPropagation();
-
     d0.classList.remove('selected');
     d100.classList.remove('selected');
     d1000.classList.add('selected');
@@ -697,8 +685,6 @@ function setupOverlay() {
   const o = document.getElementById('overshoot');
   const w = document.getElementById('wireframe');
   a.addEventListener('click', () => {
-    event.stopPropagation();
-
     if (currentIncludeAmbient) {
       a.classList.add('disabled');
     } else {
@@ -709,8 +695,6 @@ function setupOverlay() {
     updateColors();
   });
   o.addEventListener('click', () => {
-    event.stopPropagation();
-
     if (overshooting) {
       o.classList.add('disabled');
     } else {
@@ -721,8 +705,6 @@ function setupOverlay() {
     updateColors();
   });
   w.addEventListener('click', () => {
-    event.stopPropagation();
-
     if (currentWireframe) {
       w.classList.add('disabled');
     } else {
