@@ -398,68 +398,6 @@ function animate() {
   }
 }
 
-function setupKeyboard() {
-  kbd.registerKeyboardShortcut('Enter',
-    () => {
-      if (!radiosityRunning) runRadiosity();
-      currentViewOutput.setTo(true);
-    },
-    {
-      category: 'Radiosity',
-      description: 'Start radiosity computation',
-    },
-  );
-
-  kbd.registerKeyboardShortcut('Escape',
-    () => {
-      stopRadiosity();
-      delayer.cancel();
-    },
-    {
-      category: 'Radiosity',
-      description: 'Stop radiosity computation',
-    },
-  );
-
-  kbd.registerKeyboardShortcut('s',
-    () => {
-      isSlowRadiosity = !isSlowRadiosity;
-      console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
-    },
-    {
-      category: 'Radiosity',
-      description: 'Select radiosity algorithm',
-    },
-  );
-
-  kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    (e) => {
-      if (e.metaKey || e.altKey || e.ctrlKey) {
-        return false;
-      }
-
-      const newEnv = Number(e.key) - 1;
-      if (newEnv >= environmentFunctions.length) {
-        return false;
-      }
-
-      if (currentEnvironment !== newEnv) {
-        currentEnvironment = newEnv;
-
-        stopRadiosity();
-        console.log('environment', currentEnvironment);
-        setupEnvironment();
-      }
-    },
-    {
-      category: 'Environment',
-      description: ['1-9', 'Select environment'],
-    },
-  );
-
-  kbd.listKeyboardShortcuts(document.querySelector('#controls'));
-}
-
 let stopRunning = false;
 let radiosityRunning = false;
 let isSlowRadiosity = false;
@@ -596,6 +534,69 @@ function setupUI() {
 
   setupKeyboard();
 }
+
+function setupKeyboard() {
+  kbd.registerKeyboardShortcut('Enter',
+    () => {
+      if (!radiosityRunning) runRadiosity();
+      currentViewOutput.setTo(true);
+    },
+    {
+      category: 'Radiosity',
+      description: 'Start radiosity computation',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('Escape',
+    () => {
+      stopRadiosity();
+      delayer.cancel();
+    },
+    {
+      category: 'Radiosity',
+      description: 'Stop radiosity computation',
+    },
+  );
+
+  kbd.registerKeyboardShortcut('s',
+    () => {
+      isSlowRadiosity = !isSlowRadiosity;
+      console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
+    },
+    {
+      category: 'Radiosity',
+      description: 'Select radiosity algorithm',
+    },
+  );
+
+  kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    (e) => {
+      if (e.metaKey || e.altKey || e.ctrlKey) {
+        return false;
+      }
+
+      const newEnv = Number(e.key) - 1;
+      if (newEnv >= environmentFunctions.length) {
+        return false;
+      }
+
+      if (currentEnvironment !== newEnv) {
+        currentEnvironment = newEnv;
+
+        stopRadiosity();
+        console.log('environment', currentEnvironment);
+        setupEnvironment();
+      }
+    },
+    {
+      category: 'Environment',
+      description: ['1-9', 'Select environment'],
+    },
+  );
+
+  kbd.listKeyboardShortcuts(document.querySelector('#controls'));
+}
+
 
 function displayGamma(gamma) {
   return (gamma / 10).toFixed(1);
