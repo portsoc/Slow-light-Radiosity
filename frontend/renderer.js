@@ -665,5 +665,5 @@ function displayExposure(exposure) {
 }
 
 function displayDelay(d) {
-  return DELAYS[d].toString();
+  return `${DELAYS[d]}ms`;
 }
