@@ -47,7 +47,6 @@ export default class SlowRad {
       if (this.needsDisplayUpdate) {
         this.calcAmbient();
         this.env.ambient = this.ambient[this.now];
-        console.log(this.env.ambient);
         this.env.interpolateVertexExitances(this.now);
         this.needsDisplayUpdate = false;
 
@@ -70,11 +69,11 @@ export default class SlowRad {
 
     for (const currentPatch of this.env.patches) {
       // calculate form factors
-      if (!currentPatch.ffArray) {
-        currentPatch.ffArray = new Array(this.env.elementCount);
-        this.ffd.calculateFormFactors(currentPatch, this.env, currentPatch.ffArray);
+      if (!currentPatch.rffArray) {
+        this.computeRFFArray(currentPatch);
       }
-      const ffArray = currentPatch.ffArray;
+
+      const rffArray = currentPatch.rffArray;
 
       for (const surface of this.env.surfaces) {
         // Get surface reflectance
@@ -85,16 +84,14 @@ export default class SlowRad {
           if (patch !== currentPatch) {
             for (const element of patch.elements) {
               // Check element visibility
-              if (ffArray[element.number] > 0) {
-                // compute the time distances between the shooting patch and receiving element
-                const distance = currentPatch.distArray[element.number];
-                const timeDist = Math.round(distance / this.speedOfLight);
-                const receivingTime = this.now + timeDist;
+              if (rffArray[element.number] > 0) {
+                // compute when the element would receive the light
+                const receivingTime = this.now + currentPatch.distArray[element.number];
 
-                // only propagate the light if we aren't out of future
+                // only propagate the light if we aren't out of future buffer
                 if (receivingTime < this.maxTime) {
-                  // Compute reciprocal form factor
-                  const rff = Math.min(ffArray[element.number] * currentPatch.area / element.area, 1);
+                  // get reciprocal form factor
+                  const rff = rffArray[element.number];
 
                   // Get shooting patch unsent exitance
                   shoot.setTo(currentPatch.futureExitances[this.now]);
@@ -125,6 +122,18 @@ export default class SlowRad {
     return false;
   }
 
+  computeRFFArray(patch) {
+    const rffArray = new Array(this.env.elementCount);
+    this.ffd.calculateFormFactors(patch, this.env, rffArray);
+
+    // compute reciprocal form factors
+    for (const element of this.env.elements) {
+      const i = element.number;
+      rffArray[i] = Math.min(rffArray[i] * patch.area / element.area, 1);
+    }
+    patch.rffArray = rffArray;
+  }
+
   calcPatchElementDistances() {
     for (const currentPatch of this.env.patches) {
       if (currentPatch.distArray) {
@@ -138,7 +147,10 @@ export default class SlowRad {
         if (patch !== currentPatch) {
           for (const element of patch.elements) {
             // calculate patch-element distance
-            distArray[element.number] = currentPatch.center.dist(element.center);
+            const dist = currentPatch.center.dist(element.center);
+            // transform into integer distance in time steps (minimum 1)
+            const timeDist = Math.max(1, Math.round(dist / this.speedOfLight));
+            distArray[element.number] = timeDist;
           }
         }
       }

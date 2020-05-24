@@ -54,10 +54,13 @@ test('calcPatchElementDistances()', () => {
   const env = new Environment([new Instance(surfaces)]);
 
   const rad = new SlowRad();
-  rad.open(env);
 
-  expect(patch0.distArray).toStrictEqual([null, 3, 5, Math.sqrt(34)]);
+  // speed of light is 1 unit per step
+  rad.open(env, 1);
+
+  // distances are rounded integers
+  expect(patch0.distArray).toStrictEqual([null, 3, 5, 6]);
   expect(patch1.distArray).toStrictEqual([3, null, 4, 5]);
   expect(patch2.distArray).toStrictEqual([5, 4, null, 3]);
-  expect(patch3.distArray).toStrictEqual([Math.sqrt(34), 5, 3, null]);
+  expect(patch3.distArray).toStrictEqual([6, 5, 3, null]);
 });
