@@ -69,7 +69,8 @@ html, body {
 
   padding: 0.5em;
 
-  min-width: 20em;
+  min-width: 30em;
+  cursor: default; /* menu items are clickable, .windows aren't */
 }
 
 .menu-item:first-child .window {
@@ -87,16 +88,48 @@ html, body {
 #menu > :nth-child(4) { background-color: #ded9e2; }
 #menu > :nth-child(5) { background-color: #f7f4ea; }
 
-#slider-container {
-  text-align: center;
+#settings {
+  min-width: 25em;
 }
 
-#slider-container > input {
-  margin-bottom: 20px;
+.slider-container {
+  display: block;
+  margin-top: 1em;
+  margin-bottom: 1em;
 }
 
-.slider-label {
-  margin-bottom: 5px;
+.slider-container:last-child {
+  margin-bottom: 0;
+}
+
+.slider-container label .label {
+  display: inline-block;
+  margin-right: 1em;
+  text-transform: capitalize;
+  min-width: 10ch;
+}
+
+.slider-container input {
+  cursor: pointer;
+}
+
+.slider-container .value {
+  display: inline-block;
+  min-width: 5ch;
+  text-align: right;
+  margin-left: 1ch;
+  margin-right: 1ch;
+}
+
+.slider-container .fas {
+  /* icon, by default too big */
+  font-size: 80% !important;
+  cursor: pointer;
+}
+
+.slider-container .default .fas {
+  opacity: 0.5;
+  cursor: default;
 }
 
 #delay {
@@ -105,29 +138,16 @@ html, body {
   justify-content: space-evenly;
 }
 
-.window {
-  cursor: default;
-  pointer-events: none;
-}
-
-#env > div:nth-child(n+3):nth-last-child(n) {
+#env > div {
   cursor: pointer;
-  pointer-events: all;
-}
-
-#slider-container > input {
-  cursor: pointer;
-  pointer-events: all;
 }
 
 #delay > div {
   cursor: pointer;
-  pointer-events: all;
 }
 
 #ambient, #overshoot, #wireframe {
   cursor: pointer;
-  pointer-events: all;
 }
 
 /* Underline */
