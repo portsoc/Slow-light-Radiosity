@@ -5,7 +5,7 @@ import { CSS2DRenderer, CSS2DObject } from '../lib/CSS2DRenderer.js';
 import * as Rad from '../radiosity/index.js';
 import * as Modeling from '../modeling/index.js';
 
-import delays from './tools/delays.js';
+import delayer from './tools/delays.js';
 import * as kbd from './tools/keyboard-shortcuts.js';
 import * as components from './tools/basic-components.js';
 import * as menu from './menu.js';
@@ -69,6 +69,9 @@ const gamma = new components.Range('gamma', 1, 100, 22);
 
 // exposure positive or negative, also scaled by 10; actual exposure factor is 1.1^exposure
 const exposure = new components.Range('exposure', -50, 50, 0);
+
+const DELAYS = [0, 100, 1000];
+const delay = new components.Range('delay', 0, DELAYS.length - 1, 0);
 
 // init on load
 
@@ -412,7 +415,7 @@ function setupKeyboard() {
   kbd.registerKeyboardShortcut('Escape',
     () => {
       stopRadiosity();
-      delays.cancel();
+      delayer.cancel();
     },
     {
       category: 'Radiosity',
@@ -474,17 +477,6 @@ function setupKeyboard() {
     },
   );
 
-  kbd.registerKeyboardShortcut('d',
-    () => {
-      const newDelay = delays.selectNextDelay();
-      console.log(`delay ${newDelay}ms`);
-    },
-    {
-      category: 'Radiosity',
-      description: 'Select step delay (todo list values)',
-    },
-  );
-
   kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     (e) => {
       if (e.metaKey || e.altKey || e.ctrlKey) {
@@ -540,7 +532,7 @@ async function runRadiosity() {
         updateColors();
       };
 
-      await delays.delay();
+      await delayer.delay(DELAYS[delay.value]);
       if (stopRunning) break;
     }
 
@@ -620,30 +612,11 @@ function setupOverlay() {
   gamma.addEventListener('update', updateColors);
   exposure.addEventListener('update', updateColors);
 
-  // delay selector
-  const d0 = document.getElementById('delay-0');
-  const d100 = document.getElementById('delay-100');
-  const d1000 = document.getElementById('delay-1000');
-  d0.addEventListener('click', () => {
-    d0.classList.add('selected');
-    d100.classList.remove('selected');
-    d1000.classList.remove('selected');
-
-    delays.selectDelay(0);
-  });
-  d100.addEventListener('click', () => {
-    d0.classList.remove('selected');
-    d100.classList.add('selected');
-    d1000.classList.remove('selected');
-
-    delays.selectDelay(100);
-  });
-  d1000.addEventListener('click', () => {
-    d0.classList.remove('selected');
-    d100.classList.remove('selected');
-    d1000.classList.add('selected');
-
-    delays.selectDelay(1000);
+  // delay control
+  delay.setupHtml(document.querySelector('#delay-slider'), displayDelay);
+  delay.setupKeyHandler('d', 'Radiosity');
+  delay.addEventListener('update', () => {
+    delayer.cancelIfLongerThan(delay.value);
   });
 
   // mode menu
@@ -689,4 +662,8 @@ function displayGamma(gamma) {
 
 function displayExposure(exposure) {
   return (exposure > 0 ? '+' : '') + (exposure / 10).toFixed(1);
+}
+
+function displayDelay(d) {
+  return DELAYS[d].toString();
 }
