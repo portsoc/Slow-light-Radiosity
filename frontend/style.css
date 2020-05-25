@@ -52,9 +52,13 @@ html, body {
 }
 
 /* Images */
-.menu-item img {
-  margin: 0.5em;
+.menu-item img,
+.menu-item > i {
+  font-size: 24px !important;
   display: block;
+  margin: 0.5rem;
+  color: var(--bg);
+  text-align: center;
 }
 
 /* Windows */
@@ -94,8 +98,8 @@ html, body {
 
 .slider-container {
   display: block;
-  margin-top: 1em;
-  margin-bottom: 1em;
+  margin-top: .5em;
+  margin-bottom: .5em;
 }
 
 .slider-container:last-child {
@@ -121,13 +125,13 @@ html, body {
   margin-right: 1ch;
 }
 
-.slider-container .fas {
+.slider-container .reset {
   /* icon, by default too big */
   font-size: 80% !important;
   cursor: pointer;
 }
 
-.slider-container .default .fas {
+.slider-container .default .reset {
   opacity: 0.5;
   cursor: default;
 }
@@ -171,16 +175,6 @@ html, body {
 
 #ambient, #overshoot, #wireframe {
   cursor: pointer;
-}
-
-/* Underline */
-.selected{
-  text-decoration: solid underline;
-}
-
-/* Underline */
-.disabled{
-  text-decoration: solid line-through;
 }
 
 /* Axes helper */

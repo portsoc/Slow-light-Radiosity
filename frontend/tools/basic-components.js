@@ -45,8 +45,8 @@ export class Range extends EventTarget {
     this.resetEl = resetEl;
     containerEl.append(resetEl);
     resetEl.title = 'reset to default';
-    resetEl.classList.add('fas');
-    resetEl.classList.add('fa-undo-alt');
+    resetEl.classList.add('reset');
+    resetEl.classList.add('fas', 'fa-undo-alt'); // fontawesome icon
     resetEl.addEventListener('click', () => {
       this.setTo(this.default);
     });
