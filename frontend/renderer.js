@@ -19,7 +19,7 @@ import {
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
 
-const environments = new components.Selector('environments', [
+const environments = new components.Selector('environment', [
   {
     f: envRoom1,
     name: 'Simple room',
@@ -39,6 +39,17 @@ const environments = new components.Selector('environments', [
   {
     f: () => envLamp(5, true),
     name: 'A cube and a lamp',
+  },
+]);
+
+const algorithms = new components.Selector('radiosity algorithm', [
+  {
+    C: Rad.ProgRad,
+    name: 'Progressive Radiosity (fast and static light)',
+  },
+  {
+    C: Rad.SlowRad,
+    name: 'Slow-light Radiosity',
   },
 ]);
 
@@ -70,7 +81,7 @@ const gamma = new components.Range('gamma', 1, 100, 22);
 const exposure = new components.Range('exposure', -50, 50, 0);
 
 const DELAYS = [0, 100, 1000];
-const delay = new components.Range('delay', 0, DELAYS.length - 1, 0);
+const delay = new components.Range('step delay', 0, DELAYS.length - 1, 0);
 
 // init on load
 
@@ -398,12 +409,11 @@ function animate() {
 
 let stopRunning = false;
 let radiosityRunning = false;
-let isSlowRadiosity = false;
 
 async function runRadiosity() {
   try {
     console.log('running radiosity');
-    const rad = isSlowRadiosity ? new Rad.SlowRad() : new Rad.ProgRad();
+    const rad = new algorithms.value.C();
     rad.overFlag = overshooting.value;
 
     rad.open(environment);
@@ -465,6 +475,9 @@ function setupUI() {
     setupEnvironment();
   });
 
+  algorithms.setupHtml('#algorithms');
+  algorithms.setupSwitchKeyHandler('s', 'Radiosity');
+
   // light control menu
   gamma.setupHtml('#gamma-slider', displayGamma);
   exposure.setupHtml('#exposure-slider', displayExposure);
@@ -493,12 +506,13 @@ function setupUI() {
     material.wireframe = currentViewWireframe.value;
   });
 
+  currentIncludeAmbient.addExplanation('ProgRad can show light that is yet to be distributed.');
   currentIncludeAmbient.setupHtml('#ambient');
   currentIncludeAmbient.setupKeyHandler('a', 'View');
   currentIncludeAmbient.addEventListener('change', updateColors);
 
   // radiosity parameters
-  overshooting.addExplanation('Overshooting usually makes progressive radiosity faster.');
+  overshooting.addExplanation('Overshooting usually makes ProgRad faster.');
   overshooting.setupHtml('#overshoot');
   overshooting.setupKeyHandler('o', 'Radiosity');
 
@@ -525,17 +539,6 @@ function setupKeyboard() {
     {
       category: 'Radiosity',
       description: 'Stop radiosity computation',
-    },
-  );
-
-  kbd.registerKeyboardShortcut('s',
-    () => {
-      isSlowRadiosity = !isSlowRadiosity;
-      console.log('slow radiosity', isSlowRadiosity ? 'on' : 'off');
-    },
-    {
-      category: 'Radiosity',
-      description: 'Select radiosity algorithm',
     },
   );
 

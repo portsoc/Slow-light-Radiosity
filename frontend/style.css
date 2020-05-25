@@ -197,7 +197,6 @@ html, body {
 }
 
 #controls {
-  min-width: 30ch;
   box-sizing: border-box;
   width: auto;
   width: calc(100vw - 4em - 32px);
@@ -209,4 +208,10 @@ html, body {
 
 #controls h2 {
   grid-column: 1 / span 2;
+}
+
+#settings {
+  box-sizing: border-box;
+  width: auto;
+  width: calc(100vw - 4em - 32px);
 }
