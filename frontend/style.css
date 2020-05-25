@@ -194,6 +194,10 @@ html, body {
 
   height: 8em;
   width: 8em;
+
+  /* labels */
+  font-family: 'Arial Black', sans-serif;
+  font-weight: bold;
 }
 
 /* let clicks pass through the axes helper */
