@@ -109,7 +109,7 @@ html, body {
 /* Animation player bar */
 #animation-player-bar {
   position: absolute;
-  top: 15px;
+  bottom: 15px;
   left: 50%;
   margin-left: -175px;
 
