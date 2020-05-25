@@ -93,7 +93,7 @@ export class Range extends EventTarget {
     }
     this.value = value;
     this.display();
-    this.dispatchEvent(new CustomEvent('update'));
+    this.dispatchEvent(new CustomEvent('change'));
   }
 }
 
@@ -164,7 +164,7 @@ export class Toggle extends EventTarget {
       this.inputEl.checked = value;
     }
     this.value = value;
-    this.dispatchEvent(new CustomEvent('update'));
+    this.dispatchEvent(new CustomEvent('change'));
   }
 }
 
