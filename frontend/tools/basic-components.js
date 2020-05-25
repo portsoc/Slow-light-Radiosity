@@ -231,6 +231,23 @@ export class Selector extends EventTarget {
     );
   }
 
+  setupSwitchKeyHandler(key, category) {
+    kbd.registerKeyboardShortcut(
+      key,
+      (e) => {
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+          return false;
+        }
+
+        this.setToIndex((this.index + 1) % this.options.length);
+      },
+      {
+        category,
+        description: `Switch ${this.name}`,
+      },
+    );
+  }
+
   setToIndex(newIndex) {
     if (this.index !== newIndex) {
       this.value = this.options[newIndex];
