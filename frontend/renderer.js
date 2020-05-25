@@ -451,7 +451,7 @@ function setupUI() {
   menu.setup();
 
   // environment menu selector
-  environments.setupHtml(document.querySelector('#env'));
+  environments.setupHtml('#env');
   environments.setupKeyHandlers(
     ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     e => (Number(e.key) - 1),
@@ -466,8 +466,8 @@ function setupUI() {
   });
 
   // light control menu
-  gamma.setupHtml(document.querySelector('#gamma-slider'), displayGamma);
-  exposure.setupHtml(document.querySelector('#exposure-slider'), displayExposure);
+  gamma.setupHtml('#gamma-slider', displayGamma);
+  exposure.setupHtml('#exposure-slider', displayExposure);
 
   gamma.setupKeyHandler('g', 'View');
   exposure.setupKeyHandler('e', 'View');
@@ -476,30 +476,30 @@ function setupUI() {
   exposure.addEventListener('change', updateColors);
 
   // delay control
-  delay.setupHtml(document.querySelector('#delay-slider'), displayDelay);
+  delay.setupHtml('#delay-slider', displayDelay);
   delay.setupKeyHandler('d', 'Radiosity');
   delay.addEventListener('change', () => {
     delayer.cancelIfLongerThan(delay.value);
   });
 
   // view controls
-  currentViewOutput.setupHtml(document.querySelector('#output-view'));
+  currentViewOutput.setupHtml('#output-view');
   currentViewOutput.setupKeyHandler('Tab', 'View');
   currentViewOutput.addEventListener('change', updateColors);
 
-  currentViewWireframe.setupHtml(document.querySelector('#wireframe'));
+  currentViewWireframe.setupHtml('#wireframe');
   currentViewWireframe.setupKeyHandler('w', 'View');
   currentViewWireframe.addEventListener('change', () => {
     material.wireframe = currentViewWireframe.value;
   });
 
-  currentIncludeAmbient.setupHtml(document.querySelector('#ambient'));
+  currentIncludeAmbient.setupHtml('#ambient');
   currentIncludeAmbient.setupKeyHandler('a', 'View');
   currentIncludeAmbient.addEventListener('change', updateColors);
 
   // radiosity parameters
   overshooting.addExplanation('Overshooting usually makes progressive radiosity faster.');
-  overshooting.setupHtml(document.querySelector('#overshoot'));
+  overshooting.setupHtml('#overshoot');
   overshooting.setupKeyHandler('o', 'Radiosity');
 
   setupKeyboard();
