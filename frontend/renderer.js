@@ -477,6 +477,7 @@ let radiosityRunning = false;
 let isSlowRadiosity = false;
 
 let animationNow = null;
+let isAnimationForward = true;
 
 async function runRadiosity() {
   try {
@@ -527,13 +528,21 @@ async function runRadiosity() {
   }
 }
 
-async function runReplay() {
+let isPause = false;
+
+async function runReplay(n = 0) {
   try {
     if (!radiosityEngine || !radiosityEngine.show) return; // no replay possible
     radiosityRunning = true;
     stopRunning = false;
+    isAnimationForward = true;
 
-    for (let now = 0; now < radiosityEngine.maxTime; now += 1) {
+    for (let now = n; now < radiosityEngine.maxTime; now += 1) {
+      if (isPause) {
+        animationNow = now;
+        return;
+      }
+
       document.getElementById('iteration-count').textContent = now;
 
       updateForDisplay = () => {
@@ -555,13 +564,19 @@ async function runReplay() {
   }
 }
 
-async function runReplayBackward() {
+async function runReplayBackward(n = radiosityEngine.maxTime - 1) {
   try {
     if (!radiosityEngine || !radiosityEngine.show) return; // no replay possible
     radiosityRunning = true;
     stopRunning = false;
+    isAnimationForward = false;
 
-    for (let now = radiosityEngine.maxTime - 1; now >= 0; now--) {
+    for (let now = n; now >= 0; now--) {
+      if (isPause) {
+        animationNow = now;
+        return;
+      }
+
       document.getElementById('iteration-count').textContent = now;
 
       updateForDisplay = () => {
@@ -609,6 +624,25 @@ function nextFrame() {
   document.getElementById('bar').value = animationNow;
 }
 
+function pauseAnimation() {
+  isPause = true;
+
+  // replace play button by pause
+  document.getElementById('action-play').classList.add('hidden');
+  document.getElementById('action-pause').classList.remove('hidden');
+}
+
+function resumeAnimation() {
+  isPause = false;
+
+  // replace pause button by play
+  document.getElementById('action-pause').classList.add('hidden');
+  document.getElementById('action-play').classList.remove('hidden');
+
+  // resume the current animation
+  isAnimationForward ? runReplay(animationNow) : runReplayBackward(animationNow);
+}
+
 function stopRadiosity() {
   stopRunning = true;
 }
@@ -640,6 +674,7 @@ function setupOverlay() {
 
     // hide animation player
     document.getElementById('animation-player-bar').classList.add('hidden');
+    isPause = false;
   }
 
   function setEnvName(envDiv, n, selected) {
@@ -789,6 +824,16 @@ function setupOverlay() {
   });
   forwFrame.addEventListener('click', () => {
     nextFrame();
+  });
+
+  const play = document.getElementById('action-play');
+  const pause = document.getElementById('action-pause');
+
+  play.addEventListener('click', () => {
+    pauseAnimation();
+  });
+  pause.addEventListener('click', () => {
+    resumeAnimation();
   });
 }
 
