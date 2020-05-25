@@ -19,7 +19,7 @@ import {
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
 
-const environmentFunctions = [
+const environments = new components.Selector('environments', [
   {
     f: envRoom1,
     name: 'Simple room',
@@ -40,11 +40,10 @@ const environmentFunctions = [
     f: () => envLamp(5, true),
     name: 'A cube and a lamp',
   },
-];
+]);
 
 // global variables
 
-let currentEnvironment = 0;
 
 let environment;
 let renderer;
@@ -87,13 +86,12 @@ function init() {
 
 function setupEnvironment() {
   // find the first environment
-  const env = environmentFunctions[currentEnvironment];
+  const env = environments.value;
 
   environment = env.f();
 
-  console.log('selecting environment', env.name);
   if (!environment.checkNoVerticesAreShared()) {
-    console.log('environment has vertices shared between surfaces and it should not!');
+    console.log(`environment ${env.name} has vertices shared between surfaces and it should not!`);
   }
 
   document.getElementById('instance-count').textContent = environment.instances.length;
@@ -453,47 +451,19 @@ function setupUI() {
   menu.setup();
 
   // environment menu selector
-
-  let envPreviousId = 0;
-  function selectEnv(envDiv, n) {
-    if (currentEnvironment === n) return;
-
-    // unselect previous environment
-    const p = document.getElementById('env-selected');
-    setEnvName(p, envPreviousId, false);
-    p.removeAttribute('id');
-
-    // select environment
-    setEnvName(envDiv, n, true);
-    envPreviousId = n;
-
-    // update environment
-    currentEnvironment = n;
+  environments.setupHtml(document.querySelector('#env'));
+  environments.setupKeyHandlers(
+    ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
+    e => (Number(e.key) - 1),
+    {
+      category: 'Environment',
+      description: ['1-9', 'Select environment'],
+    },
+  );
+  environments.addEventListener('change', () => {
     stopRadiosity();
     setupEnvironment();
-  }
-
-  function setEnvName(envDiv, n, selected) {
-    const envName = environmentFunctions[n].name;
-    if (envName) {
-      envDiv.textContent = `${n + 1}: ${envName}`;
-    } else {
-      envDiv.textContent = `${n + 1}`;
-    }
-    if (selected) {
-      envDiv.textContent += ' ◄';
-      envDiv.setAttribute('id', 'env-selected');
-    }
-  }
-
-  // set up selector
-  const envSelector = document.getElementById('env');
-  for (let i = 0; i < environmentFunctions.length; i++) {
-    const envDiv = document.createElement('div');
-    setEnvName(envDiv, i, i === 0);
-    envDiv.addEventListener('click', () => selectEnv(envDiv, i));
-    envSelector.appendChild(envDiv);
-  }
+  });
 
   // light control menu
   gamma.setupHtml(document.querySelector('#gamma-slider'), displayGamma);
@@ -566,31 +536,6 @@ function setupKeyboard() {
     {
       category: 'Radiosity',
       description: 'Select radiosity algorithm',
-    },
-  );
-
-  kbd.registerKeyboardShortcut(['1', '2', '3', '4', '5', '6', '7', '8', '9'],
-    (e) => {
-      if (e.metaKey || e.altKey || e.ctrlKey) {
-        return false;
-      }
-
-      const newEnv = Number(e.key) - 1;
-      if (newEnv >= environmentFunctions.length) {
-        return false;
-      }
-
-      if (currentEnvironment !== newEnv) {
-        currentEnvironment = newEnv;
-
-        stopRadiosity();
-        console.log('environment', currentEnvironment);
-        setupEnvironment();
-      }
-    },
-    {
-      category: 'Environment',
-      description: ['1-9', 'Select environment'],
     },
   );
 

@@ -167,3 +167,73 @@ export class Toggle extends EventTarget {
     this.dispatchEvent(new CustomEvent('update'));
   }
 }
+
+export class Selector extends EventTarget {
+  constructor(name, namedObjects) {
+    super();
+
+    this.name = name;
+    this.options = namedObjects;
+    this.optionEls = [];
+    this.index = 0;
+    this.value = this.options[this.index];
+  }
+
+  setupHtml(el) {
+    this.optionEls = [];
+
+    for (let i = 0; i < this.options.length; i++) {
+      const option = this.options[i];
+
+      const optionEl = document.createElement('div');
+      optionEl.classList.add('option');
+      optionEl.dataset.index = i;
+
+      if (option.name) {
+        optionEl.textContent = `${i + 1}: ${option.name}`;
+      } else {
+        optionEl.textContent = `${i + 1}`;
+      }
+
+      el.addEventListener('click', (e) => this.setToIndex(Number(e.target.dataset.index)));
+      el.append(optionEl);
+      this.optionEls[i] = optionEl;
+    }
+
+    this.displaySelected();
+  }
+
+  displaySelected() {
+    for (const el of this.optionEls) {
+      el.classList.toggle('selected', Number(el.dataset.index) === this.index);
+    }
+  }
+
+  setupKeyHandlers(keys, eventToIndex, description) {
+    kbd.registerKeyboardShortcut(keys,
+      (e) => {
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+          return false;
+        }
+
+        const newIndex = eventToIndex(e);
+        if (newIndex >= this.options.length) {
+          return false;
+        }
+
+        this.setToIndex(newIndex);
+      },
+      description,
+    );
+  }
+
+  setToIndex(newIndex) {
+    if (this.index !== newIndex) {
+      this.value = this.options[newIndex];
+      this.index = newIndex;
+      this.displaySelected();
+
+      this.dispatchEvent(new CustomEvent('change'));
+    }
+  }
+}
