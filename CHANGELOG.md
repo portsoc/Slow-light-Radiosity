@@ -1,4 +1,4 @@
-# [v1.0.0](https://github.com/portsoc/Slow-light-Radiosity/tree/v1.0.0) (2020-05-12)
+# [v0.9.0](https://github.com/portsoc/Slow-light-Radiosity/tree/v1.0.0) (2020-05-12)
 ### Added
 - Radiosity render
 - Two cube room
