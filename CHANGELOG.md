@@ -6,10 +6,6 @@
 - Axes helpers
 - Menu overlay
 
-### Changed
-
-### Removed
-
 # [v0.0.1](https://github.com/portsoc/Slow-light-Radiosity/tree/v0.0.1)  (2020-05-07)
 ### Added
 - Implement all book classes
