@@ -96,13 +96,10 @@ function init() {
 }
 
 function setupEnvironment() {
-  // find the first environment
-  const env = environments.value;
-
-  environment = env.f();
+  environment = environments.value.f();
 
   if (!environment.checkNoVerticesAreShared()) {
-    console.log(`environment ${env.name} has vertices shared between surfaces and it should not!`);
+    console.log(`environment ${environments.value.name} has vertices shared between surfaces and it should not!`);
   }
 
   document.getElementById('instance-count').textContent = environment.instances.length;
@@ -119,7 +116,7 @@ function setupEnvironment() {
   Modeling.coordinates.xyFloorToView(environment);
 
   setupRendererScene();
-  updateControls();
+  updateControlsForEnvironment();
 }
 
 function setupRenderer() {
@@ -350,10 +347,9 @@ function updateColors() {
   }
 
   geometry.colorsNeedUpdate = true;
-  material.needsUpdate = true;
 }
 
-function updateControls() {
+function updateControlsForEnvironment() {
   const bounds = environment.boundingBox;
   const roomCenter = new Rad.Point3(
     (bounds[0].x + bounds[1].x) / 2,
@@ -398,11 +394,11 @@ function animate() {
   requestAnimationFrame(animate);
   if (scene) renderer.render(scene, camera);
   if (scene2) {
-    renderer2.render(scene2, camera2);
     camera2.position.copy(camera.position);
     camera2.position.sub(controls.target);
     camera2.position.setLength(5);
     camera2.lookAt(scene2.position);
+    renderer2.render(scene2, camera2);
     labelRenderer.render(scene2, camera2);
   }
 }
@@ -454,6 +450,7 @@ async function runRadiosity() {
 }
 
 function stopRadiosity() {
+  delayer.cancel();
   stopRunning = true;
 }
 
@@ -516,10 +513,7 @@ function setupUI() {
   overshooting.setupHtml('#overshoot');
   overshooting.setupKeyHandler('o', 'Radiosity');
 
-  setupKeyboard();
-}
-
-function setupKeyboard() {
+  // remaining keyboard shortcuts
   kbd.registerKeyboardShortcut('Enter',
     () => {
       if (!radiosityRunning) runRadiosity();
@@ -532,9 +526,11 @@ function setupKeyboard() {
   );
 
   kbd.registerKeyboardShortcut('Escape',
-    () => {
+    (e) => {
+      if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+        return false;
+      }
       stopRadiosity();
-      delayer.cancel();
     },
     {
       category: 'Radiosity',
