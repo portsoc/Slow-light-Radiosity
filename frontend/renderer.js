@@ -472,30 +472,30 @@ function setupUI() {
   gamma.setupKeyHandler('g', 'View');
   exposure.setupKeyHandler('e', 'View');
 
-  gamma.addEventListener('update', updateColors);
-  exposure.addEventListener('update', updateColors);
+  gamma.addEventListener('change', updateColors);
+  exposure.addEventListener('change', updateColors);
 
   // delay control
   delay.setupHtml(document.querySelector('#delay-slider'), displayDelay);
   delay.setupKeyHandler('d', 'Radiosity');
-  delay.addEventListener('update', () => {
+  delay.addEventListener('change', () => {
     delayer.cancelIfLongerThan(delay.value);
   });
 
   // view controls
   currentViewOutput.setupHtml(document.querySelector('#output-view'));
   currentViewOutput.setupKeyHandler('Tab', 'View');
-  currentViewOutput.addEventListener('update', updateColors);
+  currentViewOutput.addEventListener('change', updateColors);
 
   currentViewWireframe.setupHtml(document.querySelector('#wireframe'));
   currentViewWireframe.setupKeyHandler('w', 'View');
-  currentViewWireframe.addEventListener('update', () => {
+  currentViewWireframe.addEventListener('change', () => {
     material.wireframe = currentViewWireframe.value;
   });
 
   currentIncludeAmbient.setupHtml(document.querySelector('#ambient'));
   currentIncludeAmbient.setupKeyHandler('a', 'View');
-  currentIncludeAmbient.addEventListener('update', updateColors);
+  currentIncludeAmbient.addEventListener('change', updateColors);
 
   // radiosity parameters
   overshooting.addExplanation('Overshooting usually makes progressive radiosity faster.');
