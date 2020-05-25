@@ -7,11 +7,6 @@ export default class SlowRad {
     this.maxTime = maxTime;                    // Maximum number of steps
     this.env = null;                           // Environment
 
-    this.ambient = new Array(maxTime);         // Ambient future exitances
-    for (let i = 0; i < maxTime; i += 1) {
-      this.ambient[i] = new Spectra();
-    }
-
     this.irf = new Spectra();                  // Interreflection factors
     this.totalArea = 0;                        // Total patch area
 
@@ -52,7 +47,6 @@ export default class SlowRad {
   }
 
   show(time) {
-    this.env.ambient = this.ambient[time];
     this.env.interpolateVertexExitances(time);
 
     for (const vertex of this.env.vertices) {
@@ -120,8 +114,6 @@ export default class SlowRad {
       // Reset unsent exitance to zero
       currentPatch.futureExitances[this.now].reset();
     }
-
-    this.calcAmbient();
 
     this.now++;
 
@@ -201,28 +193,6 @@ export default class SlowRad {
     this.irf.r = 1 / (1 - sum.r);
     this.irf.g = 1 / (1 - sum.g);
     this.irf.b = 1 / (1 - sum.b);
-
-    return this;
-  }
-
-  calcAmbient() {
-    const sum = new Spectra();
-    const tmp = new Spectra();
-
-    for (const patch of this.env.patches) {
-      // Update sum of unsent exitances times areas
-      tmp.setTo(patch.futureExitances[this.now]);
-      tmp.scale(patch.area);
-      sum.add(tmp);
-    }
-
-    // Calculate area-weighted average reflectance
-    sum.scale(1 / this.totalArea);
-
-    // Calculate interreflectance factors
-    this.ambient[this.now].r = this.irf.r * sum.r;
-    this.ambient[this.now].g = this.irf.g * sum.g;
-    this.ambient[this.now].b = this.irf.b * sum.b;
 
     return this;
   }
