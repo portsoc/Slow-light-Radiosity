@@ -529,6 +529,7 @@ async function runRadiosity() {
 }
 
 let isPause = false;
+let enableLoop = false;
 
 async function runReplay(n = 0) {
   try {
@@ -561,6 +562,8 @@ async function runReplay(n = 0) {
     updateForDisplay = null;
   } finally {
     radiosityRunning = false;
+
+    if (enableLoop) runReplay();
   }
 }
 
@@ -595,6 +598,8 @@ async function runReplayBackward(n = radiosityEngine.maxTime - 1) {
     updateForDisplay = null;
   } finally {
     radiosityRunning = false;
+
+    if (enableLoop) runReplayBackward();
   }
 }
 
@@ -834,6 +839,22 @@ function setupOverlay() {
   });
   pause.addEventListener('click', () => {
     resumeAnimation();
+  });
+
+  const loop = document.getElementById('action-loop');
+  const stop = document.getElementById('action-stop');
+
+  loop.addEventListener('click', () => {
+    enableLoop = true;
+
+    loop.classList.add('hidden');
+    stop.classList.remove('hidden');
+  });
+  stop.addEventListener('click', () => {
+    enableLoop = false;
+
+    stop.classList.add('hidden');
+    loop.classList.remove('hidden');
   });
 }
 

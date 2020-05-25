@@ -184,7 +184,7 @@ html, body {
 }
 
 #action-backward, #action-backward-frame, #action-forward-frame,
-#action-forward, #action-play, #action-pause, #action-loop {
+#action-forward, #action-play, #action-pause, #action-loop, #action-stop {
   cursor: pointer;
   pointer-events: all;
 }
