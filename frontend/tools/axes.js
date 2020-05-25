@@ -66,7 +66,7 @@ export function update(mainCamera, controls) {
   camera.up = mainCamera.up;
   camera.position.copy(mainCamera.position);
   camera.position.sub(controls.target);
-  camera.position.setLength(3);
+  camera.position.setLength(3.33);
   camera.lookAt(scene.position);
 }
 
