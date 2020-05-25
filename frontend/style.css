@@ -188,7 +188,7 @@ html, body {
 }
 
 /* Axes helper */
-#axes-helper-frame {
+.axes-helper-frame {
   position: absolute;
   bottom: 15px;
   left: 15px;
@@ -202,8 +202,8 @@ html, body {
 }
 
 /* let clicks pass through the axes helper */
-#axes-helper-frame,
-#axes-helper-frame * {
+.axes-helper-frame,
+.axes-helper-frame * {
   pointer-events: none;
 }
 

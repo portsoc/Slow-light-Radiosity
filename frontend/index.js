@@ -15,11 +15,11 @@ import { environmentsList } from './environments.js';
 const environments = new components.Selector('environment', environmentsList);
 const algorithms = new components.Selector('radiosity algorithm', [
   {
-    C: Rad.ProgRad,
+    Class: Rad.ProgRad,
     name: 'Progressive Radiosity (fast and static light)',
   },
   {
-    C: Rad.SlowRad,
+    Class: Rad.SlowRad,
     name: 'Slow-light Radiosity',
   },
 ]);
@@ -56,7 +56,6 @@ window.addEventListener('load', init);
 
 function init() {
   setupRenderer();
-  setupAxes();
   setupUI();
   setupEnvironment();
   animate();
@@ -89,11 +88,7 @@ function setupEnvironment() {
 function setupRenderer() {
   renderer = new THREE.WebGLRenderer();
   renderer.setPixelRatio(window.devicePixelRatio);
-
-  // include default gamma correction with the following line
-  // renderer.outputEncoding = THREE.sRGBEncoding;
-
-  document.body.appendChild(renderer.domElement);
+  document.body.append(renderer.domElement);
 
   camera = new THREE.PerspectiveCamera(100, 1, 0.1, 1000);
   controls = new OrbitControls(camera, renderer.domElement);
@@ -105,6 +100,11 @@ function setupRenderer() {
 
   setViewSize();
   window.addEventListener('resize', setViewSize);
+
+  const axesEl = document.createElement('div');
+  axesEl.classList.add('axes-helper-frame');
+  document.body.append(axesEl);
+  axes.setup(axesEl); // setup must be after adding to the document
 }
 
 function setViewSize() {
@@ -174,10 +174,6 @@ function addFace(geometry, element, vertexIndices) {
     element.vertices[vertexIndices[1]],
     element.vertices[vertexIndices[2]],
   ];
-}
-
-function setupAxes() {
-  axes.setup('#axes-helper-frame');
 }
 
 function updateColors() {
@@ -270,7 +266,7 @@ let radiosityRunning = false;
 async function runRadiosity() {
   try {
     console.log('running radiosity');
-    const rad = new algorithms.value.C();
+    const rad = new algorithms.value.Class();
     rad.overFlag = overshooting.value;
 
     rad.open(environment);
@@ -331,6 +327,7 @@ function setupUI() {
   environments.addEventListener('change', () => {
     stopRadiosity();
     setupEnvironment();
+    currentViewOutput.setTo(false);
   });
 
   algorithms.setupHtml('#algorithms');
