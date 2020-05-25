@@ -11,7 +11,7 @@ export class Range extends EventTarget {
   }
 
   setupHtml(el, toString = (x) => x.toString()) {
-    el = findElement(el);
+    if (typeof el === 'string') el = document.querySelector(el);
 
     const containerEl = document.createElement('label');
     this.containerEl = containerEl;
@@ -109,7 +109,7 @@ export class Toggle extends EventTarget {
   }
 
   setupHtml(el) {
-    el = findElement(el);
+    if (typeof el === 'string') el = document.querySelector(el);
 
     const containerEl = document.createElement('label');
     this.containerEl = containerEl;
@@ -184,7 +184,7 @@ export class Selector extends EventTarget {
   }
 
   setupHtml(el) {
-    el = findElement(el);
+    if (typeof el === 'string') el = document.querySelector(el);
 
     for (let i = 0; i < this.options.length; i++) {
       const option = this.options[i];
@@ -256,13 +256,5 @@ export class Selector extends EventTarget {
 
       this.dispatchEvent(new CustomEvent('change'));
     }
-  }
-}
-
-function findElement(el) {
-  if (el instanceof Element) {
-    return el;
-  } else {
-    return document.querySelector(el);
   }
 }
