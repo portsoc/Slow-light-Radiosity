@@ -117,7 +117,6 @@ function setupEnvironment() {
 
 function setupRenderer() {
   renderer = new THREE.WebGLRenderer();
-  renderer.setSize(window.innerWidth, window.innerHeight);
   renderer.setPixelRatio(window.devicePixelRatio);
 
   // include default gamma correction with the following line
@@ -125,13 +124,22 @@ function setupRenderer() {
 
   document.body.appendChild(renderer.domElement);
 
-  camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera = new THREE.PerspectiveCamera(100, 1, 0.1, 1000);
   controls = new OrbitControls(camera, renderer.domElement);
 
   material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
     wireframe: currentViewWireframe.value,
   });
+
+  setViewSize();
+  window.addEventListener('resize', setViewSize);
+}
+
+function setViewSize() {
+  renderer.setSize(window.innerWidth, window.innerHeight);
+  camera.aspect = window.innerWidth / window.innerHeight;
+  camera.updateProjectionMatrix();
 }
 
 function setupRendererScene() {
@@ -253,6 +261,7 @@ function updateControlsForEnvironment() {
 
   controls.target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
   controls.maxDistance = diagonal.length * 2;
+  controls.minDistance = diagonal.length / 10;
   controls.panBBox = {
     min: {
       x: bounds[0].x,
