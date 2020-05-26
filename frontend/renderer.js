@@ -105,6 +105,7 @@ function setupRenderer() {
 
   camera = new THREE.PerspectiveCamera(100, window.innerWidth / window.innerHeight, 0.1, 1000);
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableKeys = false;
 
   material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
@@ -418,6 +419,19 @@ function keyListener(e) {
   if (e.key === 'Tab') {
     currentViewVertex = !currentViewVertex;
     updateColors();
+    e.preventDefault();
+  }
+  if (e.key === 'ArrowLeft') {
+    previousFrame();
+    e.preventDefault();
+  }
+  if (e.key === 'ArrowRight') {
+    nextFrame();
+    e.preventDefault();
+  }
+  if (e.key === ' ') {
+    if (isPause) resumeAnimation();
+    else pauseAnimation();
     e.preventDefault();
   }
   if (e.key.toLowerCase() === 'a') {
