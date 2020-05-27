@@ -256,7 +256,7 @@ function animate() {
   }
   requestAnimationFrame(animate);
   if (scene) renderer.render(scene, camera);
-  axes.update(camera, controls);
+  axes.update(camera, controls.target);
   axes.render();
 }
 

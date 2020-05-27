@@ -62,10 +62,10 @@ function createAxis(x, y, z, label, color) {
   return line;
 }
 
-export function update(mainCamera, controls) {
+export function update(mainCamera, target) {
   camera.up = mainCamera.up;
   camera.position.copy(mainCamera.position);
-  camera.position.sub(controls.target);
+  camera.position.sub(target);
   camera.position.setLength(3.33);
   camera.lookAt(scene.position);
 }
