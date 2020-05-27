@@ -69,11 +69,7 @@ export default class SlowRad {
 
     for (const currentPatch of this.env.patches) {
       // calculate form factors
-      if (!currentPatch.rffArray) {
-        this.computeRFFArray(currentPatch);
-      }
-
-      const rffArray = currentPatch.rffArray;
+      const rffArray = this.computeRFFArray(currentPatch);
 
       for (const surface of this.env.surfaces) {
         // Get surface reflectance
@@ -122,7 +118,10 @@ export default class SlowRad {
     return false;
   }
 
+  // calculate reciprocal form factors or return existing ones if already there
   computeRFFArray(patch) {
+    if (patch.rffArray) return patch.rffArray;
+
     const rffArray = new Array(this.env.elementCount);
     this.ffd.calculateFormFactors(patch, this.env, rffArray);
 
@@ -132,6 +131,7 @@ export default class SlowRad {
       rffArray[i] = Math.min(rffArray[i] * patch.area / element.area, 1);
     }
     patch.rffArray = rffArray;
+    return rffArray;
   }
 
   calcPatchElementDistances() {
