@@ -167,6 +167,8 @@ function updateControlsForEnvironment() {
 }
 
 export function updateColors() {
+  if (!environment) return; // not set up yet
+
   const deltaAmbient = (viewParameters.includeAmbient.value && environment.ambient) ? new Rad.Spectra() : undefined;
   const surfaceColor = new Rad.Spectra();
 
