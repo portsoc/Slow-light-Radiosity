@@ -136,11 +136,14 @@ export default class SlowRad {
 
   calcPatchElementDistances() {
     for (const currentPatch of this.env.patches) {
-      if (currentPatch.distArray) {
-        continue; // this patch already has distArray
+      if (currentPatch.distArray &&
+          currentPatch.distArray.speedOfLight === this.speedOfLight) {
+        // this patch already has distArray for the current speed of light
+        continue;
       }
 
       const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
+      distArray.speedOfLight = this.speedOfLight;
 
       for (const patch of this.env.patches) {
         // ignore self patch
