@@ -1,5 +1,3 @@
-import * as Modeling from '../modeling/index.js';
-
 import * as kbd from './tools/keyboard-shortcuts.js';
 import * as components from './tools/basic-components.js';
 import * as menu from './tools/menu.js';
@@ -10,9 +8,6 @@ import * as renderer from './renderer.js';
 import * as radiosity from './radiosity.js';
 
 const environments = new components.Selector('environment', environmentsList);
-
-// global variables
-
 
 // init on load
 
@@ -28,14 +23,12 @@ function init() {
 let environment;
 
 function setupEnvironment() {
+  // create a new environment
   environment = environments.value.f();
 
   if (!environment.checkNoVerticesAreShared()) {
     console.warn(`environment ${environments.value.name} has vertices shared between surfaces and it should not!`);
   }
-
-  // translate coordinates so we can see them
-  Modeling.coordinates.xyFloorToView(environment);
 
   renderer.showEnvironment(environment);
   radiosity.reset(environment);

@@ -2,6 +2,7 @@ import * as THREE from '../lib/three.module.js';
 import { OrbitControls } from '../lib/OrbitControls.js';
 
 import * as Rad from '../radiosity/index.js';
+import * as Modeling from '../modeling/index.js';
 
 import * as axes from './tools/axes.js';
 import * as components from './tools/basic-components.js';
@@ -63,6 +64,12 @@ function setViewSizeToScreenSize() {
 
 export function showEnvironment(theEnvironment) {
   environment = theEnvironment;
+
+  // translate coordinates (once) so the environment is the right way up for THREE.js
+  if (!environment._coordinatesTranslated) {
+    Modeling.coordinates.xyFloorToView(environment);
+    environment._coordinatesTranslated = true;
+  }
 
   scene = new THREE.Scene();
   const bgColor = window.getComputedStyle(document.body).getPropertyValue('--bg').trim();
