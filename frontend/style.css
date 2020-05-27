@@ -187,8 +187,8 @@ html, body {
   cursor: pointer;
 }
 
-/* Axes helper */
-.axes-helper-frame {
+/* Axes view */
+.axes-frame {
   position: absolute;
   bottom: 15px;
   left: 15px;
@@ -201,9 +201,9 @@ html, body {
   font-weight: bold;
 }
 
-/* let clicks pass through the axes helper */
-.axes-helper-frame,
-.axes-helper-frame * {
+/* let clicks pass through the axes view */
+.axes-frame,
+.axes-frame * {
   pointer-events: none;
 }
 

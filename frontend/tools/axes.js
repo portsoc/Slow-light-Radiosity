@@ -6,8 +6,10 @@ let labelRenderer;
 let camera;
 let scene;
 
-export function setup(frame) {
-  if (typeof frame === 'string') frame = document.querySelector(frame);
+export function setup() {
+  const frame = document.createElement('div');
+  frame.classList.add('axes-frame');
+  document.body.append(frame);
 
   // renderer
   renderer = new THREE.WebGLRenderer({ alpha: true });
@@ -21,10 +23,6 @@ export function setup(frame) {
   const root = new THREE.Group();
   scene.add(root);
 
-  // camera
-  camera = new THREE.PerspectiveCamera(50, frame.clientWidth / frame.clientHeight, 1, 1000);
-  root.add(camera);
-
   // label
   labelRenderer = new CSS2DRenderer();
   labelRenderer.setSize(frame.clientWidth, frame.clientHeight);
@@ -36,6 +34,12 @@ export function setup(frame) {
   root.add(createAxis(1, 0, 0, 'X', '#f33'));
   root.add(createAxis(0, 0, -1, 'Y', '#3f3'));
   root.add(createAxis(0, 1, 0, 'Z', '#44f'));
+
+  // camera
+  camera = new THREE.PerspectiveCamera(50, frame.clientWidth / frame.clientHeight, 1, 1000);
+  camera.position.set(2, 2, 2);
+  camera.lookAt(0, 0, 0);
+  root.add(camera);
 }
 
 function createAxis(x, y, z, label, color) {
@@ -67,7 +71,7 @@ export function update(mainCamera, target) {
   camera.position.copy(mainCamera.position);
   camera.position.sub(target);
   camera.position.setLength(3.33);
-  camera.lookAt(scene.position);
+  camera.lookAt(0, 0, 0);
 }
 
 export function render() {
