@@ -31,7 +31,7 @@ function setupEnvironment() {
   environment = environments.value.f();
 
   if (!environment.checkNoVerticesAreShared()) {
-    console.log(`environment ${environments.value.name} has vertices shared between surfaces and it should not!`);
+    console.warn(`environment ${environments.value.name} has vertices shared between surfaces and it should not!`);
   }
 
   // translate coordinates so we can see them
