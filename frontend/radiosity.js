@@ -29,8 +29,11 @@ export function setRenderer(r) {
   renderer = r;
 }
 
-export function reset(environment) {
-  stop(); // in case radiosity was running
+let environment;
+
+export function open(env) {
+  environment = env;
+  stop(); // in case radiosity was already running
 
   stats.set('instance-count', environment.instances.length);
   stats.set('surface-count', environment.surfaceCount);
@@ -46,7 +49,7 @@ export function reset(environment) {
 let stopRunning = false;
 let radiosityRunning = false;
 
-export async function run(environment) {
+export async function run() {
   if (radiosityRunning) return; // already running
 
   try {

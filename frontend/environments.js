@@ -1,3 +1,5 @@
+import * as components from './tools/basic-components.js';
+
 import envRoom1 from '../modeling/test-models/room1.js';
 import envRoom613 from '../modeling/test-models/room613.js';
 import {
@@ -7,7 +9,7 @@ import {
 
 // list of available environments; the first one is the default
 
-export const environmentsList = [
+const environmentsList = [
   {
     f: envRoom1,
     name: 'Simple room',
@@ -29,3 +31,31 @@ export const environmentsList = [
     name: 'A cube and a lamp',
   },
 ];
+
+export const selector = new components.Selector('environment', environmentsList);
+
+function createEnvironment() {
+  const environment = selector.value.f();
+
+  if (!environment.checkNoVerticesAreShared()) {
+    console.warn(`environment ${selector.value.name} has vertices shared between surfaces and it should not!`);
+  }
+
+  if (listener) listener(environment);
+}
+
+
+export function setup() {
+  createEnvironment();
+
+  selector.addEventListener('change', () => {
+    createEnvironment();
+  });
+}
+
+
+let listener;
+
+export function onEnvironmentChange(f) {
+  listener = f;
+}

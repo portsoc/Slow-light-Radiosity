@@ -1,13 +1,10 @@
 import * as kbd from './tools/keyboard-shortcuts.js';
-import * as components from './tools/basic-components.js';
 import * as menu from './tools/menu.js';
 import * as stats from './tools/stats.js';
 
-import { environmentsList } from './environments.js';
+import * as environments from './environments.js';
 import * as renderer from './renderer.js';
 import * as radiosity from './radiosity.js';
-
-const environments = new components.Selector('environment', environmentsList);
 
 // init on load
 
@@ -17,21 +14,15 @@ function init() {
   renderer.setup();
   radiosity.setRenderer(renderer);
   setupUI();
-  setupEnvironment();
+
+  environments.onEnvironmentChange(changeEnvironment);
+  environments.setup(); // calls changeEnvironment with the default one
 }
 
-let environment;
-
-function setupEnvironment() {
-  // create a new environment
-  environment = environments.value.f();
-
-  if (!environment.checkNoVerticesAreShared()) {
-    console.warn(`environment ${environments.value.name} has vertices shared between surfaces and it should not!`);
-  }
-
+function changeEnvironment(environment) {
+  renderer.viewParameters.viewOutput.setTo(false);
   renderer.showEnvironment(environment);
-  radiosity.reset(environment);
+  radiosity.open(environment);
 }
 
 function setupUI() {
@@ -39,8 +30,8 @@ function setupUI() {
   stats.setup();
 
   // environment menu selector
-  environments.setupHtml('#env');
-  environments.setupKeyHandlers(
+  environments.selector.setupHtml('#env');
+  environments.selector.setupKeyHandlers(
     ['1', '2', '3', '4', '5', '6', '7', '8', '9'],
     e => (Number(e.key) - 1),
     {
@@ -48,11 +39,6 @@ function setupUI() {
       description: ['1-9', 'Select environment'],
     },
   );
-  environments.addEventListener('change', () => {
-    radiosity.stop();
-    setupEnvironment();
-    renderer.viewParameters.viewOutput.setTo(false);
-  });
 
   // radiosity parameters
   radiosity.algorithms.setupHtml('#algorithms');
@@ -86,7 +72,7 @@ function setupUI() {
   kbd.registerKeyboardShortcut('Enter',
     () => {
       renderer.viewParameters.viewOutput.setTo(true);
-      radiosity.run(environment);
+      radiosity.run();
     },
     {
       category: 'Radiosity',
