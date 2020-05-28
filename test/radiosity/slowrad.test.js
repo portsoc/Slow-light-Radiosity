@@ -59,8 +59,14 @@ test('calcPatchElementDistances()', () => {
   rad.open(env, 1);
 
   // distances are rounded integers
-  expect(patch0.distArray).toStrictEqual([null, 3, 5, 6]);
-  expect(patch1.distArray).toStrictEqual([3, null, 4, 5]);
-  expect(patch2.distArray).toStrictEqual([5, 4, null, 3]);
-  expect(patch3.distArray).toStrictEqual([6, 5, 3, null]);
+  expect(patch0.distArray).toStrictEqual(sol([null, 3, 5, 6]));
+  expect(patch1.distArray).toStrictEqual(sol([3, null, 4, 5]));
+  expect(patch2.distArray).toStrictEqual(sol([5, 4, null, 3]));
+  expect(patch3.distArray).toStrictEqual(sol([6, 5, 3, null]));
 });
+
+// add speed of light as a property to the array
+function sol(arr, speedOfLight = 1) {
+  arr.speedOfLight = speedOfLight;
+  return arr;
+}
