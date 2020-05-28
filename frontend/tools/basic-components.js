@@ -86,6 +86,8 @@ export class Range extends EventTarget {
   }
 
   setTo(value) {
+    if (this.value === value) return;
+
     if (value > this.max) value = this.max;
     if (value < this.min) value = this.min;
 
@@ -164,6 +166,8 @@ export class Toggle extends EventTarget {
   }
 
   setTo(value) {
+    if (this.value === value) return;
+
     if (this.inputEl) {
       this.inputEl.checked = value;
     }
@@ -249,12 +253,12 @@ export class Selector extends EventTarget {
   }
 
   setToIndex(newIndex) {
-    if (this.index !== newIndex) {
-      this.value = this.options[newIndex];
-      this.index = newIndex;
-      this.displaySelected();
+    if (this.index !== newIndex) return;
 
-      this.dispatchEvent(new CustomEvent('change'));
-    }
+    this.value = this.options[newIndex];
+    this.index = newIndex;
+    this.displaySelected();
+
+    this.dispatchEvent(new CustomEvent('change'));
   }
 }
