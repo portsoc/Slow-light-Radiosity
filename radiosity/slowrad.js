@@ -7,9 +7,6 @@ export default class SlowRad {
     this.maxTime = maxTime;                    // Maximum number of steps
     this.env = null;                           // Environment
 
-    this.irf = new Spectra();                  // Interreflection factors
-    this.totalArea = 0;                        // Total patch area
-
     this.ffd = new HemiCube();                 // Form factor determination
   }
 
@@ -28,7 +25,6 @@ export default class SlowRad {
     this.now = 0;
     this.env.initializeFutureExitances(this.maxTime);
     this.initExitance();
-    this.calcInterReflect();
     this.calcPatchElementDistances();
     return true;
   }
@@ -166,33 +162,6 @@ export default class SlowRad {
         }
       }
     }
-
-    return this;
-  }
-
-  calcInterReflect() {
-    this.irf.reset();
-    this.totalArea = 0;
-    const sum = new Spectra();
-    const tmp = new Spectra();
-
-    for (const patch of this.env.patches) {
-      // Update sum of patch areas times reflectances
-      tmp.setTo(patch.parentSurface.reflectance);
-      tmp.scale(patch.area);
-      sum.add(tmp);
-
-      // Update sum of patch areas
-      this.totalArea += patch.area;
-    }
-
-    // Calculate atea-weighted average reflectance
-    sum.scale(1 / this.totalArea);
-
-    // Calculate interreflectance factors
-    this.irf.r = 1 / (1 - sum.r);
-    this.irf.g = 1 / (1 - sum.g);
-    this.irf.b = 1 / (1 - sum.b);
 
     return this;
   }
