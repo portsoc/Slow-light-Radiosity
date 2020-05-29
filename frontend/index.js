@@ -45,6 +45,9 @@ function setupUI() {
   // radiosity parameters
   radiosity.algorithms.setupHtml('#algorithms');
   radiosity.algorithms.setupSwitchKeyHandler('s', 'Radiosity');
+  radiosity.algorithms.addEventListener('setup', updateMaxTime);
+  radiosity.algorithms.addEventListener('step', updateBufTime);
+  radiosity.algorithms.addEventListener('finish', updateMaxTime);
 
   radiosity.parameters.overshooting.addExplanation('Overshooting usually makes ProgRad faster.');
   radiosity.parameters.overshooting.setupHtml('#overshoot');
@@ -109,4 +112,19 @@ function displayExposure(exposure) {
 
 function displayDelay(d) {
   return `${radiosity.parameters.DELAYS[d]}ms`;
+}
+
+function updateMaxTime() {
+  const alg = radiosity.algorithms.value.instance;
+  animationControls.setMaxTime(alg.maxTime);
+
+  // maxTime change resets bufTime
+  updateBufTime();
+}
+
+function updateBufTime() {
+  const alg = radiosity.algorithms.value.instance;
+  if (alg.now) {
+    animationControls.setBufferedPercent(alg.now * 100 / alg.maxTime);
+  }
 }
