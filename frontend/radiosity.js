@@ -44,16 +44,25 @@ export function open(env) {
   // running time and iteration count unknown
   stats.set('running-time', '?');
   stats.set('iteration-count', '?');
+
+  setupAlgorithm();
 }
 
 let stopRunning = false;
 let radiosityRunning = false;
 
+function setupAlgorithm() {
+  algorithms.value.instance = new algorithms.value.Class();
+  algorithms.dispatchEvent(new CustomEvent('setup'));
+}
+
+algorithms.addEventListener('change', setupAlgorithm);
+
 export async function run() {
   if (radiosityRunning) return; // already running
 
   try {
-    const rad = new algorithms.value.Class();
+    const rad = algorithms.value.instance;
     rad.overFlag = parameters.overshooting.value;
 
     rad.open(environment);
@@ -73,6 +82,8 @@ export async function run() {
         renderer.updateColors();
       });
 
+      algorithms.dispatchEvent(new CustomEvent('step'));
+
       await delayer.delay(DELAYS[parameters.delay.value]);
       if (stopRunning) break;
     }
@@ -89,6 +100,7 @@ export async function run() {
     renderer.beforeNextDisplay(null);
     rad.prepareForDisplay();
     renderer.updateColors();
+    algorithms.dispatchEvent(new CustomEvent('finish'));
   } finally {
     radiosityRunning = false;
   }
