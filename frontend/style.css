@@ -209,7 +209,6 @@ html, body {
 
 #controls {
   box-sizing: border-box;
-  width: auto;
   width: calc(100vw - 4em - 32px);
 
   display: grid;
