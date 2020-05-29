@@ -8,6 +8,7 @@ export default class RadEqnSolve {
     this.totalUnsent = 0;            // Total unsent exitence
     this.stepCount = 0;              // Step count
     this.maxStep = 100000;           // Maximum number of steps
+    this.maxTime = this.maxStep;     // maximum for animation purposes
     this.stopCriterion = 0.001;      // Stopping criterion
     this.convergence = null;         // Convergence
     this.max = null;                 // Maximum unsent flux patch
