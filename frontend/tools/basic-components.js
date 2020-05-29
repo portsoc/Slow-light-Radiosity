@@ -253,7 +253,7 @@ export class Selector extends EventTarget {
   }
 
   setToIndex(newIndex) {
-    if (this.index !== newIndex) return;
+    if (this.index === newIndex) return;
 
     this.value = this.options[newIndex];
     this.index = newIndex;
