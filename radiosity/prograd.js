@@ -16,6 +16,7 @@ export default class ProgRad extends RadEqnSolve {
     this.env = env;
     this.env.numberElements();
     this.stepCount = 0;
+    this.maxTime = this.maxStep;
     this.convergence = 1;
     this.initExitance();
     this.calcInterReflect();
@@ -24,6 +25,7 @@ export default class ProgRad extends RadEqnSolve {
 
   close() {
     this.prepareForDisplay();
+    this.maxTime = this.stepCount;
   }
 
   prepareForDisplay() {
@@ -33,6 +35,19 @@ export default class ProgRad extends RadEqnSolve {
       this.env.interpolateVertexExitances();
       this.needsDisplayUpdate = false;
     }
+  }
+
+  show(time) {
+    if (time < this.stepCount) {
+      this.open(this.env);
+    }
+
+    while (this.stepCount < time) {
+      if (this.calculate()) break;
+    }
+
+    this.prepareForDisplay();
+    return this.stepCount;
   }
 
   calculate() {

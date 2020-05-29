@@ -3,7 +3,7 @@ import Spectra from './spectra.js';
 
 export default class SlowRad {
   constructor(maxTime = 300) {
-    this.now = 0;                              // Step count
+    this.now = 0;                              // currently computing this step
     this.maxTime = maxTime;                    // Maximum number of steps
     this.env = null;                           // Environment
 
@@ -36,13 +36,17 @@ export default class SlowRad {
   prepareForDisplay() {
     if (this.now < this.maxTime) {
       if (this.needsDisplayUpdate) {
-        this.env.interpolateVertexExitances(this.now);
         this.needsDisplayUpdate = false;
-
-        for (const vertex of this.env.vertices) {
-          vertex.exitance.setTo(vertex.futureExitances[this.now]);
-        }
+        this.show(this.now);
       }
+    }
+  }
+
+  show(time) {
+    this.env.interpolateVertexExitances(time);
+
+    for (const vertex of this.env.vertices) {
+      vertex.exitance.setTo(vertex.futureExitances[time]);
     }
   }
 
