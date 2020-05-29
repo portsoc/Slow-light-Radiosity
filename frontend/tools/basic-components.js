@@ -176,6 +176,65 @@ export class Toggle extends EventTarget {
   }
 }
 
+export class IconToggle extends EventTarget {
+  constructor(name, initial) {
+    super();
+
+    this.name = name;
+    this.value = initial;
+  }
+
+  setupHtml(el, className, title) {
+    if (typeof el === 'string') el = document.querySelector(el);
+
+    const iconEl = document.createElement('i');
+    this.iconEl = iconEl;
+    el.append(iconEl);
+
+    iconEl.className = className;
+    iconEl.title = title;
+    this.display();
+
+    iconEl.addEventListener('click', this.onClick.bind(this));
+  }
+
+  setupKeyHandler(key, category) {
+    kbd.registerKeyboardShortcut(
+      key,
+      (e) => {
+        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
+          return false;
+        }
+
+        this.setTo(!this.value);
+      },
+      {
+        category,
+        description: `Toggle ${this.name}`,
+      },
+    );
+  }
+
+  display() {
+    this.iconEl.classList.toggle('on', !!this.value);
+    this.iconEl.classList.toggle('off', !this.value);
+  }
+
+  onClick() {
+    this.setTo(!this.value);
+  }
+
+  setTo(value) {
+    if (this.value === value) return;
+
+    this.value = value;
+    if (this.iconEl) {
+      this.display();
+    }
+    this.dispatchEvent(new CustomEvent('change'));
+  }
+}
+
 export class Selector extends EventTarget {
   constructor(name, namedObjects) {
     super();

@@ -1,3 +1,4 @@
+import * as animationControls from './tools/animation-controls.js';
 import * as kbd from './tools/keyboard-shortcuts.js';
 import * as menu from './tools/menu.js';
 import * as stats from './tools/stats.js';
@@ -28,6 +29,7 @@ function changeEnvironment(environment) {
 function setupUI() {
   menu.setup();
   stats.setup();
+  animationControls.setup();
 
   // environment menu selector
   environments.selector.setupHtml('#env');
