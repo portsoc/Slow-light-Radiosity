@@ -38,8 +38,11 @@ export default class ProgRad extends RadEqnSolve {
   }
 
   show(time) {
+    if (!this.env) return;
+
     if (time < this.stepCount) {
       this.open(this.env);
+      this.needsDisplayUpdate = true;
     }
 
     while (this.stepCount < time) {
