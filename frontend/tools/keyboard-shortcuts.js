@@ -41,7 +41,10 @@ const shortcutsByCategory = new Map();
 const shortcutsByKey = new Map();
 const defaultOptions = {
   category: 'Others',
+  acceptModifiers: [], // by default, no modifiers are allowed
 };
+
+const MODIFIERS = ['shift', 'ctrl', 'alt', 'meta'];
 
 export function registerKeyboardShortcut(key, f, options = {}) {
   if (Array.isArray(key)) {
@@ -74,6 +77,7 @@ export function registerKeyboardShortcut(key, f, options = {}) {
     [record.descKey, record.descText] = options.description;
   } else {
     record.descKey = key;
+    record.acceptModifiers = options.acceptModifiers;
     record.descText = options.description;
   }
 
@@ -99,6 +103,9 @@ document.addEventListener('keydown', handleKeyboard);
 function handleKeyboard(e) {
   const shortcuts = shortcutsByKey.get(e.key) || [];
   for (const handler of shortcuts) {
+    // skip if handler doesn't accept a modifier that's pressed
+    if (!matchesAcceptedModifiers(e, handler)) continue;
+
     const retval = handler.f(e);
     if (retval !== false) { // different from null, so we don't just test for falsey
       // this handler handled the key
@@ -106,4 +113,14 @@ function handleKeyboard(e) {
       break;
     }
   }
+}
+
+function matchesAcceptedModifiers(e, handler) {
+  if (!handler.acceptModifiers) return true;
+
+  for (const mod of MODIFIERS) {
+    if (e[mod + 'Key'] && !handler.acceptModifiers.includes(mod)) return false;
+  }
+
+  return true;
 }
