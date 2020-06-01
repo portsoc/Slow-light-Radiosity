@@ -59,9 +59,6 @@ export class Range extends EventTarget {
     kbd.registerKeyboardShortcut(
       keys,
       (e) => {
-        if (e.metaKey || e.altKey) {
-          return false;
-        }
         if (e.ctrlKey) {
           this.setTo(this.default);
         } else {
@@ -71,6 +68,7 @@ export class Range extends EventTarget {
       {
         category,
         description: [keys.join('/'), `Increase/decrease ${this.name} (ctrl-${key} to reset)`],
+        acceptModifiers: ['ctrl', 'shift'],
       },
     );
   }
@@ -147,11 +145,7 @@ export class Toggle extends EventTarget {
   setupKeyHandler(key, category) {
     kbd.registerKeyboardShortcut(
       key,
-      (e) => {
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-          return false;
-        }
-
+      () => {
         this.setTo(!this.value);
       },
       {
@@ -201,11 +195,7 @@ export class IconToggle extends EventTarget {
   setupKeyHandler(key, category) {
     kbd.registerKeyboardShortcut(
       key,
-      (e) => {
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-          return false;
-        }
-
+      () => {
         this.setTo(!this.value);
       },
       {
@@ -279,10 +269,6 @@ export class Selector extends EventTarget {
   setupKeyHandlers(keys, eventToIndex, description) {
     kbd.registerKeyboardShortcut(keys,
       (e) => {
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-          return false;
-        }
-
         const newIndex = eventToIndex(e);
         if (newIndex >= this.options.length) {
           return false;
@@ -297,11 +283,7 @@ export class Selector extends EventTarget {
   setupSwitchKeyHandler(key, category) {
     kbd.registerKeyboardShortcut(
       key,
-      (e) => {
-        if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-          return false;
-        }
-
+      () => {
         this.setToIndex((this.index + 1) % this.options.length);
       },
       {
