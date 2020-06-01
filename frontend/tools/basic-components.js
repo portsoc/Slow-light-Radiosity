@@ -178,11 +178,12 @@ export class IconToggle extends EventTarget {
     this.value = initial;
   }
 
-  setupHtml(el, className, title) {
+  setupHtml(el, className, title, onOffClasses = ['on', 'off']) {
     if (typeof el === 'string') el = document.querySelector(el);
 
     const iconEl = document.createElement('i');
     this.iconEl = iconEl;
+    this.onOffClasses = onOffClasses;
     el.append(iconEl);
 
     iconEl.className = className;
@@ -192,7 +193,7 @@ export class IconToggle extends EventTarget {
     iconEl.addEventListener('click', this.onClick.bind(this));
   }
 
-  setupKeyHandler(key, category) {
+  setupKeyHandler(key, category, description) {
     kbd.registerKeyboardShortcut(
       key,
       () => {
@@ -200,14 +201,14 @@ export class IconToggle extends EventTarget {
       },
       {
         category,
-        description: `Toggle ${this.name}`,
+        description: description || `Toggle ${this.name}`,
       },
     );
   }
 
   display() {
-    this.iconEl.classList.toggle('on', !!this.value);
-    this.iconEl.classList.toggle('off', !this.value);
+    this.iconEl.classList.toggle(this.onOffClasses[0], !!this.value);
+    this.iconEl.classList.toggle(this.onOffClasses[1], !this.value);
   }
 
   onClick() {
@@ -222,6 +223,42 @@ export class IconToggle extends EventTarget {
       this.display();
     }
     this.dispatchEvent(new CustomEvent('change'));
+  }
+}
+
+export class IconButton extends EventTarget {
+  constructor(name) {
+    super();
+
+    this.name = name;
+  }
+
+  setupHtml(el, className, title) {
+    if (typeof el === 'string') el = document.querySelector(el);
+
+    const iconEl = document.createElement('i');
+    this.iconEl = iconEl;
+    el.append(iconEl);
+
+    iconEl.className = className;
+    iconEl.title = title;
+
+    iconEl.addEventListener('click', this.click.bind(this));
+  }
+
+  setupKeyHandler(key, category, description) {
+    kbd.registerKeyboardShortcut(
+      key,
+      this.click.bind(this),
+      {
+        category,
+        description: description || this.name,
+      },
+    );
+  }
+
+  click() {
+    this.dispatchEvent(new CustomEvent('click'));
   }
 }
 

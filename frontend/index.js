@@ -30,6 +30,7 @@ function setupUI() {
   menu.setup();
   stats.setup();
   animationControls.setup();
+  animationControls.setupDefaultKeys();
 
   // environment menu selector
   environments.selector.setupHtml('#env');
@@ -117,9 +118,6 @@ function displayDelay(d) {
 function updateMaxTime() {
   const alg = radiosity.algorithms.value.instance;
   animationControls.setMaxTime(alg.maxTime);
-
-  // maxTime change resets bufTime
-  updateBufTime();
 }
 
 function updateBufTime() {
