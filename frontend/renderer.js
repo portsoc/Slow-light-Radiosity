@@ -33,6 +33,7 @@ export function setup() {
 
   camera = new THREE.PerspectiveCamera(100, 1, 0.1, 1000);
   controls = new OrbitControls(camera, renderer.domElement);
+  controls.enableKeys = false;
 
   material = new THREE.MeshBasicMaterial({
     vertexColors: THREE.FaceColors,
