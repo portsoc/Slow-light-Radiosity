@@ -3,7 +3,7 @@ import * as components from './basic-components.js';
 const COMPONENT_CLASSNAME = 'animation-controls';
 
 let currTime = 0;
-let maxTime;
+let maxTimeInclusive = 1;
 let showCallback;
 
 export const playing = new components.IconToggle('play/pause', false);
@@ -44,6 +44,8 @@ export function setup() {
   el.fwdBtn.addEventListener('click', stepFwd);
   playing.addEventListener('change', resetIfStartingPlayAtEnd);
 
+  progressEl.addEventListener('click', seek);
+
   animate();
 }
 
@@ -63,8 +65,8 @@ function animate() {
     currTime += playDirection;
 
     if (repeating.value) {
-      if (currTime < 0) currTime = maxTime;
-      if (currTime > maxTime) currTime = 0;
+      if (currTime < 0) currTime = maxTimeInclusive;
+      if (currTime > maxTimeInclusive) currTime = 0;
     }
   }
 
@@ -73,8 +75,8 @@ function animate() {
     currTime = 0;
     playing.setTo(false);
   }
-  if (currTime > maxTime) {
-    currTime = maxTime;
+  if (currTime > maxTimeInclusive) {
+    currTime = maxTimeInclusive;
     playing.setTo(false);
   }
 
@@ -84,8 +86,8 @@ function animate() {
 }
 
 export function setMaxTime(t) {
-  maxTime = t;
-  if (currTime > maxTime) currTime = maxTime;
+  maxTimeInclusive = t - 1;
+  if (currTime > maxTimeInclusive) currTime = maxTimeInclusive;
   showProgress();
 }
 
@@ -94,11 +96,11 @@ export function setShowCallback(f) {
 }
 
 function showProgress() {
-  el.root.style.setProperty('--val-fraction', currTime / maxTime);
+  el.root.style.setProperty('--val-fraction', currTime / maxTimeInclusive);
 }
 
-export function setBufferedPercent(percent) {
-  el.root.style.setProperty('--buf-fraction', percent / 100);
+export function setBufferedFraction(fraction) {
+  el.root.style.setProperty('--buf-fraction', fraction);
 }
 
 function newDiv(parent, subclass) {
@@ -125,7 +127,7 @@ export function resetIfStartingPlayAtEnd() {
   if (playing.value) {
     // playing was just turned on: are we at the end? if so, set to beginning
     // if backwards, switch end and beginning
-    if (!backward.value && currTime === maxTime) toStart();
+    if (!backward.value && currTime === maxTimeInclusive) toStart();
     if (backward.value && currTime === 0) toEnd();
   }
 }
@@ -147,14 +149,29 @@ export function toStart() {
 
 export function toEnd() {
   // set to 1 after end so next animation step shows the end
-  currTime = maxTime + 1;
+  currTime = maxTimeInclusive + 1;
+}
+
+function seek(event) {
+  const progressEl = event.target;
+  const position = Math.round(event.offsetX / progressEl.clientWidth * maxTimeInclusive);
+  currTime = position;
+}
+
+export function stop() {
+  playing.setTo(false);
+}
+
+export function reset() {
+  currTime = 0;
+  playing.setTo(false);
+  backward.setTo(false);
 }
 
 
 /*
 todo:
 
-clicking on progress bar to seek directly
 disabling going back for ProgRad (maybe only if it's too slow)
 gamma and exposure with animation buttons
 */
