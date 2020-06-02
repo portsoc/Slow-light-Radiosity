@@ -1,39 +1,18 @@
-import * as Rad from '../radiosity/index.js';
-
-import delayer from './tools/delays.js';
-import * as components from './tools/basic-components.js';
+import * as animationControls from './tools/animation-controls.js';
 import * as stats from './tools/stats.js';
-
-export const algorithms = new components.Selector('radiosity algorithm', [
-  {
-    Class: Rad.ProgRad,
-    name: 'Progressive Radiosity (fast and static light)',
-  },
-  {
-    Class: Rad.SlowRad,
-    name: 'Slow-light Radiosity',
-  },
-]);
-
-const DELAYS = [0, 100, 1000];
-
-export const parameters = {
-  overshooting: new components.Toggle('overshooting', false),
-  delay: new components.Range('step delay', 0, DELAYS.length - 1, 0),
-  DELAYS,
-};
-
-let renderer;
-
-export function setRenderer(r) {
-  renderer = r;
-}
+import * as renderer from './renderer.js';
+import { algorithms } from './algorithms.js';
+import { burstingDelay } from './tools/delays.js';
 
 let environment;
 
 export function open(env) {
   environment = env;
-  stop(); // in case radiosity was already running
+
+  if (!env) {
+    stop();
+    return;
+  }
 
   stats.set('instance-count', environment.instances.length);
   stats.set('surface-count', environment.surfaceCount);
@@ -41,77 +20,77 @@ export function open(env) {
   stats.set('element-count', environment.elementCount);
   stats.set('vertex-count', environment.vertexCount);
 
-  // running time and iteration count unknown
-  stats.set('running-time', '?');
   stats.set('iteration-count', '?');
 
-  setupAlgorithm();
+  const alg = algorithms.value.instance;
+  bufferingIterator = alg.open(env);
+
+  animationControls.setMaxTime(alg.maxTime);
+  animationControls.reset();
+
+  startBuffering();
 }
 
-let stopRunning = false;
-let radiosityRunning = false;
+algorithms.addEventListener('change', reopen);
 
-function setupAlgorithm() {
-  algorithms.value.instance = new algorithms.value.Class();
-  algorithms.dispatchEvent(new CustomEvent('setup'));
+function reopen() {
+  if (environment) {
+    open(environment);
+  }
 }
 
-algorithms.addEventListener('change', setupAlgorithm);
+let bufferingRunning = false;
+let bufferingIterator = null;
 
-export async function run() {
-  if (radiosityRunning) return; // already running
+async function startBuffering() {
+  if (bufferingRunning) return; // already running, will pick up the new iterator automatically
 
   try {
-    const rad = algorithms.value.instance;
-    rad.overFlag = parameters.overshooting.value;
+    bufferingRunning = true;
 
-    rad.open(environment);
-    stats.set('running-time', '–');
+    let next = bufferingIterator.next();
+    while (!next.done) {
+      updateBufTime(next.value);
 
-    const computationStart = Date.now();
+      await burstingDelay();
+      if (!bufferingIterator) break;
 
-    let pass = 0;
-    stopRunning = false;
-    radiosityRunning = true;
-
-    while (!rad.calculate()) {
-      pass += 1;
-      stats.set('iteration-count', pass);
-      renderer.beforeNextDisplay(() => {
-        rad.prepareForDisplay();
-        renderer.updateColors();
-      });
-
-      algorithms.dispatchEvent(new CustomEvent('step'));
-
-      await delayer.delay(DELAYS[parameters.delay.value]);
-      if (stopRunning) break;
+      next = bufferingIterator.next();
     }
-
-    const computationEnd = Date.now();
-
-    rad.close();
-
-    if (!stopRunning) {
-      stats.set('running-time', computationEnd - computationStart);
-      stats.set('iteration-count', pass);
-    }
-
-    renderer.beforeNextDisplay(null);
-    rad.prepareForDisplay();
-    renderer.updateColors();
-    algorithms.dispatchEvent(new CustomEvent('finish'));
   } finally {
-    radiosityRunning = false;
+    bufferingIterator = null;
+    bufferingRunning = false;
   }
 }
 
 export function stop() {
-  delayer.cancel();
-  stopRunning = true;
+  bufferingIterator = null;
 }
 
-// when delay changes, if it's changing to shorter, cancel last delay
-parameters.delay.addEventListener('change', () => {
-  delayer.cancelIfLongerThan(parameters.delay.value);
-});
+function updateBufTime(statusValue) {
+  animationControls.setBufferedFraction(statusValue.curr / statusValue.max);
+}
+
+animationControls.setShowCallback(show);
+
+function show(time) {
+  if (!environment) return; // nothing to show
+
+  if (time !== 0) renderer.viewParameters.viewOutput.setTo(true);
+
+  const alg = algorithms.value.instance;
+  const oldMaxTime = alg.maxTime;
+
+  const changedColors = alg.show(time);
+
+  if (changedColors) {
+    renderer.updateColors();
+  }
+
+  if (oldMaxTime !== alg.maxTime) {
+    animationControls.setMaxTime(alg.maxTime);
+  }
+
+  stats.set('iteration-count', alg.maxTime);
+  stats.set('current-step', time);
+}

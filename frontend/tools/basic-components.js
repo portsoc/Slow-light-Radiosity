@@ -318,14 +318,17 @@ export class Selector extends EventTarget {
   }
 
   setupSwitchKeyHandler(key, category) {
+    const keys = [key, key.toUpperCase()];
     kbd.registerKeyboardShortcut(
-      key,
-      () => {
-        this.setToIndex((this.index + 1) % this.options.length);
+      keys,
+      (e) => {
+        const dir = e.shiftKey ? this.options.length - 1 : 1;
+        this.setToIndex((this.index + dir) % this.options.length);
       },
       {
         category,
-        description: `Switch ${this.name}`,
+        description: [keys.join('/'), `Switch ${this.name}`],
+        acceptModifiers: ['shift'],
       },
     );
   }

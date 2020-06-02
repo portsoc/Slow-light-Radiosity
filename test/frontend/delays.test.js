@@ -1,88 +1,63 @@
-import delays, { FAST_BURSTS_MS } from '../../frontend/tools/delays.js';
-
-test('delay without param', () => {
-  expect(() => delays.delay()).toThrow(TypeError);
-});
-
-test('different delays', async () => {
-  const spy = jest.spyOn(window, 'setTimeout');
-
-  await delays.delay(1);
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
-
-  await delays.delay(2);
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 2);
-
-  await delays.delay(1);
-  expect(spy).toHaveBeenLastCalledWith(expect.any(Function), 1);
-
-  spy.mockRestore();
-});
+import * as delays from '../../frontend/tools/delays.js';
 
 describe('bursting', () => {
-  let spyCanBurstNow;
-
   beforeEach(() => {
     jest.useFakeTimers('modern');
-    spyCanBurstNow = jest.spyOn(delays, 'canBurstNow');
-  });
-
-  afterEach(() => {
-    spyCanBurstNow.mockRestore();
-  });
-
-  test('quick short burst (10 waits)', async () => {
-    // we should be able to run 10 times in under 2ms
-    for (let i = 0; i < 10; i += 1) {
-      await delays.delay(0);
-      expect(spyCanBurstNow).toHaveLastReturnedWith(true);
-    }
   });
 
   test('6*1ms runs', async () => {
-    // spinning 6*1ms with delays should include at least one
-    // first two spins will allow bursting
-    await delays.delay(0);
-    expect(spyCanBurstNow).toHaveLastReturnedWith(true);
-    for (let i = 0; i < FAST_BURSTS_MS; i += 1) {
+    // the rest of the tests relies on this:
+    expect(delays.WAIT_MS).toBe(1);
+
+    const startTime = Date.now();
+
+    await awaitDelay(); // the first call does not burst, waits 1ms, with fake timers exactly so
+    expect(Date.now()).toBe(startTime + 1);
+
+    // then BURST_MS spins will allow bursting
+    for (let i = 0; i < delays.BURST_MS; i += 1) {
       spin(1);
-      await delays.delay(0);
-      expect(spyCanBurstNow).toHaveLastReturnedWith(true);
+      expect(Date.now()).toBe(startTime + 2 + i);
+      await awaitDelay();
+      expect(Date.now()).toBe(startTime + 2 + i);
     }
+
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 1);
 
     // next 1ms spin should finish the burst
     spin(1);
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 2);
 
-    await awaitDelay(delays);
-
-    expect(spyCanBurstNow).toHaveLastReturnedWith(false);
-  });
-
-  test('burst always after 10ms spin', async () => {
-    await delays.delay(0); // this should burst as it's the first delay on this instance of Delays
-    expect(spyCanBurstNow).toHaveLastReturnedWith(true);
+    await awaitDelay();
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 3);
 
     spin(10);
-    await awaitDelay(delays); // should not burst, we need to fake the timers
-    expect(spyCanBurstNow).toHaveLastReturnedWith(false);
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 13);
+
+    await awaitDelay();
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 14);
 
     spin(10);
-    await delays.delay(0); // should burst again
-    expect(spyCanBurstNow).toHaveLastReturnedWith(true);
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 24);
+
+    await awaitDelay();
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 25);
+
+    // having not done anything, it should burst again
+    await awaitDelay();
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 25);
+
+    await awaitDelay();
+    expect(Date.now()).toBe(startTime + delays.BURST_MS + 25);
   });
 });
-
-test.todo('canceling explicitly');
-test.todo('canceling on new delay');
-test.todo('cancelIfLongerThan');
-test.todo('concurrent independent delays');
 
 function spin(ms) {
   jest.advanceTimersByTime(ms);
 }
 
-function awaitDelay(delays, ms = 0) {
-  const delayPromise = delays.delay(ms);
+function awaitDelay() {
+  const delayPromise = delays.burstingDelay();
   jest.runAllTimers(); // simulate timeouts during await
   return delayPromise;
 }

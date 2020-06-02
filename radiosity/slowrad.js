@@ -11,6 +11,8 @@ export default class SlowRad {
   }
 
   open(env, speedOfLight) {
+    const reset = this.env !== env || (speedOfLight != null && speedOfLight !== this.speedOfLight);
+
     this.env = env;
 
     if (speedOfLight == null) {
@@ -21,33 +23,27 @@ export default class SlowRad {
       this.speedOfLight = speedOfLight;
     }
 
-    this.env.numberElements();
-    this.now = 0;
-    this.env.initializeFutureExitances(this.maxTime);
-    this.initExitance();
-    this.calcPatchElementDistances();
-    return true;
-  }
-
-  close() {
-    this.prepareForDisplay();
-  }
-
-  prepareForDisplay() {
-    if (this.now < this.maxTime) {
-      if (this.needsDisplayUpdate) {
-        this.needsDisplayUpdate = false;
-        this.show(this.now);
-      }
+    if (reset) {
+      this.env.numberElements();
+      this.now = 0;
+      this.env.initializeFutureExitances(this.maxTime);
+      this.initExitance();
     }
+    return this.prepGenerator();
   }
 
   show(time) {
-    this.env.interpolateVertexExitances(time);
+    if (this.lastShownTime !== time || this.needsDisplayUpdate) {
+      this.lastShownTime = time;
+      this.needsDisplayUpdate = false;
 
-    for (const vertex of this.env.vertices) {
-      vertex.exitance.setTo(vertex.futureExitances[time]);
+      // set vertex colors to their colors from the given time
+      for (const vertex of this.env.vertices) {
+        vertex.exitance.setTo(vertex.futureExitances[time]);
+      }
+      return true;
     }
+    return false;
   }
 
   calculate() {
@@ -62,7 +58,7 @@ export default class SlowRad {
 
     for (const currentPatch of this.env.patches) {
       // calculate form factors
-      const rffArray = this.computeRFFArray(currentPatch);
+      const rffArray = currentPatch.rffArray;
 
       for (const surface of this.env.surfaces) {
         // Get surface reflectance
@@ -105,6 +101,8 @@ export default class SlowRad {
       currentPatch.futureExitances[this.now].reset();
     }
 
+    this.env.interpolateVertexExitances(this.now);
+
     this.now++;
 
     // Convergence not achieved yet
@@ -115,7 +113,7 @@ export default class SlowRad {
   computeRFFArray(patch) {
     if (patch.rffArray) return patch.rffArray;
 
-    const rffArray = new Array(this.env.elementCount);
+    const rffArray = patch.rffArray = new Array(this.env.elementCount);
     this.ffd.calculateFormFactors(patch, this.env, rffArray);
 
     // compute reciprocal form factors
@@ -123,31 +121,27 @@ export default class SlowRad {
       const i = element.number;
       rffArray[i] = Math.min(rffArray[i] * patch.area / element.area, 1);
     }
-    patch.rffArray = rffArray;
-    return rffArray;
   }
 
-  calcPatchElementDistances() {
-    for (const currentPatch of this.env.patches) {
-      if (currentPatch.distArray &&
-          currentPatch.distArray.speedOfLight === this.speedOfLight) {
-        // this patch already has distArray for the current speed of light
-        continue;
-      }
+  computeDistArray(currentPatch) {
+    if (currentPatch.distArray &&
+        currentPatch.distArray.speedOfLight === this.speedOfLight) {
+      // this patch already has distArray for the current speed of light
+      return;
+    }
 
-      const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
-      distArray.speedOfLight = this.speedOfLight;
+    const distArray = currentPatch.distArray = new Array(this.env.elementCount).fill(null);
+    distArray.speedOfLight = this.speedOfLight;
 
-      for (const patch of this.env.patches) {
-        // ignore self patch
-        if (patch !== currentPatch) {
-          for (const element of patch.elements) {
-            // calculate patch-element distance
-            const dist = currentPatch.center.dist(element.center);
-            // transform into integer distance in time steps (minimum 1)
-            const timeDist = Math.max(1, Math.round(dist / this.speedOfLight));
-            distArray[element.number] = timeDist;
-          }
+    for (const patch of this.env.patches) {
+      // ignore self patch
+      if (patch !== currentPatch) {
+        for (const element of patch.elements) {
+          // calculate patch-element distance
+          const dist = currentPatch.center.dist(element.center);
+          // transform into integer distance in time steps (minimum 1)
+          const timeDist = Math.max(1, Math.round(dist / this.speedOfLight));
+          distArray[element.number] = timeDist;
         }
       }
     }
@@ -182,5 +176,23 @@ export default class SlowRad {
     }
 
     return this;
+  }
+
+  * prepGenerator() {
+    // calculate distances and form factors
+    const max = this.env.patchCount;
+    let curr = 0;
+    yield { curr, max };
+
+    for (const currentPatch of this.env.patches) {
+      curr += 1;
+      this.computeDistArray(currentPatch);
+      this.computeRFFArray(currentPatch);
+      yield { curr, max };
+    }
+
+    while (!this.calculate()) {
+      yield { curr: this.now, max: this.maxTime };
+    }
   }
 }

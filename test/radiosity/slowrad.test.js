@@ -58,6 +58,10 @@ test('calcPatchElementDistances()', () => {
   // speed of light is 1 unit per step
   rad.open(env, 1);
 
+  for (const p of env.patches) {
+    rad.computeDistArray(p);
+  }
+
   // distances are rounded integers
   expect(patch0.distArray).toStrictEqual(sol([null, 3, 5, 6]));
   expect(patch1.distArray).toStrictEqual(sol([3, null, 4, 5]));

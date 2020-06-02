@@ -204,24 +204,10 @@ export function updateColors() {
   geometry.colorsNeedUpdate = true;
 }
 
-let nextDisplayCallback;
-
-// if the radiosity algorithm changed the model in visible ways that
-// need preprocessing before updating the Three.js model, it can
-// register here a function that will do that preprocessing
-export function beforeNextDisplay(cb) {
-  nextDisplayCallback = cb;
-}
-
 function animate() {
   requestAnimationFrame(animate);
 
   if (!scene) return; // nothing to show
-
-  if (nextDisplayCallback) {
-    nextDisplayCallback();
-    nextDisplayCallback = null;
-  }
 
   renderer.render(scene, camera);
   axes.update(camera, controls.target);

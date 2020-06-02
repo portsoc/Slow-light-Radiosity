@@ -6,6 +6,7 @@ import * as stats from './tools/stats.js';
 import * as environments from './environments.js';
 import * as renderer from './renderer.js';
 import * as radiosity from './radiosity.js';
+import { algorithms } from './algorithms.js';
 
 // init on load
 
@@ -13,7 +14,6 @@ window.addEventListener('load', init);
 
 function init() {
   renderer.setup();
-  radiosity.setRenderer(renderer);
   setupUI();
 
   environments.onEnvironmentChange(changeEnvironment);
@@ -44,18 +44,8 @@ function setupUI() {
   );
 
   // radiosity parameters
-  radiosity.algorithms.setupHtml('#algorithms');
-  radiosity.algorithms.setupSwitchKeyHandler('s', 'Radiosity');
-  radiosity.algorithms.addEventListener('setup', updateMaxTime);
-  radiosity.algorithms.addEventListener('step', updateBufTime);
-  radiosity.algorithms.addEventListener('finish', updateMaxTime);
-
-  radiosity.parameters.overshooting.addExplanation('Overshooting usually makes ProgRad faster.');
-  radiosity.parameters.overshooting.setupHtml('#overshoot');
-  radiosity.parameters.overshooting.setupKeyHandler('o', 'Radiosity');
-
-  radiosity.parameters.delay.setupHtml('#delay-slider', displayDelay);
-  radiosity.parameters.delay.setupKeyHandler('d', 'Radiosity');
+  algorithms.setupHtml('#algorithms');
+  algorithms.setupSwitchKeyHandler('s', 'Radiosity');
 
   // view controls
   renderer.viewParameters.gamma.setupHtml('#gamma-slider', displayGamma);
@@ -74,24 +64,13 @@ function setupUI() {
   renderer.viewParameters.includeAmbient.setupHtml('#ambient');
   renderer.viewParameters.includeAmbient.setupKeyHandler('a', 'View');
 
-  // remaining keyboard shortcuts
-  kbd.registerKeyboardShortcut('Enter',
-    () => {
-      renderer.viewParameters.viewOutput.setTo(true);
-      radiosity.run();
-    },
-    {
-      category: 'Radiosity',
-      description: 'Start radiosity computation',
-    },
-  );
-
   kbd.registerKeyboardShortcut('Escape',
     (e) => {
       if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
         return false;
       }
       radiosity.stop();
+      animationControls.stop();
     },
     {
       category: 'Radiosity',
@@ -109,20 +88,4 @@ function displayGamma(gamma) {
 
 function displayExposure(exposure) {
   return (exposure > 0 ? '+' : '') + (exposure / 10).toFixed(1);
-}
-
-function displayDelay(d) {
-  return `${radiosity.parameters.DELAYS[d]}ms`;
-}
-
-function updateMaxTime() {
-  const alg = radiosity.algorithms.value.instance;
-  animationControls.setMaxTime(alg.maxTime);
-}
-
-function updateBufTime() {
-  const alg = radiosity.algorithms.value.instance;
-  if (alg.now) {
-    animationControls.setBufferedPercent(alg.now * 100 / alg.maxTime);
-  }
 }

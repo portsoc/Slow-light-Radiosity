@@ -13,19 +13,15 @@ export default class ProgRad extends RadEqnSolve {
   }
 
   open(env) {
+    if (env !== this.env) this.maxTime = this.maxStep;
     this.env = env;
     this.env.numberElements();
     this.stepCount = 0;
-    this.maxTime = this.maxStep;
     this.convergence = 1;
+    this.max = null;
     this.initExitance();
     this.calcInterReflect();
-    return true;
-  }
-
-  close() {
-    this.prepareForDisplay();
-    this.maxTime = this.stepCount;
+    return this.formFactorCalculationGenerator();
   }
 
   prepareForDisplay() {
@@ -37,29 +33,11 @@ export default class ProgRad extends RadEqnSolve {
     }
   }
 
-  show(time) {
-    if (!this.env) return;
-
-    if (time < this.stepCount) {
-      this.open(this.env);
-      this.needsDisplayUpdate = true;
-    }
-
-    while (this.stepCount < time) {
-      if (this.calculate()) break;
-    }
-
-    this.prepareForDisplay();
-    return this.stepCount;
-  }
-
   calculate() {
     // Check for maximum number of steps
     if (this.stepCount >= this.maxStep) {
       return true;
     }
-
-    this.needsDisplayUpdate = true;
 
     // Update unsent flux statistics
     this.updateUnsentStats();
@@ -122,6 +100,9 @@ export default class ProgRad extends RadEqnSolve {
     // Increment step count
     this.stepCount++;
 
+    // if drawing, we'll need to update display
+    this.needsDisplayUpdate = true;
+
     // Convergence not achieved yet
     return false;
   }
@@ -157,5 +138,49 @@ export default class ProgRad extends RadEqnSolve {
     this.overshoot.r *= spr.r;
     this.overshoot.g *= spr.g;
     this.overshoot.b *= spr.b;
+  }
+
+
+  // adaptations for our animation frontend
+  show(time) {
+    if (!this.env) return 0;
+
+    if (time < this.stepCount) {
+      this.open(this.env);
+      this.needsDisplayUpdate = true;
+    }
+
+    while (this.stepCount < time) {
+      if (this.calculate()) {
+        this.maxTime = this.stepCount;
+        break; // radiosity finished
+      }
+    }
+
+    if (this.needsDisplayUpdate) {
+      this.prepareForDisplay();
+      return true;
+    }
+
+    return false;
+  }
+
+  * formFactorCalculationGenerator() {
+    const max = this.env.patchCount;
+    let curr = 0;
+    yield { curr, max };
+
+    for (const patch of this.env.patches) {
+      curr += 1;
+
+      if (!patch.ffArray) {
+        patch.ffArray = new Array(this.env.elementCount);
+        this.ffd.calculateFormFactors(patch, this.env, patch.ffArray);
+
+        yield { curr, max };
+      }
+    }
+
+    yield { curr: max, max };
   }
 }
