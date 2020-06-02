@@ -1,19 +1,24 @@
 export default class Instance {
   constructor(surfaces) {
     this.surfaces = surfaces;
+    this._vertices = null;       // Instance vertices (computed once in getter)
   }
 
   get vertices() {
-    const set = new Set();
-    for (const s of this.surfaces) {
-      for (const p of s.patches) {
-        addToSet(p.vertices, set);
-        for (const e of p.elements) {
-          addToSet(e.vertices, set);
+    if (this._vertices == null) {
+      const set = new Set();
+      for (const s of this.surfaces) {
+        for (const p of s.patches) {
+          addToSet(p.vertices, set);
+          for (const e of p.elements) {
+            addToSet(e.vertices, set);
+          }
         }
       }
+      this._vertices = Array.from(set);
     }
-    return Array.from(set);
+
+    return this._vertices;
   }
 }
 

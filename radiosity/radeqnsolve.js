@@ -7,7 +7,7 @@ export default class RadEqnSolve {
     this.totalFlux = 0;              // Total environment flux
     this.totalUnsent = 0;            // Total unsent exitence
     this.stepCount = 0;              // Step count
-    this.maxStep = 100000;           // Maximum number of steps
+    this.maxStep = 10000;            // Maximum number of steps
     this.maxTime = this.maxStep;     // maximum for animation purposes
     this.stopCriterion = 0.001;      // Stopping criterion
     this.convergence = null;         // Convergence
@@ -24,6 +24,7 @@ export default class RadEqnSolve {
   }
 
   initExitance() {
+    this.totalFlux = 0;
     for (const surface of this.env.surfaces) {
       // Get surface emittance
       const emit = surface.emittance;
