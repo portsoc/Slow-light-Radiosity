@@ -73,10 +73,13 @@ function updateBufTime(statusValue) {
 
 animationControls.setShowCallback(show);
 
+let lastShownTime = 0;
+
 function show(time) {
   if (!environment) return; // nothing to show
 
-  if (time !== 0) renderer.viewParameters.viewOutput.setTo(true);
+  if (time !== lastShownTime) renderer.viewParameters.viewOutput.setTo(true);
+  lastShownTime = time;
 
   const alg = algorithms.value.instance;
   const oldMaxTime = alg.maxTime;
