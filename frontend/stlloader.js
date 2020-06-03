@@ -5,27 +5,17 @@ let geo;
 const LOADER = new STLLoader();
 
 export function loadSTL(filepath, colorRGB) {
-  load(filepath)
-    .then(() => {
-      const inst = STLToInstance(geo, colorRGB);
-      // ! DEBUG
-      console.log(inst);
-
-      return inst;
-    });
+  load(filepath);
+  return STLToInstance(geo, colorRGB);
 }
 
 function load(filepath) {
-  return new Promise(function (resolve) {
-    resolve(
-      LOADER.load(
-        filepath,
-        (geometry) => {
-          geo = geometry;
-        },
-      ),
-    );
-  });
+  LOADER.load(
+    filepath,
+    (geometry) => {
+      geo = geometry;
+    },
+  );
 }
 
 function STLToInstance(g, c) {
