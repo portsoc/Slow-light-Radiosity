@@ -7,7 +7,7 @@ import {
   createTwoCubesInRoom as envCubes,
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
-import createCubeStl from '../modeling/test-models/cubeSTL.js';
+import createOpticalCubes from '../modeling/test-models/cubeSTL.js';
 
 // list of available environments; the first one is the default
 
@@ -37,8 +37,8 @@ const environmentsList = [
     name: 'Corridor with a single light',
   },
   {
-    f: () => createCubeStl(),
-    name: 'A cube from an STL file',
+    f: createOpticalCubes,
+    name: 'A spiral cube and a digged cube',
   },
 ];
 
