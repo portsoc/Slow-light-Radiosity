@@ -1,69 +1,64 @@
-import * as THREE from '../lib/three.module.js';
 import { STLLoader } from '../lib/STLLoader.js';
-import { OrbitControls } from '../lib/OrbitControls.js';
+import { Point3, Patch3, Surface3, Spectra, Instance, Vertex3 } from '../radiosity/index.js';
 
-let container;
+console.log(loadSTL('../modeling/stl-models/cube.stl', [214, 48, 49]));
 
-let camera, cameraTarget, scene, renderer, controls;
+export function loadSTL(filepath, colorRGB) {
+  let inst;
 
-init();
-animate();
-
-function init() {
-  container = document.createElement('div');
-  document.body.appendChild(container);
-
-  camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 1, 100);
-  camera.position.set(3, 0.15, 3);
-
-  cameraTarget = new THREE.Vector3(0, 0, 0);
-
-  scene = new THREE.Scene();
-  scene.background = new THREE.Color(0x72645b);
-
-  // Binary file
-
+  // Load STL file
   const loader = new STLLoader();
-  const material = new THREE.MeshPhongMaterial({ color: 0xff5533, specular: 0x111111, shininess: 200 });
+  loader.load(
+    filepath,
+    (geometry) => {
+      inst = STLToInstance(geometry, colorRGB);
+    },
+  );
 
-  loader.load('../modeling/stl-models/The_Tinker_Dragon_Rises.stl', function (geometry) {
-    const mesh = new THREE.Mesh(geometry, material);
-
-    mesh.rotation.set(-Math.PI / 2, 0, 0);
-    mesh.scale.set(0.02, 0.02, 0.02);
-
-    mesh.castShadow = true;
-    mesh.receiveShadow = true;
-
-    scene.add(mesh);
-  });
-
-  // Lights
-
-  scene.add(new THREE.HemisphereLight(0x443333, 0x111122));
-
-  // renderer
-
-  renderer = new THREE.WebGLRenderer({ antialias: true });
-  renderer.setPixelRatio(window.devicePixelRatio);
-  renderer.setSize(window.innerWidth, window.innerHeight);
-  renderer.outputEncoding = THREE.sRGBEncoding;
-
-  renderer.shadowMap.enabled = true;
-
-  container.appendChild(renderer.domElement);
-
-  controls = new OrbitControls(camera, renderer.domElement);
+  return inst;
 }
 
-function animate() {
-  requestAnimationFrame(animate);
+function STLToInstance(g, c) {
+  // Vertices
+  const vertices = [];
+  const posArray = g.attributes.position.array;
+  for (let i = 0; i < posArray.length; i += 3) {
+    vertices.push(
+      new Vertex3(
+        new Point3(
+          posArray[i],
+          posArray[i + 1],
+          posArray[i + 2],
+        ),
+      ),
+    );
+  }
 
-  render();
-  controls.update();
-}
+  // Patches
+  const patches = [];
+  for (let i = 0; i < vertices.length; i += 3) {
+    patches.push(
+      new Patch3(
+        [
+          vertices[i],
+          vertices[i + 1],
+          vertices[i + 2],
+        ],
+      ),
+    );
+  }
 
-function render() {
-  camera.lookAt(cameraTarget);
-  renderer.render(scene, camera);
+  // Surfaces
+  const surfaces = [
+    new Surface3(
+      new Spectra(
+        c[0], c[1], c[2],
+      ),
+      null,
+      patches,
+    ),
+  ];
+
+  // Instance
+  return new Instance(surfaces);
 }
