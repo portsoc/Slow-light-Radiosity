@@ -1,21 +1,31 @@
 import { STLLoader } from '../lib/STLLoader.js';
 import { Point3, Patch3, Surface3, Spectra, Instance, Vertex3 } from '../radiosity/index.js';
 
-console.log(loadSTL('../modeling/stl-models/cube.stl', [214, 48, 49]));
+let geo;
+const LOADER = new STLLoader();
 
 export function loadSTL(filepath, colorRGB) {
-  let inst;
+  load(filepath)
+    .then(() => {
+      const inst = STLToInstance(geo, colorRGB);
+      // ! DEBUG
+      console.log(inst);
 
-  // Load STL file
-  const loader = new STLLoader();
-  loader.load(
-    filepath,
-    (geometry) => {
-      inst = STLToInstance(geometry, colorRGB);
-    },
-  );
+      return inst;
+    });
+}
 
-  return inst;
+function load(filepath) {
+  return new Promise(function (resolve) {
+    resolve(
+      LOADER.load(
+        filepath,
+        (geometry) => {
+          geo = geometry;
+        },
+      ),
+    );
+  });
 }
 
 function STLToInstance(g, c) {
