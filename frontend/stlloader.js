@@ -48,7 +48,9 @@ function STLToInstance(g, c) {
   const surfaces = [
     new Surface3(
       new Spectra(
-        c[0], c[1], c[2],
+        c[0] / 255,
+        c[1] / 255,
+        c[2] / 255,
       ),
       null,
       patches,
