@@ -4,18 +4,15 @@ import { Point3, Patch3, Surface3, Spectra, Instance, Vertex3 } from '../radiosi
 let geo;
 const LOADER = new STLLoader();
 
-export function loadSTL(filepath, colorRGB) {
-  load(filepath);
+export async function loadSTL(filepath, colorRGB) {
+  const geo = await load(filepath);
   return STLToInstance(geo, colorRGB);
 }
 
 function load(filepath) {
-  LOADER.load(
-    filepath,
-    (geometry) => {
-      geo = geometry;
-    },
-  );
+  return new Promise(resolve => {
+    LOADER.load(filepath, resolve);
+  });
 }
 
 function STLToInstance(g, c) {

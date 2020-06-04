@@ -39,8 +39,8 @@ const environmentsList = [
 
 export const selector = new components.Selector('environment', environmentsList);
 
-function createEnvironment() {
-  const environment = selector.value.f();
+async function createEnvironment() {
+  const environment = await selector.value.f();
 
   if (!environment.checkNoVerticesAreShared()) {
     console.warn(`environment ${selector.value.name} has vertices shared between surfaces and it should not!`);
