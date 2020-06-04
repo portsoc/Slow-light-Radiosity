@@ -1,7 +1,6 @@
 import { STLLoader } from '../lib/STLLoader.js';
 import { Point3, Patch3, Surface3, Spectra, Instance, Vertex3 } from '../radiosity/index.js';
 
-let geo;
 const LOADER = new STLLoader();
 
 export async function loadSTL(filepath, colorRGB) {
