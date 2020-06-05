@@ -72,10 +72,7 @@ function setupUI() {
   renderer.viewParameters.includeAmbient.setupKeyHandler('a', 'View');
 
   kbd.registerKeyboardShortcut('Escape',
-    (e) => {
-      if (e.metaKey || e.altKey || e.ctrlKey || e.shiftKey) {
-        return false;
-      }
+    () => {
       radiosity.stop();
       animationControls.stop();
     },
