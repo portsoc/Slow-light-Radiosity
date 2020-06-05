@@ -1,6 +1,7 @@
 import * as components from './tools/basic-components.js';
 
 import envRoom1 from '../modeling/test-models/room1.js';
+import envRoom2 from '../modeling/test-models/room2.js';
 import envRoom613 from '../modeling/test-models/room613.js';
 import {
   createTwoCubesInRoom as envCubes,
@@ -29,6 +30,10 @@ const environmentsList = [
   {
     f: () => envLamp(5, true),
     name: 'A cube and a lamp',
+  },
+  {
+    f: envRoom2,
+    name: 'Corridor with a single light',
   },
 ];
 
