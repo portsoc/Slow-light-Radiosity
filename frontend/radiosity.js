@@ -84,7 +84,12 @@ function show(time) {
   const alg = algorithms.value.instance;
   const oldMaxTime = alg.maxTime;
 
-  const changedColors = alg.show(time, renderer.getCameraPosition());
+  const camera =
+    renderer.viewParameters.viewGlobalCamera.value
+      ? null
+      : renderer.getCameraPosition();
+
+  const changedColors = alg.show(time, camera);
 
   if (changedColors) {
     renderer.updateColors();

@@ -14,13 +14,14 @@ export default class Point3 {
   }
 
   equals(p) {
-    return this.x === p.x && this.y === p.y && this.z === p.z;
+    return p && this.x === p.x && this.y === p.y && this.z === p.z;
   }
 
   setTo(p) {
     this.x = p.x;
     this.y = p.y;
     this.z = p.z;
+    return this;
   }
 
   addVector(v) {

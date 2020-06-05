@@ -9,7 +9,7 @@ export default class SlowRad {
     this.env = null;                           // Environment
 
     this.ffd = new HemiCube();                 // Form factor determination
-    this.lastCameraPosition = new Point3();
+    this.tmpCamPos = new Point3();             // Object to hold last camera position
   }
 
   open(env, speedOfLight) {
@@ -35,9 +35,11 @@ export default class SlowRad {
   }
 
   show(time, camPos) {
-    const cameraMoved = camPos && !this.lastCameraPosition.equals(camPos);
+    const cameraSwitched = (this.lastCameraPosition == null) !== (camPos == null);
+    const cameraMoved = this.lastCameraPosition && !this.lastCameraPosition.equals(camPos);
+    this.lastCameraPosition = camPos && this.tmpCamPos.setTo(camPos);
 
-    if (this.lastShownTime !== time || cameraMoved || this.needsDisplayUpdate) {
+    if (this.lastShownTime !== time || cameraSwitched || cameraMoved || this.needsDisplayUpdate) {
       this.lastShownTime = time;
       this.needsDisplayUpdate = false;
 
