@@ -1,5 +1,6 @@
 import HemiCube from './hemicube.js';
 import Spectra from './spectra.js';
+import Point3 from './point3.js';
 
 export default class SlowRad {
   constructor(maxTime = 300) {
@@ -8,6 +9,7 @@ export default class SlowRad {
     this.env = null;                           // Environment
 
     this.ffd = new HemiCube();                 // Form factor determination
+    this.lastCameraPosition = new Point3();
   }
 
   open(env, speedOfLight) {
@@ -32,14 +34,17 @@ export default class SlowRad {
     return this.prepGenerator();
   }
 
-  show(time) {
-    if (this.lastShownTime !== time || this.needsDisplayUpdate) {
+  show(time, camPos) {
+    const cameraMoved = camPos && !this.lastCameraPosition.equals(camPos);
+
+    if (this.lastShownTime !== time || cameraMoved || this.needsDisplayUpdate) {
       this.lastShownTime = time;
       this.needsDisplayUpdate = false;
 
       // set vertex colors to their colors from the given time
       for (const vertex of this.env.vertices) {
-        vertex.exitance.setTo(vertex.futureExitances[time]);
+        const camDist = camPos ? this.getTimeDist(vertex.pos, camPos) : 0;
+        vertex.exitance.setTo(vertex.futureExitances[time - camDist]);
       }
       return true;
     }
@@ -137,14 +142,20 @@ export default class SlowRad {
       // ignore self patch
       if (patch !== currentPatch) {
         for (const element of patch.elements) {
-          // calculate patch-element distance
-          const dist = currentPatch.center.dist(element.center);
-          // transform into integer distance in time steps (minimum 1)
-          const timeDist = Math.max(1, Math.round(dist / this.speedOfLight));
-          distArray[element.number] = timeDist;
+          distArray[element.number] = this.getTimeDist(currentPatch.center, element.center);
         }
       }
     }
+  }
+
+  getTimeDist(p1, p2) {
+    // calculate patch-element distance
+    const dist = p1.dist(p2);
+
+    // transform into integer distance in time steps (minimum 1)
+    const timeDist = Math.max(1, Math.round(dist / this.speedOfLight));
+
+    return timeDist;
   }
 
   initExitance() {

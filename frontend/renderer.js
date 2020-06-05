@@ -213,3 +213,7 @@ function animate() {
   axes.update(camera, controls.target);
   axes.render();
 }
+
+export function getCameraPosition() {
+  return camera.position;
+}

@@ -16,12 +16,19 @@ export default class Spectra {
 
   reset() {
     this.r = this.g = this.b = 0;
+    return this;
   }
 
   setTo(s) {
+    if (!s) {
+      this.reset();
+      return this;
+    }
+
     this.r = s.r;
     this.g = s.g;
     this.b = s.b;
+    return this;
   }
 
   add(s) {
