@@ -60,6 +60,13 @@ function setupUI() {
   renderer.viewParameters.viewWireframe.setupHtml('#wireframe');
   renderer.viewParameters.viewWireframe.setupKeyHandler('w', 'View');
 
+  renderer.viewParameters.viewGlobalCamera.addExplanation(`
+    For slow-light radiosity, global camera sees light as it reaches surfaces,
+    while local camera needs the light to arrive at camera position.
+    `);
+  renderer.viewParameters.viewGlobalCamera.setupHtml('#global');
+  renderer.viewParameters.viewGlobalCamera.setupKeyHandler('c', 'View');
+
   renderer.viewParameters.includeAmbient.addExplanation('ProgRad can show light that is yet to be distributed.');
   renderer.viewParameters.includeAmbient.setupHtml('#ambient');
   renderer.viewParameters.includeAmbient.setupKeyHandler('a', 'View');

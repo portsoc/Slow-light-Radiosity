@@ -8,7 +8,12 @@ import * as axes from './tools/axes.js';
 import * as components from './tools/basic-components.js';
 
 export const viewParameters = {
-  viewOutput: new components.Toggle('view radiosity output', false), // the current view is either vertex (radiosity) or shaded
+  // the current view is either vertex (radiosity) or shaded
+  viewOutput: new components.Toggle('view radiosity output', false),
+
+  // global camera sees light as it reaches surfaces, local camera waits for the light to reach the camera
+  viewGlobalCamera: new components.Toggle('global camera', true),
+
   viewWireframe: new components.Toggle('wireframe view', false),
   includeAmbient: new components.Toggle('show ambient light', false),
   gamma: new components.Range('gamma', 1, 100, 22), // scaled by 10, so 0.1-10, default 2.2
