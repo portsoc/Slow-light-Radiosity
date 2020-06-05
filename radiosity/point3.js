@@ -13,6 +13,16 @@ export default class Point3 {
     }
   }
 
+  equals(p) {
+    return this.x === p.x && this.y === p.y && this.z === p.z;
+  }
+
+  setTo(p) {
+    this.x = p.x;
+    this.y = p.y;
+    this.z = p.z;
+  }
+
   addVector(v) {
     if (!(v instanceof Vector3)) throw new TypeError('point can only add vectors');
 
