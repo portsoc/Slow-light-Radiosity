@@ -8,6 +8,7 @@ import {
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
 import createOpticalCubes from '../modeling/test-models/cubeSTL.js';
+import createMaze from '../modeling/test-models/maze.js';
 
 // list of available environments; the first one is the default
 
@@ -39,6 +40,10 @@ const environmentsList = [
   {
     f: createOpticalCubes,
     name: 'A spiral cube and a digged cube',
+  },
+  {
+    f: createMaze,
+    name: 'A maze with some light sources',
   },
 ];
 
