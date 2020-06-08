@@ -143,11 +143,11 @@ function updateControlsForEnvironment() {
     (bounds[0].z + bounds[1].z) / 2,
   );
 
+  const diagonal = new Rad.Vector3(bounds[0], bounds[1]);
+
   camera.position.x = roomCenter.x;
   camera.position.y = roomCenter.y;
-  camera.position.z = 2 * bounds[1].z - bounds[0].z;
-
-  const diagonal = new Rad.Vector3(bounds[0], bounds[1]);
+  camera.position.z = roomCenter.z + diagonal.length / 2;
 
   controls.target = new THREE.Vector3(roomCenter.x, roomCenter.y, roomCenter.z);
   controls.maxDistance = diagonal.length * 2;
