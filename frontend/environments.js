@@ -7,6 +7,7 @@ import {
   createTwoCubesInRoom as envCubes,
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
+import createMaze from '../modeling/test-models/maze.js';
 
 // list of available environments; the first one is the default
 
@@ -35,12 +36,16 @@ const environmentsList = [
     f: envRoom2,
     name: 'Corridor with a single light',
   },
+  {
+    f: createMaze,
+    name: 'A maze with some light sources',
+  },
 ];
 
 export const selector = new components.Selector('environment', environmentsList);
 
-function createEnvironment() {
-  const environment = selector.value.f();
+async function createEnvironment() {
+  const environment = await selector.value.f();
 
   if (!environment.checkNoVerticesAreShared()) {
     console.warn(`environment ${selector.value.name} has vertices shared between surfaces and it should not!`);
