@@ -48,8 +48,8 @@ function setupUI() {
   algorithms.setupSwitchKeyHandler('s', 'Radiosity');
 
   // view controls
-  renderer.viewParameters.gamma.setupHtml('#gamma-slider', displayGamma);
-  renderer.viewParameters.exposure.setupHtml('#exposure-slider', displayExposure);
+  renderer.viewParameters.gamma.setupHtml('#gamma-slider', renderer.displayGamma);
+  renderer.viewParameters.exposure.setupHtml('#exposure-slider', renderer.displayExposure);
 
   renderer.viewParameters.gamma.setupKeyHandler('g', 'View');
   renderer.viewParameters.exposure.setupKeyHandler('e', 'View');
@@ -83,13 +83,4 @@ function setupUI() {
   );
 
   kbd.listKeyboardShortcuts(document.querySelector('#controls'));
-}
-
-
-function displayGamma(gamma) {
-  return (gamma / 10).toFixed(1);
-}
-
-function displayExposure(exposure) {
-  return (exposure > 0 ? '+' : '') + (exposure / 10).toFixed(1);
 }

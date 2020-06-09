@@ -222,3 +222,11 @@ function animate() {
 export function getCameraPosition() {
   return camera.position;
 }
+
+export function displayGamma(gamma) {
+  return (gamma / 10).toFixed(1);
+}
+
+export function displayExposure(exposure) {
+  return (exposure > 0 ? '+' : '') + (exposure / 10).toFixed(1);
+}
