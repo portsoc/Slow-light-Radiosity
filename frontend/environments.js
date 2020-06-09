@@ -8,12 +8,13 @@ import {
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
 import createMaze from '../modeling/test-models/maze.js';
+import twoFaces from '../modeling/test-models/two-faces.js';
 
 // list of available environments; the first one is the default
 
 const environmentsList = [
   {
-    f: envRoom1,
+    f: twoFaces,
     name: 'Simple room',
   },
   {

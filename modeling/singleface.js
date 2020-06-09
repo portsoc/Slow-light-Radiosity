@@ -22,3 +22,21 @@ export function singleFace(reflectance, emittance, subdivide = [1, 1]) {
 
   return new Rad.Instance([surface]);
 }
+
+export function twoTriangles(reflectance, emittance) {
+  const p = [
+    new Rad.Point3(0, 0, 0),
+    new Rad.Point3(1, 0, 0),
+    new Rad.Point3(1, 1, 0),
+    new Rad.Point3(0, 1, 0),
+    new Rad.Point3(1, 0, 0),
+  ];
+  const v = p.map(p => new Rad.Vertex3(p));
+
+  const patch1 = new Rad.Patch3([v[0], v[1], v[2]]);
+  const patch2 = new Rad.Patch3([v[2], v[3], v[0]]);
+
+  const surface = new Rad.Surface3(reflectance, emittance, [patch1, patch2]);
+
+  return new Rad.Instance([surface]);
+}
