@@ -48,6 +48,9 @@ export default class SlowRad {
         const camDist = camPos ? this.getTimeDist(vertex.pos, camPos) : 0;
         vertex.exitance.setTo(vertex.futureExitances[time - camDist]);
       }
+      for (const el of this.env.elements) {
+        el.exitance.setTo(el.futureExitances[time]);
+      }
       return true;
     }
     return false;

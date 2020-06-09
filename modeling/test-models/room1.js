@@ -8,7 +8,7 @@ import * as Cube from '../cube.js';
 // base size is 10 (the shorter side of the room)
 // the book seems to use base size 1 but that's harder to work with
 export default function createRoom() {
-  const room = makeRoom(20);
+  const room = makeRoom(10);
   const bench = makeBench();
   const light1 = makeLight();
   const light2 = makeLight();
@@ -18,7 +18,7 @@ export default function createRoom() {
   l1x.transform(light1);
 
   const l2x = new Transform3();
-  l2x.translate(13.5, 1, 8);
+  l2x.translate(13, 1, 7);
   l2x.transform(light2);
 
   const bx = new Transform3();
@@ -35,15 +35,15 @@ function makeRoom(subdivision = 5) {
   const y = 10;
   const z = 10;
 
-  const retval = Cube.unitCubeMultiSurface(subdivision);
+  const retval = Cube.unitCubeMultiSurface(subdivision, true);
 
   // The sides are in order of front (standing on x), back, right, left, top, bottom.
-  retval.surfaces[0].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // front
-  retval.surfaces[1].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // back
-  retval.surfaces[2].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // right
-  retval.surfaces[3].reflectance.add(new Rad.Spectra(0.95, 0.0, 0.0)); // left
-  retval.surfaces[4].reflectance.add(new Rad.Spectra(0.2, 0.3, 0.3)); // top (floor due to inversion scaling)
-  retval.surfaces[5].reflectance.add(new Rad.Spectra(0.95, 0.95, 0.95)); // bottom (ceiling due to inv.scaling)
+  retval.surfaces[0].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // front
+  retval.surfaces[1].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // back
+  retval.surfaces[2].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // right
+  retval.surfaces[3].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // left
+  retval.surfaces[4].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // top (floor due to inversion scaling)
+  retval.surfaces[5].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // bottom (ceiling due to inv.scaling)
 
   const roomXform = new Transform3();
   roomXform.scale(x, y, -z);
@@ -146,10 +146,10 @@ function makeBench() {
   s3patches.push(new Rad.Patch3([v[21], v[15], v[25], v[29]], p12elements));
   s3patches.push(new Rad.Patch3([v[26], v[18], v[21], v[29]], p13elements));
 
-  const s0 = new Rad.Surface3(new Rad.Spectra(0.5, 0.2, 0.7), null, s0patches);
-  const s1 = new Rad.Surface3(new Rad.Spectra(0.0, 0.8, 0.3), null, s1patches);
-  const s2 = new Rad.Surface3(new Rad.Spectra(0.0, 0.8, 0.3), null, s2patches);
-  const s3 = new Rad.Surface3(new Rad.Spectra(0.0, 0.3, 0.0), null, s3patches);
+  const s0 = new Rad.Surface3(new Rad.Spectra(1, 1, 1), null, s0patches);
+  const s1 = new Rad.Surface3(new Rad.Spectra(1, 1, 1), null, s1patches);
+  const s2 = new Rad.Surface3(new Rad.Spectra(1, 1, 1), null, s2patches);
+  const s3 = new Rad.Surface3(new Rad.Spectra(1, 1, 1), null, s3patches);
 
   return new Rad.Instance([s0, s1, s2, s3]);
 }
@@ -165,14 +165,14 @@ function makeLight() {
   const retval = Cube.unitCubeMultiSurface([1, 5, 1], true);
 
   // The sides are in order of front (standing on x), back, right, left, top, bottom.
-  retval.surfaces[0].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // front
-  retval.surfaces[1].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // back
-  retval.surfaces[2].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // right
-  retval.surfaces[3].reflectance.add(new Rad.Spectra(0.0, 0.0, 0.5)); // left
-  retval.surfaces[4].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // top
-  retval.surfaces[5].reflectance.add(new Rad.Spectra(0.8, 0.8, 0.8)); // bottom
-  retval.surfaces[4].emittance.add(new Rad.Spectra(L * 0.5, L * 0.5, L * 0.5)); // top
-  retval.surfaces[5].emittance.add(new Rad.Spectra(L, L, L)); // bottom
+  retval.surfaces[0].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // front
+  retval.surfaces[1].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // back
+  retval.surfaces[2].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // right
+  retval.surfaces[3].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // left
+  retval.surfaces[4].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // top
+  retval.surfaces[5].reflectance.setTo(new Rad.Spectra(1, 1, 1)); // bottom
+  retval.surfaces[4].emittance.setTo(new Rad.Spectra(L * 0.5, L * 0.5, L * 0.5)); // top
+  retval.surfaces[5].emittance.setTo(new Rad.Spectra(L, L, L)); // bottom
 
   const roomXform = new Transform3();
   roomXform.scale(x, y, z);

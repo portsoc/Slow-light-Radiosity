@@ -194,7 +194,8 @@ export function updateColors() {
         for (const face of element._threeFaces) {
           for (let i = 0; i < 3; i += 1) {
             if (viewParameters.viewOutput.value) {
-              surfaceColor.setTo(face._radVertices[i].exitance);
+              // surfaceColor.setTo(face._radVertices[i].exitance);
+              surfaceColor.setTo(element.exitance);
               if (deltaAmbient) surfaceColor.add(deltaAmbient);
               surfaceColor.scale(1.1 ** viewParameters.exposure.value);
               surfaceColor.exp(10 / viewParameters.gamma.value);
