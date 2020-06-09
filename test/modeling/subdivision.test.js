@@ -158,3 +158,56 @@ function allSimilarNormals(elements) {
 test.todo('quadElements with different x and y subdivisions');
 
 test.todo('quadPatches');
+
+describe('triangles', () => {
+  test('len', () => {
+    const len = subdivision._testing.len;
+
+    const v0 = new Rad.Vertex3(new Rad.Point3(0, 0, 0));
+    const v1 = new Rad.Vertex3(new Rad.Point3(3, 0, 0));
+    const v2 = new Rad.Vertex3(new Rad.Point3(0, 4, 0));
+    const v3 = new Rad.Vertex3(new Rad.Point3(0, 0, 4));
+
+    expect(len(v0, v1)).toBeCloseTo(3, 5);
+    expect(len(v1, v0)).toBeCloseTo(3, 5);
+    expect(len(v0, v2)).toBeCloseTo(4, 5);
+    expect(len(v1, v2)).toBeCloseTo(5, 5);
+    expect(len(v1, v3)).toBeCloseTo(5, 5);
+    expect(len(v3, v1)).toBeCloseTo(5, 5);
+  });
+
+  test('getAngle', () => {
+    const getAngle = subdivision._testing.getAngle;
+
+    const v0 = new Rad.Vector3(3, 3, 0);
+    const v1 = new Rad.Vector3(3, 0, 0);
+    const v2 = new Rad.Vector3(0, 3, 0);
+
+    expect(getAngle(v0, v1)).toBeCloseTo(Math.PI / 4, 5);
+    expect(getAngle(v0, v2)).toBeCloseTo(Math.PI / 4, 5);
+    expect(getAngle(v1, v2)).toBeCloseTo(Math.PI / 2, 5);
+  });
+
+  test('getAngles', () => {
+    const getAngles = subdivision._testing.getAngles;
+
+    const v0 = new Rad.Vertex3(new Rad.Point3(0, 0, 0));
+    const v1 = new Rad.Vertex3(new Rad.Point3(3, 0, 0));
+    const v2 = new Rad.Vertex3(new Rad.Point3(0, 4, 0));
+
+    const angles = getAngles([v0, v1, v2]);
+    expect(angles[0]).toBeCloseTo(Math.PI / 2, 5);
+    expect(angles[1]).toBeCloseTo(Math.acos(3 / 5), 5);
+    expect(angles[2]).toBeCloseTo(Math.acos(4 / 5), 5);
+  });
+
+  test('findMaxIndex3', () => {
+    const findMaxIndex3 = subdivision._testing.findMaxIndex3;
+    expect(findMaxIndex3([0, 1, 2])).toBe(2);
+    expect(findMaxIndex3([1, 2, 3])).toBe(2);
+    expect(findMaxIndex3([4, 2, 3])).toBe(0);
+    expect(findMaxIndex3([4, 2, 3, 6])).toBe(0); // ignores more than 3 elements
+    expect(findMaxIndex3([4, 6, 3])).toBe(1);
+    expect(findMaxIndex3([0, 0, 0])).toBe(2);
+  });
+});

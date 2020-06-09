@@ -40,6 +40,10 @@ const environmentsList = [
     f: createMaze,
     name: 'A maze with some light sources',
   },
+  {
+    f: () => createMaze(7),
+    name: 'Same maze but subdivided (very slow!)',
+  },
 ];
 
 export const selector = new components.Selector('environment', environmentsList);

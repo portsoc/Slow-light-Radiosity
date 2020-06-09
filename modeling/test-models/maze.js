@@ -3,9 +3,11 @@ import * as Rad from '../../radiosity/index.js';
 import Transform3 from '../transform3.js';
 import * as Cube from '../cube.js';
 
-export default async function createMaze() {
+// 15x15 maze with side about 200 long (each cell is about 13.3x13.3 units)
+// set maxLineLength to something smaller (e.g. 10) to subdivide so no face has a longer side
+export default async function createMaze(maxSideLength) {
   const mazeColor = new Rad.Spectra(241, 242, 246).scale(1 / 255);
-  const maze = await loadSTL('../modeling/stl-models/15x15-maze.stl', mazeColor);
+  const maze = await loadSTL('../modeling/stl-models/15x15-maze.stl', mazeColor, null, maxSideLength);
 
   const light1 = makeLightCube(new Rad.Spectra(87, 75, 144).scale(1 / 255));
   const light2 = makeLightCube(new Rad.Spectra(225, 95, 65).scale(1 / 255));
