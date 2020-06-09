@@ -48,6 +48,8 @@ function setupUI() {
   algorithms.setupSwitchKeyHandler('s', 'Radiosity');
 
   // view controls
+  animationControls.playbackSpeed.setupHtml('#speed-slider', animationControls.displaySpeedSetting);
+
   renderer.viewParameters.gamma.setupHtml('#gamma-slider', renderer.displayGamma);
   renderer.viewParameters.exposure.setupHtml('#exposure-slider', renderer.displayExposure);
 

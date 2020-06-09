@@ -10,6 +10,9 @@ export const playing = new components.IconToggle('play/pause', false);
 export const repeating = new components.IconToggle('repeat animation on finish', false);
 export const backward = new components.IconToggle('backward play', false);
 
+// 0 is default (100% speed), other values are 25% speed increments
+export const playbackSpeed = new components.Range('playback speed', -3, 12, 0);
+
 const el = {};
 
 export function setup() {
@@ -62,7 +65,7 @@ function animate() {
 
   if (playing.value) {
     const playDirection = backward.value ? -1 : 1;
-    currTime += playDirection;
+    currTime += playDirection * speedValue();
 
     if (repeating.value) {
       if (currTime < 0) currTime = maxTimeInclusive;
@@ -82,7 +85,7 @@ function animate() {
 
   showProgress();
 
-  if (showCallback) showCallback(currTime);
+  if (showCallback) showCallback(Math.floor(currTime));
 }
 
 export function setMaxTime(t) {
@@ -127,8 +130,8 @@ export function resetIfStartingPlayAtEnd() {
   if (playing.value) {
     // playing was just turned on: are we at the end? if so, set to beginning
     // if backwards, switch end and beginning
-    if (!backward.value && currTime === maxTimeInclusive) toStart();
-    if (backward.value && currTime === 0) toEnd();
+    if (!backward.value && currTime >= maxTimeInclusive) toStart();
+    if (backward.value && currTime <= 0) toEnd();
   }
 }
 
@@ -143,19 +146,18 @@ export function stepBack() {
 }
 
 export function toStart() {
-  // set to 1 before beginning so next animation step shows the beginning
-  currTime = -1;
+  // set to before beginning so next animation step shows the beginning
+  currTime = 0;
 }
 
 export function toEnd() {
-  // set to 1 after end so next animation step shows the end
-  currTime = maxTimeInclusive + 1;
+  // set to after end so next animation step shows the end
+  currTime = maxTimeInclusive;
 }
 
 function seek(event) {
   const progressEl = event.target;
-  const position = Math.round(event.offsetX / progressEl.clientWidth * maxTimeInclusive);
-  currTime = position;
+  currTime = event.offsetX / progressEl.clientWidth * maxTimeInclusive;
 }
 
 export function stop() {
@@ -175,3 +177,12 @@ todo:
 disabling going back for ProgRad (maybe only if it's too slow)
 gamma and exposure with animation buttons
 */
+
+export function displaySpeedSetting(val) {
+  return `${speedValue(val) * 100}%`;
+}
+
+function speedValue(val = playbackSpeed.value) {
+  const speed = 1 + val / 4;
+  return speed;
+}
