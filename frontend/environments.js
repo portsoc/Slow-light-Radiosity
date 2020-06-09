@@ -8,6 +8,7 @@ import {
   createCubeAndLampInRoom as envLamp,
 } from '../modeling/test-models/two-cubes.js';
 import createMaze from '../modeling/test-models/maze.js';
+import createTriangles from '../modeling/test-models/triangles.js';
 
 // list of available environments; the first one is the default
 
@@ -43,6 +44,10 @@ const environmentsList = [
   {
     f: () => createMaze(7),
     name: 'Same maze but subdivided (very slow!)',
+  },
+  {
+    f: createTriangles,
+    name: 'Ten random triangles',
   },
 ];
 
