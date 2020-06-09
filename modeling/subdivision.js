@@ -178,3 +178,88 @@ function cacheSubdivision(start, end, n, retval) {
 
   endCache.set(n, retval);
 }
+
+// subdivide a triangle into patches with maximum side length `maxLength`
+export function trianglePatchesToSize(vertices, maxLength, result = []) {
+  if (len(vertices[0], vertices[1]) <= maxLength &&
+      len(vertices[1], vertices[2]) <= maxLength &&
+      len(vertices[0], vertices[2]) <= maxLength) {
+    result.push(makePatch(vertices));
+    return result;
+  }
+
+  // find the biggest internal angle
+  const angles = getAngles(vertices);
+  const maxIndex = findMaxIndex3(angles);
+
+  // set vertices ABC so the angle at A is the widest
+  const a = vertices[maxIndex];
+  const b = vertices[(maxIndex + 1) % 3];
+  const c = vertices[(maxIndex + 2) % 3];
+
+  // side BC is the longest so we will subdivide it
+  const segments = Math.ceil(len(b, c) / maxLength);
+  const subBC = subdivideVertexLine(b, c, segments);
+
+  // find subdivision point closest to A
+  let d = subBC[1];
+  let dDist = len(a, d);
+  for (let i = 2; i < segments; i += 1) {
+    const dist = len(a, subBC[i]);
+    if (dist < dDist) {
+      d = subBC[i];
+      dDist = dist;
+    }
+  }
+
+  // recursively subdivide the resulting two triangles
+  trianglePatchesToSize([a, b, d], maxLength, result);
+  trianglePatchesToSize([a, d, c], maxLength, result);
+  return result;
+}
+
+// length of side between vertices
+function len(v1, v2) {
+  const retval = v1.pos.dist(v2.pos);
+  // console.log(`len ${retval}`);
+  return retval;
+}
+
+function makePatch(vertices) {
+  return new Rad.Patch3(vertices);
+}
+
+// in a triangle defined by vertices, compute angles at each point
+// returns an array of angles (numbers in radians)
+function getAngles(vertices) {
+  // side vectors
+  const s01 = new Rad.Vector3(vertices[0].pos, vertices[1].pos);
+  const s02 = new Rad.Vector3(vertices[0].pos, vertices[2].pos);
+  const s12 = new Rad.Vector3(vertices[1].pos, vertices[2].pos);
+  const s21 = new Rad.Vector3(vertices[2].pos, vertices[1].pos);
+
+  return [
+    getAngle(s01, s02),
+    getAngle(s21, s01),
+    getAngle(s02, s12),
+  ];
+}
+
+function getAngle(vect1, vect2) {
+  return Math.acos(vect1.dot(vect2) / vect1.length / vect2.length);
+}
+
+// find the index of the largest element in array of 3 numbers
+function findMaxIndex3(arr3) {
+  return arr3[0] > arr3[1]
+    ? (arr3[0] > arr3[2] ? 0 : 2)
+    : (arr3[1] > arr3[2] ? 1 : 2);
+}
+
+export const _testing = {
+  len,
+  makePatch,
+  getAngles,
+  getAngle,
+  findMaxIndex3,
+};
