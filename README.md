@@ -13,3 +13,27 @@ An adaptation of the Radiosity algorithm and implementation from Ashdown's ["Rad
 Work in progress.
 
 See the current status at [http://portsoc.github.io/Slow-light-Radiosity/frontend/](http://portsoc.github.io/Slow-light-Radiosity/frontend/)
+
+# Getting Started
+
+## Prerequisites
+
+* [Node.js](https://nodejs.org/) >= 10
+* [npm](https://www.npmjs.com/) >= 6
+
+## Installation
+
+```sh
+# Clone the repository (stable branch)
+git clone -b master https://github.com/portsoc/Slow-light-Radiosity.git slowrad
+# OR download the latest release at: https://github.com/portsoc/Slow-light-Radiosity/releases/lastest
+
+# Go to the project root
+cd slowrad
+
+# Install
+npm install
+```
+
+## Usage
+
