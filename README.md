@@ -15,7 +15,14 @@
   <img src="https://img.shields.io/badge/language-JavaScript-yellowgreen.svg?style=flat"/>
 </p>
 
+<p align="center">
+  <a href="http://portsoc.github.io/Slow-light-Radiosity/frontend/"><img src="https://img.shields.io/badge/demo-try out :)-brightgreen.svg?style=flat"/></a>
+</p>
+
 ---
+
+**Note**
+> This project was realised by the School of Computing, University of Portsmouth (UK), in partnership with the IUT de Belfort-Montbéliard (France).
 
 # Introduction
 
@@ -28,10 +35,6 @@ This project is an adaptation of the Radiosity algorithm and implementation from
 * `frontend/` has a visualization environment and various tests
 * `test/` has all unit tests
 * `lib/` contains third-party libraries
-
-Work in progress.
-
-See the current status at [http://portsoc.github.io/Slow-light-Radiosity/frontend/](http://portsoc.github.io/Slow-light-Radiosity/frontend/)
 
 # Getting Started
 
@@ -67,16 +70,18 @@ npm lint
 
 # Authors
 
-<div style="display: flex; flex-direction: column; justify-content: center">
-  <a href="https://github.com/jacekkopecky">
-    <img width ="60" src="https://avatars.githubusercontent.com/jacekkopecky" style="border-radius: 100%"/>
-  </a>
-  <div>Jacek Kopecký</div>
-</div>
+<div style="display: flex">
+  <div style="text-align: center; width: 60px; margin-right: 30px">
+    <a href="https://github.com/jacekkopecky">
+      <img width ="60" src="https://avatars.githubusercontent.com/jacekkopecky" style="border-radius: 100%"/>
+    </a>
+    <b>Jacek Kopecký</b>
+  </div>
 
-<div>
-  <a href="https://github.com/Eccsx">
-    <img width ="60" src="https://avatars.githubusercontent.com/Eccsx" style="border-radius: 100%"/>
-  </a>
-  <div>Thomas Mattone</div>
+  <div style="text-align: center; width: 60px; margin-right: 30px">
+    <a href="https://github.com/Eccsx">
+      <img width ="60" src="https://avatars.githubusercontent.com/Eccsx" style="border-radius: 100%"/>
+    </a>
+    <b>Thomas Mattone</b>
+  </div>
 </div>
