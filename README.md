@@ -1,7 +1,6 @@
 
-
 <p align="center">
-  <img width ="512" src="bench-room.gif" style="border-radius: 5%"/>
+  <img width ="512" src="bench-room.gif"/>
 </p>
 
 <h1 align="center">Slow-light Radiosity</h1>
@@ -70,18 +69,16 @@ npm lint
 
 # Authors
 
-<div style="display: flex">
-  <div style="text-align: center; width: 60px; margin-right: 30px">
-    <a href="https://github.com/jacekkopecky">
-      <img width ="60" src="https://avatars.githubusercontent.com/jacekkopecky" style="border-radius: 100%"/>
-    </a>
-    <b>Jacek Kopecký</b>
-  </div>
+<div>
+  <a href="https://github.com/jacekkopecky">
+    <img width ="60" src="https://avatars.githubusercontent.com/jacekkopecky"/>
+  </a>
+  <b>Jacek Kopecký</b>
+</div>
 
-  <div style="text-align: center; width: 60px; margin-right: 30px">
-    <a href="https://github.com/Eccsx">
-      <img width ="60" src="https://avatars.githubusercontent.com/Eccsx" style="border-radius: 100%"/>
-    </a>
-    <b>Thomas Mattone</b>
-  </div>
+<div>
+  <a href="https://github.com/Eccsx">
+    <img width ="60" src="https://avatars.githubusercontent.com/Eccsx"/>
+  </a>
+  <b>Thomas Mattone</b>
 </div>
