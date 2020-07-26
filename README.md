@@ -13,3 +13,12 @@ An adaptation of the Radiosity algorithm and implementation from Ashdown's ["Rad
 Work in progress.
 
 See the current status at [http://portsoc.github.io/Slow-light-Radiosity/frontend/](http://portsoc.github.io/Slow-light-Radiosity/frontend/)
+
+
+## notes on modeling trees (wip)
+
+stretched cube as trunk and branches (in openscad, a hull of two octahedrons, located at each point)
+triangles as leaves
+
+follows space colonisation algorithm as described in
+http://algorithmicbotany.org/papers/colonization.egwnp2007.large.pdf
