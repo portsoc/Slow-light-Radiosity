@@ -11,7 +11,7 @@
   "dependencies": {
     "eslint": "^6.8.0",
     "eslint-config-portsoc": "^0.6.0",
-    "three": "^0.115.0"
+    "three": "^0.125.0"
   },
   "devDependencies": {
     "@babel/core": "^7.9.0",
