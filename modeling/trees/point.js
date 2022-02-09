@@ -30,20 +30,24 @@ export class Point {
     return Math.sqrt((this.x - p2.x) ** 2 + (this.y - p2.y) ** 2 + (this.z - p2.z) ** 2);
   }
 
+  // length of a vector from 0,0,0 to this point
   len() {
     return Math.sqrt(this.x ** 2 + this.y ** 2 + this.z ** 2);
   }
 
+  // unit vector in the direction from 0,0,0 to this point
   norm() {
     return this.div(this.len());
   }
 
-  // 0 returns this, 1 returns a point 1 away from this towards p2
+  // create a point in the direction of point p2, with distance d from this point
+  // 0 returns this, 1 returns a point 1 unit away from this towards p2
   towardsAbs(p2, d = 1) {
     const v = p2.minus(this).norm().scale(d);
     return this.plus(v);
   }
 
+  // create a point in the direction of point p2, at fraction f of the distance
   // 0 returns this, 1 returns p2
   towardsFract(p2, f) {
     const v = p2.minus(this).scale(f);
